@@ -1,0 +1,75 @@
+=====================================================
+  Helios II — QSS Theme Generator
+=====================================================
+
+HOW TO LAUNCH
+--------------
+Double-click:  Helios Theme Generator.exe
+
+No installation. No Python. No setup required.
+
+
+USING THE GENERATOR
+--------------------
+The window is divided into three areas:
+
+  LEFT SIDEBAR
+    Click any section to open its settings:
+    General     background, accent, text, warning
+    Panels      panel bg, border, opacity, radius
+    Buttons     button colors and hover state
+    Tabs        tab bar colors
+    Inputs      input fields and dropdowns
+    Scrollbars  scrollbar handle colors
+    Background  background image and glass effect
+    Presets     built-in themes + palette extractor
+    Export      config tools + install instructions
+
+  CENTER
+    Settings for the selected section.
+    All changes update the preview instantly.
+
+  RIGHT
+    Live Helios II interface preview.
+
+  BOTTOM TOOLBAR
+    Generate    compile settings into a .qss file
+    Download    save the .qss (auto-detects Helios)
+    Reset       revert to Default (Helios Dark)
+    Palette     extract colors from any image
+    Export      save your settings as JSON
+    Import      load previously saved settings
+
+
+GENERATING A THEME FROM AN IMAGE
+----------------------------------
+1.  Click Palette in the toolbar (or go to Presets)
+2.  Click Upload Palette Image
+3.  Select any palette strip, artwork, or photo
+4.  Review the extracted colors, adjust if needed
+5.  Click Apply Palette to Theme
+
+
+INSTALLING A THEME IN HELIOS II
+---------------------------------
+1.  Click Generate in the bottom toolbar
+2.  Click Download — save the .qss file
+
+    If Helios II is found on your system the
+    download dialog will offer to copy the file
+    directly into the Helios styles folder.
+
+    Manual install — copy the .qss file into:
+        HeliosII\lib\styles\
+
+3.  Open Helios II
+
+4.  Go to:  Tools  →  Preferences  →  Style
+
+5.  Select your theme from the dropdown list
+
+6.  Click Apply or OK
+
+7.  Restart Helios II if the theme does not apply
+
+=====================================================
