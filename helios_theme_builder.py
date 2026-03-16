@@ -37,7 +37,7 @@ def _asset(relative: str) -> str:
 
 def _logo_pixmap(height: int = 40) -> "QPixmap":
     """Load the Theme Gen logo scaled to *height* px, keeping aspect ratio."""
-    path = _asset("assets/logo/Theme_Gen_Logo.png")
+    path = _asset("assets/logo.png")
     pix  = QPixmap(path)
     if pix.isNull():
         # Fallback: draw a simple hex shape in brand colours
@@ -1522,7 +1522,7 @@ class HeliosThemeGenerator(QMainWindow):
         self._timer.timeout.connect(self._rebuild_and_apply)
 
         # Window icon (taskbar + title bar)
-        ico_path = _asset("assets/logo/themegen.ico")
+        ico_path = _asset("assets/logo.png")
         if os.path.exists(ico_path):
             self.setWindowIcon(QIcon(ico_path))
 
@@ -2215,7 +2215,7 @@ class AboutDialog(QDialog):
         )
 
         # Set dialog icon
-        icon_path = _asset("assets/logo/themegen.ico")
+        icon_path = _asset("assets/logo.png")
         if os.path.exists(icon_path):
             self.setWindowIcon(QIcon(icon_path))
 
@@ -2278,7 +2278,7 @@ def main():
     app.setStyle("Fusion")
 
     # ── Set application-wide icon (taskbar + window chrome) ──────────────────
-    ico_path = _asset("assets/logo/themegen.ico")
+    ico_path = _asset("assets/logo.png")
     if os.path.exists(ico_path):
         app.setWindowIcon(QIcon(ico_path))
 

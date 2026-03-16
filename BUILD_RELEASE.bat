@@ -62,15 +62,31 @@ echo.
 echo  [4/5]  Compiling executable (60-120 seconds)...
 echo.
 
-%PYTHON% -m PyInstaller ^
-    --noconfirm ^
-    --onefile ^
-    --windowed ^
-    --name "Helios Theme Generator" ^
-    --icon "assets\logo\themegen.ico" ^
-    --add-data "assets;assets" ^
-    --clean ^
-    helios_theme_builder.py
+:: Keep PyInstaller inside the project folder to avoid profile permission issues.
+set "HOME=%CD%"
+set "USERPROFILE=%CD%"
+set "PYINSTALLER_CONFIG_DIR=%CD%\.pyinstaller"
+
+if exist "assets" (
+    %PYTHON% -m PyInstaller ^
+        --noconfirm ^
+        --onefile ^
+        --windowed ^
+        --name "Helios Theme Generator" ^
+        --icon "assets\logo.png" ^
+        --add-data "assets;assets" ^
+        --clean ^
+        helios_theme_builder.py
+) else (
+    echo  [WARN] assets\ folder not found. Building without bundled assets.
+    %PYTHON% -m PyInstaller ^
+        --noconfirm ^
+        --onefile ^
+        --windowed ^
+        --name "Helios Theme Generator" ^
+        --clean ^
+        helios_theme_builder.py
+)
 
 echo.
 
