@@ -129,6 +129,8 @@ const themeNameInput = document.getElementById("themeName");
 const resetButton = document.getElementById("resetTheme");
 const advancedModeToggle = document.getElementById("advancedMode");
 const toast = document.getElementById("toast");
+const palettePreviewCard = document.getElementById("palettePreviewCard");
+const palettePreview = document.getElementById("palettePreview");
 const glow = document.createElement("div");
 const spotlight = document.createElement("div");
 const toolCard = document.querySelector(".tool-card");
@@ -137,6 +139,7 @@ const previewPane = document.querySelector(".preview");
 const cards = [...document.querySelectorAll(".card")];
 const stepSections = [...document.querySelectorAll("[data-step-group]")];
 const stepTabs = [...document.querySelectorAll(".step-tab")];
+const colorInputs = [...document.querySelectorAll("input[type='color']")];
 
 let template = defaultTemplate;
 let particles = [];
@@ -202,8 +205,15 @@ function drawParticles() {
 
 function shiftHexColor(hex, amount) {
   const normalized = hex.replace("#", "");
+  if (normalized.length === 3) {
+    return shiftHexColor(
+      `#${normalized[0]}${normalized[0]}${normalized[1]}${normalized[1]}${normalized[2]}${normalized[2]}`,
+      amount
+    );
+  }
+
   if (normalized.length !== 6) {
-    return hex;
+    return normalizeColor(hex) || hex;
   }
 
   const clamp = (value) => Math.max(0, Math.min(255, value));
@@ -212,6 +222,90 @@ function shiftHexColor(hex, amount) {
   const b = clamp(parseInt(normalized.slice(4, 6), 16) + amount);
 
   return `#${[r, g, b].map((value) => value.toString(16).padStart(2, "0")).join("")}`;
+}
+
+function clampHex(value) {
+  return normalizeColor(value) || "";
+}
+
+function hexToRgb(hex) {
+  const normalized = clampHex(hex).replace("#", "");
+  if (normalized.length !== 6) {
+    return null;
+  }
+
+  return {
+    r: parseInt(normalized.slice(0, 2), 16),
+    g: parseInt(normalized.slice(2, 4), 16),
+    b: parseInt(normalized.slice(4, 6), 16),
+  };
+}
+
+function rgbToHex({ r, g, b }) {
+  return `#${[r, g, b].map((value) => Math.max(0, Math.min(255, Math.round(value))).toString(16).padStart(2, "0")).join("")}`;
+}
+
+function luminance(hex) {
+  const rgb = hexToRgb(hex);
+  if (!rgb) {
+    return 0;
+  }
+
+  const transform = (value) => {
+    const channel = value / 255;
+    return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+  };
+
+  return 0.2126 * transform(rgb.r) + 0.7152 * transform(rgb.g) + 0.0722 * transform(rgb.b);
+}
+
+function contrastRatio(first, second) {
+  const light = Math.max(luminance(first), luminance(second));
+  const dark = Math.min(luminance(first), luminance(second));
+  return (light + 0.05) / (dark + 0.05);
+}
+
+function mixColors(first, second, amount) {
+  const rgbFirst = hexToRgb(first);
+  const rgbSecond = hexToRgb(second);
+  if (!rgbFirst || !rgbSecond) {
+    return first;
+  }
+
+  const mix = (left, right) => left + (right - left) * amount;
+  return rgbToHex({
+    r: mix(rgbFirst.r, rgbSecond.r, amount),
+    g: mix(rgbFirst.g, rgbSecond.g, amount),
+    b: mix(rgbFirst.b, rgbSecond.b, amount),
+  });
+}
+
+function ensureContrast(textColor, backgroundColor, minimum = 4.5) {
+  const safeText = clampHex(textColor) || "#ffffff";
+  const safeBackground = clampHex(backgroundColor) || "#000000";
+  if (contrastRatio(safeText, safeBackground) >= minimum) {
+    return safeText;
+  }
+
+  const whiteContrast = contrastRatio("#ffffff", safeBackground);
+  const blackContrast = contrastRatio("#000000", safeBackground);
+  return whiteContrast >= blackContrast ? "#ffffff" : "#000000";
+}
+
+function saturateHex(hex, amount) {
+  const normalized = clampHex(hex).replace("#", "");
+  if (normalized.length !== 6) {
+    return hex;
+  }
+
+  const [r, g, b] = [0, 2, 4].map((index) => parseInt(normalized.slice(index, index + 2), 16));
+  const average = (r + g + b) / 3;
+  const adjust = (channel) => {
+    const delta = (channel - average) * amount;
+    return Math.max(0, Math.min(255, Math.round(channel + delta)));
+  };
+
+  return `#${[adjust(r), adjust(g), adjust(b)].map((value) => value.toString(16).padStart(2, "0")).join("")}`;
 }
 
 function normalizeColor(value) {
@@ -454,14 +548,18 @@ function generateFinalQSS(nextTemplate, nextTheme) {
 
 function showExportSuccess() {
   toast.style.opacity = "1";
+  toast.style.transform = "translateY(0) scale(1)";
+  toast.style.boxShadow = "0 0 0 1px rgba(76, 194, 255, 0.18), 0 16px 40px rgba(0, 0, 0, 0.42)";
 
   window.setTimeout(() => {
     toast.style.opacity = "0";
+    toast.style.transform = "translateY(8px) scale(0.98)";
   }, 2000);
 }
 
 function setActiveStep(step) {
   currentStep = step;
+  toolCard?.classList.toggle("is-advanced", advancedModeToggle.checked);
 
   stepTabs.forEach((button) => {
     button.classList.toggle("active", button.dataset.step === step);
@@ -478,6 +576,175 @@ function loadDefaultTheme() {
   Object.assign(theme, defaultTheme);
 }
 
+function deriveAccentSystem(source) {
+  const accentColor = clampHex(source);
+  if (!accentColor) {
+    return;
+  }
+
+  theme.accent = accentColor;
+  theme.button_bg = accentColor;
+  theme.button_hover = shiftHexColor(accentColor, 18);
+  theme.tab_active = saturateHex(shiftHexColor(accentColor, 6), 0.24);
+  theme.input_border = shiftHexColor(accentColor, -42);
+}
+
+function showPalette(colors = [], accentColor = "") {
+  if (!palettePreviewCard || !palettePreview || !colors.length) {
+    return;
+  }
+
+  palettePreview.innerHTML = "";
+  colors.forEach((color) => {
+    const swatch = document.createElement("button");
+    swatch.type = "button";
+    swatch.className = `palette-swatch${color === accentColor ? " accent-swatch" : ""}`;
+    swatch.style.background = color;
+    swatch.title = color.toUpperCase();
+    swatch.addEventListener("click", () => {
+      updateThemeKey("accent", color);
+    });
+    palettePreview.appendChild(swatch);
+  });
+
+  palettePreviewCard.classList.remove("is-hidden");
+  palettePreviewCard.classList.add("is-visible");
+}
+
+function distanceBetween(first, second) {
+  const rgbFirst = hexToRgb(first);
+  const rgbSecond = hexToRgb(second);
+  if (!rgbFirst || !rgbSecond) {
+    return Number.MAX_SAFE_INTEGER;
+  }
+
+  return Math.sqrt((rgbFirst.r - rgbSecond.r) ** 2 + (rgbFirst.g - rgbSecond.g) ** 2 + (rgbFirst.b - rgbSecond.b) ** 2);
+}
+
+function extractDominantColorsFromImage(image) {
+  const canvasElement = document.createElement("canvas");
+  const context = canvasElement.getContext("2d", { willReadFrequently: true });
+  if (!context) {
+    return [];
+  }
+
+  const maxDimension = 160;
+  const scale = Math.min(1, maxDimension / Math.max(image.width, image.height));
+  canvasElement.width = Math.max(1, Math.round(image.width * scale));
+  canvasElement.height = Math.max(1, Math.round(image.height * scale));
+  context.drawImage(image, 0, 0, canvasElement.width, canvasElement.height);
+
+  const { data } = context.getImageData(0, 0, canvasElement.width, canvasElement.height);
+  const buckets = new Map();
+
+  for (let index = 0; index < data.length; index += 16) {
+    const alpha = data[index + 3];
+    if (alpha < 180) {
+      continue;
+    }
+
+    const r = Math.round(data[index] / 24) * 24;
+    const g = Math.round(data[index + 1] / 24) * 24;
+    const b = Math.round(data[index + 2] / 24) * 24;
+    const key = rgbToHex({ r, g, b });
+    buckets.set(key, (buckets.get(key) || 0) + 1);
+  }
+
+  const sorted = [...buckets.entries()]
+    .sort((left, right) => right[1] - left[1])
+    .map(([color]) => color);
+
+  const deduped = [];
+  sorted.forEach((color) => {
+    if (deduped.every((existing) => distanceBetween(existing, color) > 34)) {
+      deduped.push(color);
+    }
+  });
+
+  return deduped.slice(0, 8);
+}
+
+function createThemeFromPalette(colors) {
+  if (!colors.length) {
+    return null;
+  }
+
+  const sortedByLuminance = [...colors].sort((left, right) => luminance(left) - luminance(right));
+  const darkest = sortedByLuminance[0] || baseTheme.app_bg;
+  const secondDarkest = sortedByLuminance[1] || shiftHexColor(darkest, 10);
+  const midTone = sortedByLuminance[Math.min(2, sortedByLuminance.length - 1)] || shiftHexColor(secondDarkest, 10);
+  const brightAccent = [...colors].sort((left, right) => luminance(right) - luminance(left))[0] || baseTheme.accent;
+  const lightTone = [...colors].sort((left, right) => luminance(right) - luminance(left))[1] || "#ffffff";
+
+  const generated = {
+    app_bg: darkest,
+    panel_bg: secondDarkest,
+    panel_inner: mixColors(secondDarkest, midTone, 0.45),
+    menu_bg: mixColors(darkest, secondDarkest, 0.55),
+    menu_text: ensureContrast(lightTone, mixColors(darkest, secondDarkest, 0.55), 4),
+    left_bg: mixColors(darkest, secondDarkest, 0.35),
+    left_section_bg: mixColors(secondDarkest, midTone, 0.2),
+    right_bg: mixColors(darkest, secondDarkest, 0.45),
+    right_card_bg: mixColors(secondDarkest, midTone, 0.35),
+    tab_bg: mixColors(darkest, secondDarkest, 0.5),
+    tab_active: brightAccent,
+    tab_text: ensureContrast(lightTone, mixColors(darkest, secondDarkest, 0.5), 4),
+    input_bg: mixColors(secondDarkest, midTone, 0.3),
+    input_border: shiftHexColor(secondDarkest, 24),
+    button_bg: brightAccent,
+    button_hover: shiftHexColor(brightAccent, 18),
+    text_primary: ensureContrast(lightTone, darkest, 5),
+    text_secondary: ensureContrast(mixColors(lightTone, darkest, 0.35), secondDarkest, 3.8),
+    success: mixColors(brightAccent, "#00cc88", 0.45),
+    error: mixColors(brightAccent, "#ff5c72", 0.55),
+    accent: brightAccent,
+  };
+
+  generated.text_secondary = ensureContrast(generated.text_secondary, generated.panel_bg, 3.5);
+  return generated;
+}
+
+function handleImportedImage(file) {
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    const image = new Image();
+    image.onload = () => {
+      const colors = extractDominantColorsFromImage(image);
+      const nextTheme = createThemeFromPalette(colors);
+      if (!nextTheme) {
+        return;
+      }
+
+      Object.assign(theme, nextTheme);
+      updateInputs();
+      applyTheme();
+      showPalette(colors.slice(0, 5), nextTheme.accent);
+    };
+    image.src = typeof event.target?.result === "string" ? event.target.result : "";
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateThemeKey(key, value) {
+  const normalized = clampHex(value);
+  if (!normalized) {
+    return;
+  }
+
+  theme[key] = normalized;
+
+  if (key === "accent") {
+    deriveAccentSystem(normalized);
+  } else if (key === "button_bg") {
+    theme.button_hover = shiftHexColor(normalized, 18);
+  } else if (key === "tab_active") {
+    theme.accent = normalized;
+  }
+
+  updateInputs();
+  applyTheme();
+}
+
 function downloadQSS(qss) {
   const name = themeNameInput.value.trim() || "custom-theme";
   const blob = new Blob([qss], { type: "text/plain" });
@@ -491,10 +758,23 @@ function downloadQSS(qss) {
 }
 
 function updateInputs() {
-  document.querySelectorAll("input[type='color']").forEach((input) => {
+  colorInputs.forEach((input) => {
     const key = input.dataset.key;
-    if (theme[key]) {
-      input.value = theme[key];
+    const value = theme[key];
+    if (!value) {
+      return;
+    }
+
+    input.value = value;
+
+    const control = input.closest(".card")?.querySelector(".color-control");
+    const trigger = control?.querySelector(".color-trigger");
+    const hexInput = control?.querySelector(".color-hex");
+    if (trigger) {
+      trigger.style.setProperty("--swatch", value);
+    }
+    if (hexInput && document.activeElement !== hexInput) {
+      hexInput.value = value.toUpperCase();
     }
   });
 }
@@ -517,6 +797,7 @@ function handleImportedQSS(qss) {
     template = generateTemplate(qss, system);
     updateInputs();
     applyTheme();
+    showPalette(Object.values(system).filter(Boolean).slice(0, 5), theme.accent);
   } catch (_error) {
     // Keep the current theme and UI running if import parsing fails.
   }
@@ -583,7 +864,7 @@ function applyTheme() {
   document.querySelectorAll(".section-block").forEach((el) => {
     el.style.background = theme.left_section_bg;
     el.style.border = `1px solid ${theme.input_border}`;
-    el.style.borderRadius = "6px";
+    el.style.borderRadius = "4px";
     el.style.padding = "8px";
   });
 
@@ -603,6 +884,12 @@ function applyTheme() {
     el.style.background = theme.input_bg;
     el.style.color = theme.text_primary;
     el.style.border = `1px solid ${theme.input_border}`;
+    el.onmouseover = () => {
+      el.style.borderColor = theme.tab_active;
+    };
+    el.onmouseout = () => {
+      el.style.borderColor = theme.input_border;
+    };
     el.onfocus = () => {
       el.style.boxShadow = `0 0 0 1px ${theme.input_border}, 0 0 18px ${glowColor}`;
     };
@@ -631,16 +918,28 @@ function applyTheme() {
   });
 
   document.querySelectorAll(".tab").forEach((el) => {
-    el.style.background = theme.tab_bg;
+    el.style.background = "transparent";
     el.style.color = theme.tab_text;
-    el.style.border = `1px solid ${theme.input_border}`;
+    el.style.border = "none";
+    el.style.borderBottom = "2px solid transparent";
+    el.style.cursor = "pointer";
+    el.onmouseover = () => {
+      if (!el.classList.contains("active")) {
+        el.style.color = theme.text_primary;
+      }
+    };
+    el.onmouseout = () => {
+      if (!el.classList.contains("active")) {
+        el.style.color = theme.tab_text;
+      }
+    };
   });
 
   document.querySelectorAll(".tab.active").forEach((el) => {
-    el.style.background = theme.tab_active;
-    el.style.color = "#000000";
-    el.style.borderColor = theme.tab_active;
-    el.style.boxShadow = `0 0 0 1px ${activeBorder}`;
+    el.style.background = "transparent";
+    el.style.color = theme.text_primary;
+    el.style.borderBottomColor = theme.tab_active;
+    el.style.boxShadow = "none";
   });
 
   document.querySelectorAll(".section-block label, .preview-card-block label").forEach((el) => {
@@ -648,8 +947,36 @@ function applyTheme() {
   });
 
   document.querySelectorAll(".display-area").forEach((el) => {
-    el.style.background = theme.panel_inner;
+    el.style.background = "transparent";
+    el.style.border = "none";
+  });
+
+  document.querySelectorAll(".display-canvas").forEach((el) => {
+    el.style.setProperty("background", "#000000", "important");
     el.style.border = `1px solid ${theme.input_border}`;
+  });
+
+  document.querySelectorAll(".workspace-mode, .output-header, .status-strip, .panel-title").forEach((el) => {
+    el.style.background = theme.panel_bg;
+    el.style.color = theme.text_primary;
+  });
+
+  document.querySelectorAll(".output-body").forEach((el) => {
+    el.style.background = theme.panel_inner;
+  });
+
+  document.querySelectorAll(".meta-line, .usb-row span, .status-strip span:not(.status-online)").forEach((el) => {
+    el.style.color = theme.text_secondary;
+  });
+
+  document.querySelectorAll(".subtab").forEach((el) => {
+    el.style.color = theme.text_secondary;
+    el.style.borderBottomColor = "transparent";
+  });
+
+  document.querySelectorAll(".active-subtab").forEach((el) => {
+    el.style.color = theme.text_primary;
+    el.style.borderBottomColor = theme.tab_active;
   });
 
   document.querySelectorAll(".slot").forEach((el, index) => {
@@ -682,6 +1009,54 @@ function wireCardSpotlights() {
   });
 }
 
+function buildColorControls() {
+  colorInputs.forEach((input) => {
+    if (input.dataset.enhanced === "true") {
+      return;
+    }
+
+    input.dataset.enhanced = "true";
+    const key = input.dataset.key;
+    const wrapper = document.createElement("div");
+    wrapper.className = "color-control";
+
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "color-trigger";
+    trigger.setAttribute("aria-label", `Choose ${key}`);
+
+    const meta = document.createElement("div");
+    meta.className = "color-meta";
+
+    const hexInput = document.createElement("input");
+    hexInput.type = "text";
+    hexInput.className = "color-hex";
+    hexInput.maxLength = 7;
+    hexInput.value = (theme[key] || input.value || "").toUpperCase();
+
+    const note = document.createElement("div");
+    note.className = "color-note";
+    note.textContent = "Swatch + HEX";
+
+    trigger.addEventListener("click", () => input.click());
+    input.addEventListener("input", () => updateThemeKey(key, input.value));
+    hexInput.addEventListener("change", () => {
+      const normalized = clampHex(hexInput.value);
+      if (!normalized) {
+        hexInput.value = (theme[key] || input.value || "").toUpperCase();
+        return;
+      }
+
+      input.value = normalized;
+      updateThemeKey(key, normalized);
+    });
+
+    meta.append(hexInput, note);
+    wrapper.append(trigger, meta);
+    input.insertAdjacentElement("afterend", wrapper);
+  });
+}
+
 function wireFocusStates() {
   if (!toolCard || !sidebar || !previewPane) {
     return;
@@ -706,14 +1081,6 @@ function wireFocusStates() {
   });
 }
 
-document.querySelectorAll("input[type='color']").forEach((input) => {
-  input.addEventListener("input", (event) => {
-    const key = event.target.dataset.key;
-    theme[key] = event.target.value;
-    applyTheme();
-  });
-});
-
 document.querySelectorAll(".preset").forEach((button) => {
   button.onclick = () => {
     applyPreset(button.dataset.preset);
@@ -729,6 +1096,13 @@ stepTabs.forEach((button) => {
 qssUpload.addEventListener("change", (event) => {
   const file = event.target.files[0];
   if (!file) {
+    return;
+  }
+
+  const name = file.name.toLowerCase();
+  const isImage = file.type.startsWith("image/") || /\.(png|jpe?g)$/.test(name);
+  if (isImage) {
+    handleImportedImage(file);
     return;
   }
 
@@ -776,6 +1150,7 @@ loadDefaultTheme();
 resizeCanvas();
 createParticles();
 drawParticles();
+buildColorControls();
 wireCardSpotlights();
 wireFocusStates();
 setActiveStep("base");

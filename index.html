@@ -15,7 +15,7 @@
     <canvas id="bg"></canvas>
     <div class="hero">
       <h1 class="main-title gradient-text">Helios Theme Generator</h1>
-      <p class="subtitle hero-subtitle">Create and export custom UI themes for Helios II</p>
+      <p class="subtitle hero-subtitle">Design professional Helios themes in seconds</p>
     </div>
 
     <div class="tool-container">
@@ -23,38 +23,68 @@
         <div class="tool-layout">
           <aside class="sidebar">
             <div class="sidebar-header">
-              <button id="download" class="download-btn" type="button">Download</button>
+              <button id="download" class="download-btn" type="button">Download Theme</button>
             </div>
 
             <div class="controls">
           <section class="section setup">
             <h4>Theme Setup</h4>
+            <p class="section-description">Start from a clean default, import a Helios theme, or jump into a preset direction.</p>
             <div class="section-controls">
               <div class="card">
                 <label for="themeName">Name</label>
                 <input type="text" id="themeName" placeholder="My Theme" />
               </div>
               <div class="card">
-                <label for="qssUpload">Import</label>
-                <input id="qssUpload" type="file" accept=".qss" />
+                <label for="qssUpload">Import Image or QSS</label>
+                <input id="qssUpload" type="file" accept=".qss,.png,.jpg,.jpeg,image/png,image/jpeg" />
               </div>
               <div class="card full">
-                <label>Presets</label>
+                <label>Preset Base</label>
                 <div class="preset-grid">
-                  <button class="preset" data-preset="dark" type="button">Dark</button>
-                  <button class="preset" data-preset="neon" type="button">Neon</button>
-                  <button class="preset" data-preset="light" type="button">Light</button>
+                  <button class="preset preset-card" data-preset="dark" type="button">
+                    <span class="preset-visual preset-dark">
+                      <span></span><span></span><span></span>
+                    </span>
+                    <span class="preset-meta">
+                      <strong>Dark</strong>
+                      <small>Default Helios</small>
+                    </span>
+                  </button>
+                  <button class="preset preset-card" data-preset="neon" type="button">
+                    <span class="preset-visual preset-neon">
+                      <span></span><span></span><span></span>
+                    </span>
+                    <span class="preset-meta">
+                      <strong>Neon</strong>
+                      <small>High contrast glow</small>
+                    </span>
+                  </button>
+                  <button class="preset preset-card" data-preset="light" type="button">
+                    <span class="preset-visual preset-light">
+                      <span></span><span></span><span></span>
+                    </span>
+                    <span class="preset-meta">
+                      <strong>Light</strong>
+                      <small>Bright workspace</small>
+                    </span>
+                  </button>
                 </div>
               </div>
               <div class="card full">
                 <label>Actions</label>
                 <button id="resetTheme" type="button">Reset</button>
               </div>
+              <div class="card full palette-card is-hidden" id="palettePreviewCard">
+                <label>Extracted Palette</label>
+                <div class="palette-preview" id="palettePreview"></div>
+              </div>
             </div>
           </section>
 
           <section class="section workflow">
             <h4>Workflow</h4>
+            <p class="section-description">Move through the theme step by step, or switch to Advanced Mode for full control.</p>
             <div class="section-controls">
               <div class="card full">
                 <label>Customize Step</label>
@@ -76,6 +106,7 @@
 
           <section class="section base" data-step-group="base">
             <h4>Main Layout</h4>
+            <p class="section-description">Set the global canvas, panel surfaces, and overall depth of the interface.</p>
             <div class="section-controls">
               <div class="card">
                 <label for="app_bg">App Background</label>
@@ -94,6 +125,7 @@
 
           <section class="section import" data-step-group="layout">
             <h4>Top Bar</h4>
+            <p class="section-description">Control the menu strip and the text tone users read first.</p>
             <div class="section-controls">
               <div class="card">
                 <label for="menu_bg">Menu Background</label>
@@ -108,6 +140,7 @@
 
           <section class="section accent" data-step-group="layout">
             <h4>Left Panel</h4>
+            <p class="section-description">Tune the capture controls and utility column without changing the overall shell.</p>
             <div class="section-controls">
               <div class="card">
                 <label for="left_bg">Background</label>
@@ -122,6 +155,7 @@
 
           <section class="section text" data-step-group="layout">
             <h4>Right Panel</h4>
+            <p class="section-description">Refine card surfaces for device status, memory slots, and contextual panels.</p>
             <div class="section-controls">
               <div class="card">
                 <label for="right_bg">Background</label>
@@ -136,6 +170,7 @@
 
           <section class="section borders" data-step-group="components">
             <h4>Tabs</h4>
+            <p class="section-description">Define how the main workspace navigation behaves in idle and active states.</p>
             <div class="section-controls">
               <div class="card">
                 <label for="tab_bg">Tab Background</label>
@@ -154,6 +189,7 @@
 
           <section class="section theme" data-step-group="components">
             <h4>Inputs</h4>
+            <p class="section-description">Style editable fields and their borders for clear hierarchy and focus.</p>
             <div class="section-controls">
               <div class="card">
                 <label for="input_bg">Background</label>
@@ -168,6 +204,7 @@
 
           <section class="section presets" data-step-group="components">
             <h4>Buttons</h4>
+            <p class="section-description">Choose the primary action tone and the hover behavior users notice immediately.</p>
             <div class="section-controls">
               <div class="card">
                 <label for="button_bg">Button</label>
@@ -182,6 +219,7 @@
 
           <section class="section base" data-step-group="base">
             <h4>Text</h4>
+            <p class="section-description">Balance readable labels, helper text, and overall contrast across the app.</p>
             <div class="section-controls">
               <div class="card">
                 <label for="text_primary">Primary</label>
@@ -196,6 +234,7 @@
 
           <section class="section accent" data-step-group="details">
             <h4>Status</h4>
+            <p class="section-description">Set positive and warning tones for active slots, states, and system feedback.</p>
             <div class="section-controls">
               <div class="card">
                 <label for="success">Success</label>
@@ -210,6 +249,7 @@
 
           <section class="section text" data-step-group="details">
             <h4>Accent</h4>
+            <p class="section-description">Drive the system glow and active emphasis with one shared accent color.</p>
             <div class="section-controls">
               <div class="card full">
                 <label for="accent">Accent</label>
@@ -225,62 +265,122 @@
               <div class="workspace-inner">
                 <div class="workspace-header">
                   <h2>Theme Preview</h2>
+                  <p>High-fidelity Helios workspace with live color mapping.</p>
                 </div>
 
                 <section class="preview-card">
-            <div class="helios-app">
-              <div class="menu-bar">
-                <span>Helios II</span>
-                <div class="menu-items">
-                  <span>File</span>
-                  <span>View</span>
-                  <span>Plugins</span>
-                  <span>Tools</span>
-                  <span>Help</span>
-                </div>
-              </div>
+                  <div class="helios-app">
+                    <div class="menu-bar">
+                      <div class="menu-items">
+                        <span>File</span>
+                        <span>View</span>
+                        <span>Plugins</span>
+                        <span>Tools</span>
+                        <span>Help</span>
+                      </div>
+                    </div>
 
-              <div class="helios-body">
-                <div class="left-panel">
-                  <div class="section-block">
-                    <label>Capture Source</label>
-                    <div class="input">Video Test</div>
+                    <div class="status-strip">
+                      <span class="status-online">Server online</span>
+                      <span>Logged in as user</span>
+                      <span>Welcome to Helios II</span>
+                    </div>
+
+                    <div class="helios-body">
+                      <div class="left-panel">
+                        <div class="panel-title">OpenCV Capture</div>
+
+                        <div class="section-block">
+                          <label>Capture Source</label>
+                          <div class="input">Video Test</div>
+                        </div>
+
+                        <div class="section-block">
+                          <label>Settings</label>
+                          <div class="input">60 FPS</div>
+                          <div class="input">1080p (1920x1080)</div>
+                        </div>
+
+                        <div class="section-block compact-block">
+                          <label>Control</label>
+                          <button class="btn" type="button">Start Capture</button>
+                          <div class="meta-line">Write FPS: --</div>
+                        </div>
+
+                        <div class="section-block compact-block">
+                          <label>CV Python</label>
+                          <div class="status-badge success-badge">Python: 3.11</div>
+                          <div class="status-badge error-badge">Video Input: Not detected</div>
+                          <div class="input">2k_Vision.py</div>
+                        </div>
+
+                        <div class="section-block compact-block">
+                          <label>File Explorer</label>
+                          <div class="input">C:/Users/userg/Desktop/HeliosII/scripts</div>
+                          <div class="file-list">
+                            <div class="file-item">_2k_Vision</div>
+                            <div class="file-item">_nba2k_main</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="center-panel">
+                        <div class="tabs">
+                          <div class="tab active">Video Display</div>
+                          <div class="tab">Device Monitor</div>
+                          <div class="tab">Online Resources</div>
+                        </div>
+
+                        <div class="workspace-mode">Video Display</div>
+
+                        <div class="center-stack">
+                          <div class="display-area">
+                            <div class="display-metrics">
+                              <span>Processing: 0 FPS</span>
+                              <span>Display: 0 FPS</span>
+                            </div>
+                            <div class="display-canvas"></div>
+                          </div>
+
+                          <div class="output-panel">
+                            <div class="output-header">Output Panel</div>
+                            <div class="output-body"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="right-panel">
+                        <div class="panel-title">Titan Bridge</div>
+
+                        <div class="card preview-card-block bridge-card">
+                          <label>Titan Two Device</label>
+                          <div class="input">No devices found</div>
+                          <div class="meta-line">No device selected</div>
+                        </div>
+
+                        <div class="card preview-card-block memory-card">
+                          <label>Memory Slots</label>
+                          <div class="slot"><strong>1</strong><span>Empty</span></div>
+                          <div class="slot"><strong>2</strong><span>Empty</span></div>
+                          <div class="slot"><strong>3</strong><span>Empty</span></div>
+                        </div>
+
+                        <div class="card preview-card-block config-card">
+                          <div class="subtabs">
+                            <span class="subtab active-subtab">Device Config</span>
+                            <span class="subtab">KMG Capture</span>
+                          </div>
+                          <div class="input">Output: Automatic</div>
+                          <div class="usb-card">
+                            <div class="usb-row"><strong>IN A</strong><span>Empty</span></div>
+                            <div class="usb-row"><strong>IN B</strong><span>Empty</span></div>
+                            <div class="usb-row"><strong>OUT</strong><span>Empty</span></div>
+                            <div class="usb-row"><strong>PROG</strong><span>Empty</span></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-
-                  <div class="section-block">
-                    <label>Settings</label>
-                    <div class="input">60 FPS</div>
-                    <div class="input">1080p</div>
-                  </div>
-
-                  <button class="btn" type="button">Start Capture</button>
-                </div>
-
-                <div class="center-panel">
-                  <div class="tabs">
-                    <div class="tab active">Video Display</div>
-                    <div class="tab">Device Monitor</div>
-                    <div class="tab">Online Resources</div>
-                  </div>
-
-                  <div class="display-area"></div>
-                </div>
-
-                <div class="right-panel">
-                  <div class="card preview-card-block">
-                    <label>Titan Two Device</label>
-                    <div class="input">No device</div>
-                  </div>
-
-                  <div class="card preview-card-block">
-                    <label>Memory Slots</label>
-                    <div class="slot">1 Empty</div>
-                    <div class="slot">2 Empty</div>
-                    <div class="slot">3 Empty</div>
-                  </div>
-                </div>
-              </div>
-            </div>
                 </section>
               </div>
             </div>
