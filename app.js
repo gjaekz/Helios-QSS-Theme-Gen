@@ -72,6 +72,12 @@ const presets = {
   },
 };
 
+const inspoPalettes = {
+  ocean: ["#0f172a", "#1e293b", "#1d4ed8", "#38bdf8", "#e2e8f0"],
+  ember: ["#1c1917", "#292524", "#7c2d12", "#fb923c", "#f5f5f4"],
+  violet: ["#111827", "#1f2937", "#6d28d9", "#a78bfa", "#f5f3ff"],
+};
+
 const defaultTemplate = `QWidget {
     background-color: {{app_bg}};
     color: {{text_primary}};
@@ -806,6 +812,49 @@ function handleImportedQSS(qss) {
   }
 }
 
+function applyInspoPalette(name) {
+  const palette = inspoPalettes[name];
+  if (!palette) {
+    return;
+  }
+
+  const [appBg, panelBg, accentColor, highlightColor, textColor] = palette;
+  const darkText = luminance(appBg) > 0.35 ? "#111111" : "#ffffff";
+  const secondaryText = shiftHexColor(textColor, darkText === "#111111" ? -88 : -52);
+
+  Object.assign(theme, {
+    app_bg: appBg,
+    panel_bg: panelBg,
+    panel_inner: shiftHexColor(panelBg, -8),
+    menu_bg: shiftHexColor(appBg, 6),
+    menu_text: textColor,
+    left_bg: shiftHexColor(appBg, 4),
+    left_section_bg: shiftHexColor(panelBg, -10),
+    right_bg: shiftHexColor(appBg, 8),
+    right_card_bg: shiftHexColor(panelBg, 4),
+    tab_bg: shiftHexColor(panelBg, -6),
+    tab_active: accentColor,
+    tab_text: textColor,
+    input_bg: shiftHexColor(appBg, -4),
+    input_border: shiftHexColor(panelBg, 18),
+    button_bg: accentColor,
+    button_hover: highlightColor,
+    text_primary: darkText === "#111111" ? darkText : textColor,
+    text_secondary: secondaryText,
+    success: highlightColor,
+    error: "#ff5c72",
+    accent: accentColor,
+  });
+
+  updateInputs();
+  applyTheme();
+  showPalette(palette, accentColor);
+
+  document.querySelectorAll(".inspo-palette").forEach((button) => {
+    button.classList.toggle("active", button.dataset.inspo === name);
+  });
+}
+
 function applyPreset(presetName) {
   const preset = presets[presetName];
   if (!preset) {
@@ -1139,6 +1188,12 @@ function wirePreviewZoneEditing() {
 document.querySelectorAll(".preset").forEach((button) => {
   button.onclick = () => {
     applyPreset(button.dataset.preset);
+  };
+});
+
+document.querySelectorAll(".inspo-palette").forEach((button) => {
+  button.onclick = () => {
+    applyInspoPalette(button.dataset.inspo);
   };
 });
 

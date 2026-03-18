@@ -896,6 +896,91 @@ button:active {
   font-size: 10px;
 }
 
+.inspo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.inspo-copy {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.inspo-link {
+  color: #7dd3fc;
+  font-size: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.inspo-link:hover {
+  color: #bae6fd;
+}
+
+.inspo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.inspo-palette {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.inspo-palette:hover {
+  transform: translateY(-1px) scale(1.02);
+  border-color: rgba(96, 165, 250, 0.4);
+  box-shadow: 0 0 16px rgba(96, 165, 250, 0.16);
+}
+
+.inspo-palette.active {
+  border-color: rgba(96, 165, 250, 0.7);
+  box-shadow: 0 0 20px rgba(96, 165, 250, 0.22);
+}
+
+.inspo-swatches {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  width: 100%;
+  height: 42px;
+  padding: 4px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.inspo-swatches span {
+  border-radius: 6px;
+}
+
+.inspo-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.inspo-meta strong {
+  font-size: 11px;
+}
+
+.inspo-meta small {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 10px;
+}
+
 .sidebar-header {
   margin-bottom: 12px;
 }
