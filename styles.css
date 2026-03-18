@@ -217,6 +217,16 @@ body {
   animation: fadeUp 0.8s ease 0.1s both;
 }
 
+.hero-credit {
+  margin-top: 18px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  animation: fadeUp 0.8s ease 0.16s both;
+}
+
 .hero-badge {
   display: inline-flex;
   align-items: center;
