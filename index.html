@@ -35,11 +35,15 @@
           <div class="tool-layout">
           <aside class="sidebar">
             <div class="sidebar-header">
+              <div class="sidebar-header-actions">
+                <button id="exitAdvanced" class="mode-back btn-secondary is-hidden" type="button" aria-label="Exit Advanced Mode">←</button>
+                <button id="resetThemeQuick" class="btn-secondary quick-reset" type="button">Reset</button>
+              </div>
               <button id="download" class="download-btn btn-primary" type="button">Download Theme</button>
             </div>
 
             <div class="controls">
-          <section class="section setup section-primary control-section">
+          <section class="section setup section-primary control-section" data-non-theme="true">
             <h4>Theme Setup</h4>
             <p class="section-description">Start from a clean default, import a Helios theme, or jump into a preset direction.</p>
             <div class="section-controls">
@@ -146,7 +150,7 @@
             </div>
           </section>
 
-          <section class="section workflow section-secondary control-section">
+          <section class="section workflow section-secondary control-section" data-non-theme="true">
             <h4>Workflow</h4>
             <p class="section-description">Move through the theme step by step, or switch to Advanced Mode for full control.</p>
             <div class="section-controls">
@@ -185,9 +189,9 @@
                 </div>
               </div>
               <div class="card full">
-                <div class="control-group" data-zone="panel-inner">
-                <label for="panel_inner">Inner Panel</label>
-                <input id="panel_inner" type="color" data-key="panel_inner" />
+                <div class="control-group" data-zone="panel-title-bg">
+                <label for="panel_title_bg">Panel Title</label>
+                <input id="panel_title_bg" type="color" data-key="panel_title_bg" />
                 </div>
               </div>
             </div>
@@ -204,47 +208,47 @@
                 </div>
               </div>
               <div class="card">
-                <div class="control-group" data-zone="menu-text">
-                <label for="menu_text">Menu Text</label>
-                <input id="menu_text" type="color" data-key="menu_text" />
+                <div class="control-group" data-zone="menu-hover">
+                <label for="menu_hover">Menu Hover</label>
+                <input id="menu_hover" type="color" data-key="menu_hover" />
                 </div>
               </div>
             </div>
           </section>
 
           <section class="section accent section-secondary control-section" data-step-group="layout">
-            <h4>Left Panel</h4>
-            <p class="section-description">Tune the capture controls and utility column without changing the overall shell.</p>
+            <h4>Panels</h4>
+            <p class="section-description">Adjust panel borders and status surfaces while keeping the Dark layout intact.</p>
             <div class="section-controls">
               <div class="card">
-                <div class="control-group" data-zone="left-bg">
-                <label for="left_bg">Background</label>
-                <input id="left_bg" type="color" data-key="left_bg" />
+                <div class="control-group" data-zone="panel-border">
+                <label for="panel_border">Panel Border</label>
+                <input id="panel_border" type="color" data-key="panel_border" />
                 </div>
               </div>
               <div class="card">
-                <div class="control-group" data-zone="left-section-bg">
-                <label for="left_section_bg">Section Background</label>
-                <input id="left_section_bg" type="color" data-key="left_section_bg" />
+                <div class="control-group" data-zone="statusbar-bg">
+                <label for="statusbar_bg">Status Bar</label>
+                <input id="statusbar_bg" type="color" data-key="statusbar_bg" />
                 </div>
               </div>
             </div>
           </section>
 
           <section class="section text section-secondary control-section" data-step-group="layout">
-            <h4>Right Panel</h4>
-            <p class="section-description">Refine card surfaces for device status, memory slots, and contextual panels.</p>
+            <h4>Accent Layers</h4>
+            <p class="section-description">Control secondary accent behavior and the status bar edge highlight.</p>
             <div class="section-controls">
               <div class="card">
-                <div class="control-group" data-zone="right-bg">
-                <label for="right_bg">Background</label>
-                <input id="right_bg" type="color" data-key="right_bg" />
+                <div class="control-group" data-zone="accent-secondary">
+                <label for="accent_secondary">Accent Secondary</label>
+                <input id="accent_secondary" type="color" data-key="accent_secondary" />
                 </div>
               </div>
               <div class="card">
-                <div class="control-group" data-zone="right-card-bg">
-                <label for="right_card_bg">Card Background</label>
-                <input id="right_card_bg" type="color" data-key="right_card_bg" />
+                <div class="control-group" data-zone="statusbar-border">
+                <label for="statusbar_border">Status Border</label>
+                <input id="statusbar_border" type="color" data-key="statusbar_border" />
                 </div>
               </div>
             </div>
@@ -267,9 +271,9 @@
                 </div>
               </div>
               <div class="card full">
-                <div class="control-group" data-zone="tab-text">
-                <label for="tab_text">Tab Text</label>
-                <input id="tab_text" type="color" data-key="tab_text" />
+                <div class="control-group" data-zone="tab-hover">
+                <label for="tab_hover">Tab Hover</label>
+                <input id="tab_hover" type="color" data-key="tab_hover" />
                 </div>
               </div>
             </div>
@@ -291,6 +295,12 @@
                 <input id="input_border" type="color" data-key="input_border" />
                 </div>
               </div>
+              <div class="card full">
+                <div class="control-group" data-zone="input-focus">
+                <label for="input_focus">Focus</label>
+                <input id="input_focus" type="color" data-key="input_focus" />
+                </div>
+              </div>
             </div>
           </section>
 
@@ -308,6 +318,12 @@
                 <div class="control-group" data-zone="button-hover">
                 <label for="button_hover">Hover</label>
                 <input id="button_hover" type="color" data-key="button_hover" />
+                </div>
+              </div>
+              <div class="card full">
+                <div class="control-group" data-zone="button-active">
+                <label for="button_active">Active</label>
+                <input id="button_active" type="color" data-key="button_active" />
                 </div>
               </div>
             </div>
@@ -483,6 +499,19 @@
                             <div class="usb-row"><strong>OUT</strong><span>Empty</span></div>
                             <div class="usb-row"><strong>PROG</strong><span>Empty</span></div>
                           </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="preferences-dialog" data-zone="panel-bg">
+                      <div class="panel-title">Preferences</div>
+                      <div class="dialog-content">
+                        <div class="dialog-row">
+                          <label>Theme Mode</label>
+                          <div class="input">Dark</div>
+                        </div>
+                        <div class="dialog-row">
+                          <label>UI Scale</label>
+                          <div class="input">100%</div>
                         </div>
                       </div>
                     </div>

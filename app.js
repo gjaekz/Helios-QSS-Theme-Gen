@@ -1,74 +1,80 @@
 const baseTheme = {
-  app_bg: "#0f0f0f",
-  panel_bg: "#1a1a1a",
-  panel_inner: "#151515",
-  menu_bg: "#181b22",
-  menu_text: "#cfd5dd",
-  left_bg: "#14171d",
-  left_section_bg: "#101318",
-  right_bg: "#15181e",
-  right_card_bg: "#1a1d23",
-  tab_bg: "#15181e",
-  tab_active: "#4cc2ff",
-  tab_text: "#c8d0da",
-  input_bg: "#0f1217",
-  input_border: "#333333",
-  button_bg: "#4cc2ff",
-  button_hover: "#5fd0ff",
-  text_primary: "#ffffff",
-  text_secondary: "#9ca4af",
+  app_bg: "#35383c",
+  text_primary: "#f3f5f7",
+  text_secondary: "#787d84",
+  panel_bg: "#43474c",
+  panel_title_bg: "#43474c",
+  panel_border: "#66696d",
+  menu_bg: "#43474c",
+  menu_hover: "#5a5e64",
+  button_bg: "#53565c",
+  button_hover: "#686c74",
+  button_active: "#00e5ff",
+  input_bg: "#4a4e54",
+  input_border: "#5c6066",
+  input_focus: "#00e5ff",
+  tab_bg: "#35383c",
+  tab_hover: "#525660",
+  tab_active: "#35383c",
+  accent: "#00e5ff",
+  accent_secondary: "#5a5e64",
   success: "#00cc88",
   error: "#ff5c72",
-  accent: "#4cc2ff",
+  statusbar_bg: "#4a4e54",
+  statusbar_border: "#66696d",
 };
 
 const presets = {
   dark: { ...baseTheme },
   neon: {
     app_bg: "#050507",
-    panel_bg: "#0d0f14",
-    panel_inner: "#081117",
-    menu_bg: "#09131a",
-    menu_text: "#8affc1",
-    left_bg: "#081118",
-    left_section_bg: "#071018",
-    right_bg: "#091018",
-    right_card_bg: "#0e1520",
-    tab_bg: "#0b1018",
-    tab_active: "#00ffa3",
-    tab_text: "#d8fff1",
-    input_bg: "#060b10",
-    input_border: "#1f2937",
-    button_bg: "#00ffa3",
-    button_hover: "#00ffd0",
     text_primary: "#ffffff",
     text_secondary: "#8affc1",
+    panel_bg: "#0d0f14",
+    panel_title_bg: "#101522",
+    panel_border: "#1f2937",
+    menu_bg: "#09131a",
+    menu_hover: "#132337",
+    button_bg: "#00ffa3",
+    button_hover: "#00ffd0",
+    button_active: "#00ffa3",
+    input_bg: "#060b10",
+    input_border: "#1f2937",
+    input_focus: "#00ffd0",
+    tab_bg: "#0b1018",
+    tab_hover: "#132337",
+    tab_active: "#0b1018",
+    accent: "#00ffa3",
+    accent_secondary: "#132337",
     success: "#00ffa3",
     error: "#ff4d8d",
-    accent: "#00ffa3",
+    statusbar_bg: "#081118",
+    statusbar_border: "#00ffa3",
   },
   light: {
     app_bg: "#f5f5f5",
-    panel_bg: "#ffffff",
-    panel_inner: "#f0f3f6",
-    menu_bg: "#e8edf3",
-    menu_text: "#39424e",
-    left_bg: "#eef3f8",
-    left_section_bg: "#f5f7fa",
-    right_bg: "#eef3f8",
-    right_card_bg: "#ffffff",
-    tab_bg: "#eef3f8",
-    tab_active: "#4cc2ff",
-    tab_text: "#364152",
-    input_bg: "#ffffff",
-    input_border: "#d4d8dd",
-    button_bg: "#4cc2ff",
-    button_hover: "#3aaedc",
     text_primary: "#111111",
     text_secondary: "#555555",
+    panel_bg: "#ffffff",
+    panel_title_bg: "#f0f4f8",
+    panel_border: "#d7dee7",
+    menu_bg: "#ffffff",
+    menu_hover: "#e9f4ff",
+    button_bg: "#4cc2ff",
+    button_hover: "#3aaedc",
+    button_active: "#4cc2ff",
+    input_bg: "#ffffff",
+    input_border: "#c9d6e2",
+    input_focus: "#4cc2ff",
+    tab_bg: "#eef3f8",
+    tab_hover: "#dff0ff",
+    tab_active: "#4cc2ff",
+    accent: "#4cc2ff",
+    accent_secondary: "#8abfe0",
     success: "#0ea56b",
     error: "#d9485f",
-    accent: "#4cc2ff",
+    statusbar_bg: "#eef3f8",
+    statusbar_border: "#d7dee7",
   },
 };
 
@@ -78,49 +84,606 @@ const inspoPalettes = {
   violet: ["#111827", "#1f2937", "#6d28d9", "#a78bfa", "#f5f3ff"],
 };
 
-const defaultTemplate = `QWidget {
-    background-color: {{app_bg}};
-    color: {{text_primary}};
+const SAFE_QSS_MAP = {
+  app_bg: {
+    selectors: ["QWidget", "QMainWindow", "QWidget:disabled"],
+    properties: ["background-color"],
+  },
+  text_primary: {
+    selectors: ["QWidget", "QLabel"],
+    properties: ["color"],
+  },
+  text_secondary: {
+    selectors: ["QWidget:disabled"],
+    properties: ["color"],
+  },
+  panel_bg: {
+    selectors: ["QDockWidget", "QGroupBox", "QStatusBar"],
+    properties: ["background-color"],
+  },
+  panel_title_bg: {
+    selectors: ["QDockWidget::title"],
+    properties: ["background-color"],
+  },
+  panel_border: {
+    selectors: ["QDockWidget", "QGroupBox"],
+    properties: ["border-color"],
+  },
+  menu_bg: {
+    selectors: ["QMenuBar", "QMenu", "QToolBar"],
+    properties: ["background-color"],
+  },
+  menu_hover: {
+    selectors: ["QMenu::item:selected"],
+    properties: ["background-color"],
+  },
+  button_bg: {
+    selectors: ["QPushButton"],
+    properties: ["background-color", "color", "border-color"],
+  },
+  button_hover: {
+    selectors: ["QPushButton:hover"],
+    properties: ["background-color"],
+  },
+  button_active: {
+    selectors: ["QPushButton:pressed", "QPushButton:checked"],
+    properties: ["background-color"],
+  },
+  input_bg: {
+    selectors: ["QLineEdit", "QComboBox", "QSpinBox", "QTextEdit", "QPlainTextEdit"],
+    properties: ["background-color", "color"],
+  },
+  input_border: {
+    selectors: ["QLineEdit", "QComboBox", "QSpinBox"],
+    properties: ["border-color"],
+  },
+  input_focus: {
+    selectors: ["QLineEdit:focus", "QComboBox:focus"],
+    properties: ["border-color"],
+  },
+  tab_bg: {
+    selectors: ["QTabBar::tab"],
+    properties: ["background-color", "color"],
+  },
+  tab_hover: {
+    selectors: ["QTabBar::tab:hover"],
+    properties: ["background-color"],
+  },
+  tab_active: {
+    selectors: ["QTabBar::tab:selected"],
+    properties: ["background-color", "color"],
+  },
+  accent: {
+    selectors: ["QPushButton:hover", "QTabBar::tab:selected"],
+    properties: ["background-color"],
+  },
+  accent_secondary: {
+    selectors: ["QToolButton:hover"],
+    properties: ["background-color"],
+  },
+  success: {
+    selectors: ['QLabel[status="active"]'],
+    properties: ["color"],
+  },
+  error: {
+    selectors: ['QLabel[status="error"]'],
+    properties: ["color"],
+  },
+  statusbar_bg: {
+    selectors: ["QStatusBar"],
+    properties: ["background-color"],
+  },
+  statusbar_border: {
+    selectors: ["QStatusBar"],
+    properties: ["border-color"],
+  },
+};
+
+const BLOCKED_PROPERTIES = [
+  "padding",
+  "margin",
+  "spacing",
+  "border-radius",
+  "font",
+  "font-size",
+  "font-weight",
+  "width",
+  "height",
+  "min-width",
+  "max-width",
+  "min-height",
+  "max-height",
+];
+const ALLOWED_PROPERTIES = ["color", "background-color", "border-color"];
+const UNSAFE_QSS_PROPERTY_RE =
+  /(padding|margin|spacing|border-radius|font-size|font-weight|font|min-width|max-width|min-height|max-height|width|height)\s*:[^;]*;/gi;
+const LOCKED_QSS_RULES = `
+VideoDisplay {
+    background: #000000 !important;
+}
+
+QWidget#videoDisplay {
+    background: #000000 !important;
+}
+`;
+const WHITELISTED_SELECTOR_TERMS = [...new Set(Object.values(SAFE_QSS_MAP).flatMap((config) => config.selectors.map((selector) => selector.toLowerCase())))];
+const THEME_TO_SAFE_ZONE = Object.keys(SAFE_QSS_MAP).reduce((accumulator, key) => {
+  accumulator[key] = key;
+  return accumulator;
+}, {});
+const SAFE_TOKENS = [
+  "app_bg",
+  "text_primary",
+  "text_secondary",
+  "panel_bg",
+  "panel_title_bg",
+  "panel_border",
+  "menu_bg",
+  "menu_hover",
+  "button_bg",
+  "button_hover",
+  "button_active",
+  "input_bg",
+  "input_border",
+  "input_focus",
+  "tab_bg",
+  "tab_hover",
+  "tab_active",
+  "accent",
+  "accent_secondary",
+  "success",
+  "error",
+  "statusbar_bg",
+  "statusbar_border",
+];
+const PREVIEW_ZONE_ALIASES = {
+  "panel-inner": "panel-title-bg",
+  "menu-text": "text-primary",
+  "left-bg": "panel-bg",
+  "left-section-bg": "panel-border",
+  "right-bg": "panel-bg",
+  "right-card-bg": "statusbar-bg",
+  "tab-text": "text-primary",
+};
+const SURFACE_KEYS = new Set([
+  "app_bg",
+  "panel_bg",
+  "panel_title_bg",
+  "menu_bg",
+  "input_bg",
+  "tab_bg",
+  "tab_active",
+  "statusbar_bg",
+]);
+let lastPatchedSelectors = [];
+
+const defaultTemplate = String.raw`QWidget {
+    background-color: #35383c;
+    color: #f3f5f7;
+    font-family: "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
+    font-size: 9pt;
+}
+
+QWidget:disabled {
+    color: #787d84;
+}
+
+QWidget:focus {
+    outline: none;
 }
 
 QMainWindow {
-    background-color: {{app_bg}};
+    background-color: #35383c;
 }
 
-QMenuBar, QMenu {
-    background-color: {{menu_bg}};
-    color: {{menu_text}};
+QMainWindow::separator {
+    background: #66696d;
+    width: 3px;
+    height: 3px;
 }
 
-QDockWidget, QGroupBox, QStatusBar {
-    background-color: {{panel_bg}};
+QMainWindow::separator:hover {
+    background: #00E5FF;
 }
 
-QLineEdit, QComboBox, QTextEdit, QPlainTextEdit {
-    background-color: {{input_bg}};
-    border: 1px solid {{input_border}};
-    color: {{text_primary}};
+QSplitter::handle {
+    background-color: #35383c;
 }
 
-QPushButton, QToolButton {
-    background-color: {{button_bg}};
-    color: #000000;
+QSplitter::handle:hover {
+    background-color: #00E5FF;
 }
 
-QPushButton:hover, QToolButton:hover {
-    background-color: {{button_hover}};
+QDockWidget {
+    background-color: #43474c;
+    border: 1px solid #66696d;
+    titlebar-close-icon: url(:/icons/close.svg);
+    titlebar-normal-icon: url(:/icons/float.svg);
+}
+
+QDockWidget::title {
+    background-color: #43474c;
+    color: #f4f6f7;
+    padding: 5px 8px;
+    font-weight: 600;
+    border-bottom: 1px solid #2e3136;
+}
+
+QDockWidget::close-button, QDockWidget::float-button {
+    background-color: transparent;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+QDockWidget::close-button:hover, QDockWidget::float-button:hover {
+    background-color: #5a5e64;
+}
+
+QMenuBar {
+    background-color: #43474c;
+    padding: 2px;
+    border-bottom: 1px solid #66696d;
+}
+
+QMenuBar::item {
+    padding: 4px 8px;
+    background: transparent;
+    border-radius: 4px;
+}
+
+QMenuBar::item:selected {
+    background-color: #585c62;
+    color: #ffffff;
+}
+
+QMenu {
+    background-color: #43474c;
+    border: 1px solid #66696d;
+    border-radius: 6px;
+    padding: 4px;
+}
+
+QMenu::item {
+    padding: 6px 24px;
+    border-radius: 4px;
+}
+
+QMenu::item:selected {
+    background-color: #5a5e64;
+    color: #ffffff;
+}
+
+QMenu::item:pressed {
+    background-color: #00E5FF;
+    color: #101418;
+}
+
+QMenu::separator {
+    height: 1px;
+    background-color: #66696d;
+    margin: 3px 8px;
+}
+
+QToolBar {
+    background-color: #43474c;
+    border: none;
+    border-bottom: 1px solid #66696d;
+    padding: 3px;
+    spacing: 3px;
+}
+
+QToolButton {
+    background-color: transparent;
+    border-radius: 4px;
+    padding: 6px 6px;
+}
+
+QToolButton:hover {
+    background-color: #5a5e64;
+}
+
+QToolButton:pressed {
+    background-color: #00E5FF;
+    color: #101418;
+}
+
+QToolButton:checked {
+    background-color: #00E5FF;
+    border: 1px solid #00E5FF;
+    color: #101418;
+}
+
+QPushButton {
+    background-color: #53565c;
+    color: #f4f6f7;
+    border: 1px solid #62656a;
+    border-radius: 4px;
+    padding: 4px 12px;
+    min-height: 20px;
+}
+
+QPushButton:hover {
+    background-color: #686c74;
+    border-color: #787c82;
+}
+
+QPushButton:pressed {
+    background-color: #00E5FF;
+    color: #101418;
+}
+
+QPushButton:checked {
+    background-color: #00E5FF;
+    color: #101418;
+    border-color: #00E5FF;
+}
+
+QPushButton:checked:hover {
+    background-color: #5ce0ee;
+    border-color: #5ce0ee;
+}
+
+QPushButton:default, QPushButton[class="primary"] {
+    background-color: #00E5FF;
+    color: #101418;
+}
+
+QPushButton:default:hover {
+    background-color: #5ce0ee;
+}
+
+QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox, QTextEdit, QPlainTextEdit {
+    background-color: #4a4e54;
+    border: 1px solid #5c6066;
+    border-radius: 4px;
+    padding: 3px 6px;
+    selection-background-color: #00E5FF;
+    color: #f3f5f7;
+    min-height: 18px;
+}
+
+QTextEdit[objectName="outputLog"] {
+    background-color: #4a4e54;
+    color: #f3f5f7;
+}
+
+QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus, QComboBox:focus, QTextEdit:focus, QPlainTextEdit:focus {
+    border: 1px solid #00E5FF;
+    background-color: #52565c;
+}
+
+QSpinBox::up-button, QDoubleSpinBox::up-button,
+QSpinBox::down-button, QDoubleSpinBox::down-button {
+    background-color: transparent;
+    border: none;
+    width: 16px;
+}
+
+QSpinBox::up-button:hover, QDoubleSpinBox::up-button:hover,
+QSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover {
+    background-color: #5a5e64;
+}
+
+QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
+    image: url(:/icons/spinbox-up-arrow.svg);
+    width: 10px;
+    height: 10px;
+}
+
+QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
+    image: url(:/icons/spinbox-down-arrow.svg);
+    width: 10px;
+    height: 10px;
+}
+
+QComboBox {
+    min-width: 60px;
+    padding: 4px 7px;
+}
+
+QComboBox:hover {
+    background-color: #585c62;
+    border-color: #6e7278;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 20px;
+    background-color: transparent;
+}
+
+QComboBox::down-arrow {
+    image: url(:/icons/arrow-down.svg);
+    width: 10px;
+    height: 10px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #43474c;
+    border: 1px solid #66696d;
+    border-radius: 4px;
+    selection-background-color: #00E5FF;
+    outline: none;
+    padding: 4px;
+}
+
+QComboBox QAbstractItemView::item {
+    padding: 4px 8px;
+    border-radius: 3px;
+}
+
+QComboBox QAbstractItemView::item:hover {
+    background-color: #5a5e64;
+    color: #ffffff;
+}
+
+QListView, QTreeView, QTableView {
+    background-color: #4a4e54;
+    border: 1px solid #4a4e54;
+    border-radius: 4px;
+    outline: none;
+    alternate-background-color: #3a3e44;
+}
+
+QListView::item, QTreeView::item {
+    padding: 4px 5px;
+    border: none;
+    border-radius: 3px;
+}
+
+QListView::item:hover, QTreeView::item:hover {
+    background-color: #5a5e66;
+}
+
+QListView::item:selected, QTreeView::item:selected {
+    background-color: #5c6268;
+    color: #ffffff;
+    border-left: 2px solid #00E5FF;
+}
+
+QTreeView::branch:has-children:!has-siblings:closed,
+QTreeView::branch:closed:has-children:has-siblings {
+    image: url(:/icons/tree-expand.svg);
+}
+
+QTreeView::branch:open:has-children:!has-siblings,
+QTreeView::branch:open:has-children:has-siblings {
+    image: url(:/icons/tree-collapse.svg);
+}
+
+QHeaderView::section {
+    background-color: #43474c;
+    color: #d4d8db;
+    border: none;
+    border-right: 1px solid #2e3136;
+    border-bottom: 1px solid #2e3136;
+    padding: 4px;
+    font-weight: 600;
+    font-size: 8pt;
+    text-transform: uppercase;
+}
+
+QScrollBar:vertical {
+    background: #35383c;
+    width: 10px;
+    margin: 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: #5a5f66;
+    min-height: 20px;
+    border-radius: 5px;
+    margin: 2px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #7a808a;
+}
+
+QScrollBar::horizontal {
+    background: #35383c;
+    height: 10px;
+    margin: 0px;
+}
+
+QScrollBar::handle:horizontal {
+    background: #5a5f66;
+    min-width: 20px;
+    border-radius: 5px;
+    margin: 2px;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background: #7a808a;
+}
+
+QScrollBar::add-line, QScrollBar::sub-line {
+    width: 0px;
+    height: 0px;
+}
+
+QTabWidget::pane {
+    border: 1px solid #66696d;
+    border-top: none;
+    border-radius: 0px 0px 4px 4px;
+    background-color: #35383c;
+}
+
+QTabWidget::tab-bar {
+    alignment: left;
 }
 
 QTabBar::tab {
-    background-color: {{tab_bg}};
-    color: {{tab_text}};
+    background-color: transparent;
+    color: #f4f6f7;
+    border: none;
+    padding: 7px 13px;
+    margin-right: 2px;
+    border-bottom: 2px solid transparent;
+}
+
+QTabBar::tab:hover {
+    color: #ffffff;
+    background-color: #525660;
 }
 
 QTabBar::tab:selected {
-    background-color: {{tab_active}};
-    color: #000000;
+    color: #00E5FF;
+    border-bottom: 2px solid #00E5FF;
+    background-color: #35383c;
 }
-`;
+
+QGroupBox {
+    border: 1px solid #66696d;
+    border-radius: 5px;
+    margin-top: 22px;
+    padding: 4px;
+    font-weight: bold;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 5px;
+    margin-bottom: -20px;
+    background-color: #35383c;
+    color: #f4f6f7;
+}
+
+QCheckBox { spacing: 6px; }
+QCheckBox::indicator {
+    width: 14px; height: 14px;
+    background-color: #4a4e54;
+    border: 1px solid #66696d;
+    border-radius: 3px;
+}
+QCheckBox::indicator:checked {
+    background-color: #00E5FF;
+    border-color: #00E5FF;
+    image: url(:/icons/check.svg);
+}
+
+QRadioButton { spacing: 6px; }
+QRadioButton::indicator {
+    width: 14px; height: 14px;
+    background-color: #4a4e54;
+    border: 1px solid #66696d;
+    border-radius: 7px;
+}
+QRadioButton::indicator:checked {
+    background-color: #00E5FF;
+    border-color: #00E5FF;
+    image: url(:/icons/radio-dot.svg);
+}
+
+QLabel[status="active"] { color: #00E5FF; font-weight: bold; }
+QLabel[status="error"] { color: #ff7a73; font-weight: bold; }
+QLabel[status="info"] { color: #b5bac0; font-size: 9px; }
+
+QStatusBar {
+    background-color: #4a4e54;
+    color: #101418;
+}`;
 
 const THEME_KEYS = Object.keys(baseTheme);
 const theme = { ...baseTheme };
@@ -133,7 +696,9 @@ const downloadButton = document.getElementById("download");
 const qssUpload = document.getElementById("qssUpload");
 const themeNameInput = document.getElementById("themeName");
 const resetButton = document.getElementById("resetTheme");
+const quickResetButton = document.getElementById("resetThemeQuick");
 const advancedModeToggle = document.getElementById("advancedMode");
+const exitAdvancedButton = document.getElementById("exitAdvanced");
 const toast = document.getElementById("toast");
 const startCreatingButton = document.getElementById("startCreating");
 const generatorSection = document.getElementById("generator");
@@ -289,6 +854,82 @@ function mixColors(first, second, amount) {
   });
 }
 
+function rgbToHsl({ r, g, b }) {
+  const red = r / 255;
+  const green = g / 255;
+  const blue = b / 255;
+  const max = Math.max(red, green, blue);
+  const min = Math.min(red, green, blue);
+  const lightness = (max + min) / 2;
+  const delta = max - min;
+
+  if (delta === 0) {
+    return { h: 0, s: 0, l: lightness };
+  }
+
+  const saturation = lightness > 0.5 ? delta / (2 - max - min) : delta / (max + min);
+  let hue = 0;
+
+  switch (max) {
+    case red:
+      hue = (green - blue) / delta + (green < blue ? 6 : 0);
+      break;
+    case green:
+      hue = (blue - red) / delta + 2;
+      break;
+    default:
+      hue = (red - green) / delta + 4;
+      break;
+  }
+
+  return { h: hue / 6, s: saturation, l: lightness };
+}
+
+function hueToRgb(left, right, hue) {
+  let nextHue = hue;
+  if (nextHue < 0) {
+    nextHue += 1;
+  }
+  if (nextHue > 1) {
+    nextHue -= 1;
+  }
+  if (nextHue < 1 / 6) {
+    return left + (right - left) * 6 * nextHue;
+  }
+  if (nextHue < 1 / 2) {
+    return right;
+  }
+  if (nextHue < 2 / 3) {
+    return left + (right - left) * (2 / 3 - nextHue) * 6;
+  }
+  return left;
+}
+
+function hslToRgb({ h, s, l }) {
+  if (s === 0) {
+    const channel = l * 255;
+    return { r: channel, g: channel, b: channel };
+  }
+
+  const right = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const left = 2 * l - right;
+
+  return {
+    r: hueToRgb(left, right, h + 1 / 3) * 255,
+    g: hueToRgb(left, right, h) * 255,
+    b: hueToRgb(left, right, h - 1 / 3) * 255,
+  };
+}
+
+function hexToHsl(hex) {
+  const rgb = hexToRgb(hex);
+  if (!rgb) {
+    return { h: 0, s: 0, l: 0 };
+  }
+
+  return rgbToHsl(rgb);
+}
+
 function ensureContrast(textColor, backgroundColor, minimum = 4.5) {
   const safeText = clampHex(textColor) || "#ffffff";
   const safeBackground = clampHex(backgroundColor) || "#000000";
@@ -350,8 +991,339 @@ function normalizeColor(value) {
     .join("")}`;
 }
 
+function isValidColor(color) {
+  return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(color);
+}
+
+function isDark(color) {
+  return luminance(color) < 0.45;
+}
+
+function getReadableText(background) {
+  return isDark(background) ? "#ffffff" : "#000000";
+}
+
+function clampLightness(color, min, max) {
+  const normalized = clampHex(color);
+  if (!normalized) {
+    return color;
+  }
+
+  const hsl = hexToHsl(normalized);
+  return rgbToHex(
+    hslToRgb({
+      h: hsl.h,
+      s: hsl.s,
+      l: Math.max(min, Math.min(max, hsl.l)),
+    })
+  );
+}
+
+function normalizeSemanticColor(color) {
+  return clampLightness(color, 0.15, 0.65);
+}
+
+function clampNumber(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function adjustLightness(color, amount) {
+  const normalized = clampHex(color);
+  if (!normalized) {
+    return color;
+  }
+
+  const hsl = hexToHsl(normalized);
+  return rgbToHex(
+    hslToRgb({
+      h: hsl.h,
+      s: hsl.s,
+      l: clampNumber(hsl.l + amount, 0.06, 0.9),
+    })
+  );
+}
+
+function safeDarken(color, amount) {
+  return adjustLightness(color, -clampNumber(amount, 0.2, 0.5));
+}
+
+function safeLighten(color, amount) {
+  return adjustLightness(color, clampNumber(amount, 0.08, 0.22));
+}
+
+function setSurfaceLightness(color, targetLightness) {
+  const normalized = clampHex(color) || baseTheme.app_bg;
+  const hsl = hexToHsl(normalized);
+
+  return rgbToHex(
+    hslToRgb({
+      h: hsl.h,
+      s: clampNumber(hsl.s, 0.08, 0.5),
+      l: clampNumber(targetLightness, 0.12, 0.28),
+    })
+  );
+}
+
+function resolveTokenColor(color, fallback) {
+  return clampHex(color) || clampHex(fallback) || "#000000";
+}
+
+function nudgeLightness(color, amount) {
+  const normalized = clampHex(color);
+  if (!normalized) {
+    return color;
+  }
+
+  const hsl = hexToHsl(normalized);
+  return rgbToHex(
+    hslToRgb({
+      h: hsl.h,
+      s: hsl.s,
+      l: clampNumber(hsl.l + amount, 0.08, 0.9),
+    })
+  );
+}
+
+function toBaseTone(color) {
+  const normalized = resolveTokenColor(color, baseTheme.app_bg);
+  const l = hexToHsl(normalized).l;
+  if (l > 0.34) {
+    return nudgeLightness(normalized, -0.1);
+  }
+  if (l < 0.14) {
+    return nudgeLightness(normalized, 0.05);
+  }
+  return normalized;
+}
+
+function toSurfaceTone(color) {
+  const normalized = resolveTokenColor(color, baseTheme.panel_bg);
+  const l = hexToHsl(normalized).l;
+  if (l > 0.42) {
+    return nudgeLightness(normalized, -0.08);
+  }
+  if (l < 0.16) {
+    return nudgeLightness(normalized, 0.06);
+  }
+  return normalized;
+}
+
+function toStructureTone(color) {
+  const normalized = resolveTokenColor(color, baseTheme.accent_secondary);
+  const l = hexToHsl(normalized).l;
+  if (l > 0.72) {
+    return nudgeLightness(normalized, -0.08);
+  }
+  if (l < 0.22) {
+    return nudgeLightness(normalized, 0.08);
+  }
+  return normalized;
+}
+
+function toAccentTone(color) {
+  const normalized = resolveTokenColor(color, baseTheme.accent);
+  const l = hexToHsl(normalized).l;
+  if (l > 0.78) {
+    return nudgeLightness(normalized, -0.08);
+  }
+  if (l < 0.28) {
+    return nudgeLightness(normalized, 0.08);
+  }
+  return normalized;
+}
+
+function analyzeColor(color) {
+  const normalized = clampHex(color);
+  const hsl = hexToHsl(normalized);
+
+  return {
+    color: normalized,
+    h: hsl.h,
+    s: hsl.s,
+    l: hsl.l,
+    isDark: hsl.l < 0.25,
+    isLight: hsl.l > 0.75,
+    isAccent: hsl.s > 0.6 && hsl.l > 0.4 && hsl.l < 0.7,
+  };
+}
+
+function classifyPalette(colors) {
+  const analyzed = colors
+    .filter((color) => isValidColor(color))
+    .map((color) => analyzeColor(normalizeSemanticColor(color)));
+
+  const darks = analyzed
+    .filter((entry) => entry.isDark)
+    .sort((left, right) => left.l - right.l)
+    .map((entry) => entry.color);
+  const lights = analyzed
+    .filter((entry) => entry.isLight)
+    .sort((left, right) => right.l - left.l)
+    .map((entry) => entry.color);
+  const accents = analyzed
+    .filter((entry) => entry.isAccent)
+    .sort((left, right) => right.s - left.s || left.l - right.l)
+    .map((entry) => entry.color);
+
+  return { darks, lights, accents };
+}
+
+function isPaletteMostlyDark(colors) {
+  const valid = colors.filter((color) => isValidColor(color));
+  if (!valid.length) {
+    return true;
+  }
+
+  const averageLuminance = valid.reduce((sum, color) => sum + luminance(color), 0) / valid.length;
+  return averageLuminance < 0.48;
+}
+
+function balancePalette(colors) {
+  const analyzed = colors
+    .filter((color) => isValidColor(color))
+    .map((color) => analyzeColor(color));
+
+  if (!analyzed.length) {
+    return {
+      primary: baseTheme.accent,
+      secondary: shiftHexColor(baseTheme.accent, -18),
+      tertiary: baseTheme.panel_bg,
+      base: baseTheme.text_primary,
+    };
+  }
+
+  const bySaturation = [...analyzed].sort((left, right) => right.s - left.s || right.l - left.l);
+  const byDarkness = [...analyzed].sort((left, right) => left.l - right.l);
+  const byLightness = [...analyzed].sort((left, right) => right.l - left.l);
+
+  const primary = bySaturation[0]?.color || analyzed[0].color;
+  const secondary =
+    bySaturation.find((entry) => entry.color !== primary)?.color ||
+    byLightness.find((entry) => entry.color !== primary)?.color ||
+    primary;
+  const tertiary =
+    byDarkness.find((entry) => entry.color !== primary && entry.color !== secondary)?.color ||
+    byDarkness[0]?.color ||
+    analyzed[0].color;
+  const base =
+    byLightness.find((entry) => entry.color !== tertiary)?.color ||
+    byLightness[0]?.color ||
+    analyzed[0].color;
+
+  return { primary, secondary, tertiary, base };
+}
+
+function normalizeSurface(color) {
+  return resolveTokenColor(color, baseTheme.panel_bg);
+}
+
+function deriveSurfaceSystem(tokens) {
+  const appBg = resolveTokenColor(tokens.app_bg, baseTheme.app_bg);
+  const panelBg = resolveTokenColor(tokens.panel_bg, baseTheme.panel_bg);
+  const sectionBg = resolveTokenColor(tokens.panel_title_bg || tokens.input_bg, panelBg);
+  const elevatedBg = resolveTokenColor(tokens.statusbar_bg || tokens.menu_bg, panelBg);
+
+  return {
+    app_bg: appBg,
+    panel_bg: panelBg,
+    section_bg: sectionBg,
+    elevated_bg: elevatedBg,
+  };
+}
+
+function normalizeThemeTokens(nextTheme) {
+  const appBg = resolveTokenColor(nextTheme.app_bg, baseTheme.app_bg);
+  const panelBg = resolveTokenColor(nextTheme.panel_bg, baseTheme.panel_bg);
+  const sectionBg = resolveTokenColor(nextTheme.panel_title_bg || nextTheme.input_bg, panelBg);
+  const structure = resolveTokenColor(
+    nextTheme.accent_secondary || nextTheme.panel_border || nextTheme.input_border,
+    baseTheme.accent_secondary
+  );
+  const accent = resolveTokenColor(nextTheme.accent, baseTheme.accent);
+  const textPrimary = ensureContrast(nextTheme.text_primary || getReadableText(appBg), appBg, 7);
+  const textSecondary = ensureContrast(nextTheme.text_secondary || getReadableText(panelBg), panelBg, 4);
+
+  return {
+    ...nextTheme,
+    app_bg: appBg,
+    panel_bg: panelBg,
+    panel_title_bg: sectionBg,
+    menu_bg: resolveTokenColor(nextTheme.menu_bg, panelBg),
+    menu_hover: structure,
+    button_bg: resolveTokenColor(nextTheme.button_bg, accent),
+    button_hover: resolveTokenColor(nextTheme.button_hover, accent),
+    button_active: resolveTokenColor(nextTheme.button_active, accent),
+    input_bg: resolveTokenColor(nextTheme.input_bg, sectionBg),
+    panel_border: structure,
+    input_border: structure,
+    tab_bg: resolveTokenColor(nextTheme.tab_bg, panelBg),
+    tab_hover: structure,
+    tab_active: resolveTokenColor(nextTheme.tab_active, accent),
+    statusbar_bg: resolveTokenColor(nextTheme.statusbar_bg, panelBg),
+    statusbar_border: structure,
+    accent,
+    accent_secondary: structure,
+    input_focus: resolveTokenColor(nextTheme.input_focus, accent),
+    text_primary: textPrimary,
+    text_secondary: textSecondary,
+  };
+}
+
 function stripComments(qss) {
   return qss.replace(/\/\*[\s\S]*?\*\//g, "");
+}
+
+function matchesEditableSelector(selector) {
+  return WHITELISTED_SELECTOR_TERMS.includes(selector.trim().toLowerCase());
+}
+
+function validateQSS(qss) {
+  if (/QMainWindow\s*\{[^}]*padding/i.test(qss)) {
+    return false;
+  }
+  if (/QWidget\s*\{[^}]*margin/i.test(qss)) {
+    return false;
+  }
+  return !new RegExp(`(${BLOCKED_PROPERTIES.map((property) => property.replace("-", "\\-")).join("|")})\\s*:`, "i").test(qss);
+}
+
+function sanitizeQSS(qss) {
+  return stripComments(qss)
+    .replace(UNSAFE_QSS_PROPERTY_RE, "")
+    .replace(/([^{}]+)\{([^}]*)\}/g, (match, selectorBlock, body) => {
+      const selectors = selectorBlock
+        .split(",")
+        .map((selector) => selector.trim())
+        .filter((selector) => matchesEditableSelector(selector.toLowerCase()));
+
+      if (!selectors.length) {
+        return "";
+      }
+
+      const safeProps = body
+        .split(";")
+        .map((prop) => prop.trim())
+        .filter(Boolean)
+        .map((prop) => {
+          const [rawProperty, ...rest] = prop.split(":");
+          if (!rawProperty || !rest.length) {
+            return "";
+          }
+          const property = rawProperty.trim().toLowerCase();
+          const value = rest.join(":").trim();
+
+          if (!ALLOWED_PROPERTIES.includes(property) || !extractColors(value).length) {
+            return "";
+          }
+
+          return `${property}: ${value}`;
+        })
+        .filter(Boolean)
+        .join("; ");
+
+      return safeProps.trim() ? `${selectors.join(", ")} { ${safeProps}; }` : "";
+    })
+    .trim();
 }
 
 function extractColors(value) {
@@ -362,11 +1334,27 @@ function extractColors(value) {
   return (value.match(COLOR_VALUE_RE) || []).map(normalizeColor).filter(Boolean);
 }
 
+function extractPaletteFromQSS(qss) {
+  const matches = qss.match(/#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})\b/g) || [];
+  const unique = [];
+
+  matches
+    .map((color) => normalizeColor(color))
+    .filter(Boolean)
+    .forEach((color) => {
+      if (!unique.includes(color)) {
+        unique.push(color);
+      }
+    });
+
+  return unique.slice(0, 8);
+}
+
 function collectDeclarations(qss) {
   const declarations = [];
   const blockRe = /([^{}]+)\{([^{}]*)\}/g;
   const propRe = /([A-Za-z-]+)\s*:\s*([^;]+);/g;
-  const clean = stripComments(qss);
+  const clean = sanitizeQSS(qss);
   let blockMatch;
 
   while ((blockMatch = blockRe.exec(clean)) !== null) {
@@ -384,11 +1372,14 @@ function collectDeclarations(qss) {
       const value = propMatch[2].trim();
       const colors = extractColors(value);
 
-      if (!colors.length) {
+      if (!ALLOWED_PROPERTIES.includes(property) || !colors.length) {
         continue;
       }
 
       selectors.forEach((selector) => {
+        if (!matchesEditableSelector(selector)) {
+          return;
+        }
         declarations.push({
           selector: selector.toLowerCase(),
           property,
@@ -428,105 +1419,27 @@ function classifyColors(qss) {
   }, {});
 
   declarations.forEach((declaration) => {
-    const { selector, property, colors } = declaration;
-    const firstColor = colors[0];
-    const lastColor = colors[colors.length - 1];
+    const selector = declaration.selector;
+    const property = declaration.property;
+    const color = declaration.colors[declaration.colors.length - 1];
 
-    if (property === "color" || property === "selection-color") {
-      colors.forEach((color) => {
-        if (selector.includes(":disabled") || selector.includes("[status=\"info\"]")) {
-          addCandidate(buckets.text_secondary, color);
-        } else if (selector.includes("qmenubar")) {
-          addCandidate(buckets.menu_text, color);
-        } else if (selector.includes("qtabbar::tab")) {
-          addCandidate(buckets.tab_text, color);
-        } else if (selector.includes("[status=\"active\"]") || selector.includes("success")) {
-          addCandidate(buckets.success, color);
-        } else if (selector.includes("error")) {
-          addCandidate(buckets.error, color);
-        } else {
-          addCandidate(buckets.text_primary, color);
-        }
-      });
-      return;
-    }
-
-    if (property === "border" || property === "border-color") {
-      addCandidate(buckets.input_border, lastColor);
-      addCandidate(buckets.accent, lastColor);
-      return;
-    }
-
-    if (selector.includes("qwidget") || selector.includes("qmainwindow")) {
-      addCandidate(buckets.app_bg, firstColor);
-    }
-
-    if (selector.includes("qmenubar") || selector.includes("qmenu")) {
-      addCandidate(buckets.menu_bg, firstColor);
-    }
-
-    if (selector.includes("qdockwidget") || selector.includes("qgroupbox")) {
-      addCandidate(buckets.panel_bg, firstColor);
-      addCandidate(buckets.left_section_bg, firstColor);
-      addCandidate(buckets.right_card_bg, firstColor);
-    }
-
-    if (
-      selector.includes("qlineedit") ||
-      selector.includes("qcombobox") ||
-      selector.includes("qspinbox") ||
-      selector.includes("qtextedit") ||
-      selector.includes("qplaintextedit")
-    ) {
-      addCandidate(buckets.input_bg, firstColor);
-      addCandidate(buckets.panel_inner, firstColor);
-    }
-
-    if (selector.includes("qtabbar::tab:selected")) {
-      addCandidate(buckets.tab_active, firstColor);
-    }
-
-    if (selector.includes("qtabbar::tab")) {
-      addCandidate(buckets.tab_bg, firstColor);
-    }
-
-    if (selector.includes("qpushbutton") || selector.includes("qtoolbutton")) {
-      addCandidate(buckets.button_bg, firstColor);
-      addCandidate(buckets.accent, firstColor);
-    }
-
-    if (selector.includes(":hover")) {
-      addCandidate(buckets.button_hover, firstColor);
-    }
+    Object.entries(SAFE_QSS_MAP).forEach(([zone, config]) => {
+      const selectorMatch = config.selectors.some((safeSelector) => safeSelector.toLowerCase() === selector);
+      const propertyMatch = config.properties.includes(property);
+      if (selectorMatch && propertyMatch) {
+        addCandidate(buckets[zone], color);
+      }
+    });
   });
 
-  return {
-    app_bg: pickColor(buckets.app_bg, ""),
-    panel_bg: pickColor(buckets.panel_bg, ""),
-    panel_inner: pickColor(buckets.panel_inner, ""),
-    menu_bg: pickColor(buckets.menu_bg, ""),
-    menu_text: pickColor(buckets.menu_text, ""),
-    left_bg: pickColor(buckets.left_bg, pickColor(buckets.panel_bg, "")),
-    left_section_bg: pickColor(buckets.left_section_bg, pickColor(buckets.panel_inner, "")),
-    right_bg: pickColor(buckets.right_bg, pickColor(buckets.panel_bg, "")),
-    right_card_bg: pickColor(buckets.right_card_bg, pickColor(buckets.panel_inner, "")),
-    tab_bg: pickColor(buckets.tab_bg, ""),
-    tab_active: pickColor(buckets.tab_active, pickColor(buckets.accent, "")),
-    tab_text: pickColor(buckets.tab_text, pickColor(buckets.text_primary, "")),
-    input_bg: pickColor(buckets.input_bg, ""),
-    input_border: pickColor(buckets.input_border, ""),
-    button_bg: pickColor(buckets.button_bg, pickColor(buckets.accent, "")),
-    button_hover: pickColor(buckets.button_hover, ""),
-    text_primary: pickColor(buckets.text_primary, ""),
-    text_secondary: pickColor(buckets.text_secondary, ""),
-    success: pickColor(buckets.success, "#00cc88"),
-    error: pickColor(buckets.error, "#ff5c72"),
-    accent: pickColor(buckets.accent, ""),
-  };
+  return THEME_KEYS.reduce((accumulator, key) => {
+    accumulator[key] = pickColor(buckets[key], baseTheme[key] || "");
+    return accumulator;
+  }, {});
 }
 
 function generateTemplate(qss, system) {
-  let output = qss;
+  let output = sanitizeQSS(qss) || defaultTemplate;
 
   Object.entries(system).forEach(([key, value]) => {
     if (!value) {
@@ -544,15 +1457,561 @@ function generateTemplate(qss, system) {
   return output;
 }
 
-function generateFinalQSS(nextTemplate, nextTheme) {
-  let output = nextTemplate;
+function getPropertyValueForZone(zone, property, nextTheme) {
+  switch (zone) {
+    case "button_bg":
+      if (property === "background-color") {
+        return nextTheme.button_bg;
+      }
+      if (property === "color") {
+        return ensureContrast(nextTheme.text_primary, nextTheme.button_bg, 4.5);
+      }
+      if (property === "border-color") {
+        return nextTheme.accent_secondary;
+      }
+      break;
+    case "input_bg":
+      if (property === "background-color") {
+        return nextTheme.input_bg;
+      }
+      if (property === "color") {
+        return ensureContrast(nextTheme.text_primary, nextTheme.input_bg, 4.5);
+      }
+      break;
+    case "tab_bg":
+      if (property === "background-color") {
+        return nextTheme.tab_bg;
+      }
+      if (property === "color") {
+        return ensureContrast(nextTheme.text_primary, nextTheme.tab_bg, 4.5);
+      }
+      break;
+    case "tab_active":
+      if (property === "background-color") {
+        return nextTheme.tab_active;
+      }
+      if (property === "color") {
+        return ensureContrast(nextTheme.accent || nextTheme.text_primary, nextTheme.tab_active, 3);
+      }
+      break;
+    case "statusbar_bg":
+      if (property === "background-color") {
+        return nextTheme.statusbar_bg;
+      }
+      if (property === "border-color") {
+        return nextTheme.accent_secondary;
+      }
+      break;
+    default:
+      return nextTheme[zone] || "";
+  }
 
-  Object.entries(nextTheme).forEach(([key, value]) => {
-    const regex = new RegExp(`{{${key}}}`, "g");
-    output = output.replace(regex, value);
+  return nextTheme[zone] || "";
+}
+
+function replaceColorInCompoundValue(value, replacement) {
+  if (!value) {
+    return value;
+  }
+
+  if (/#(?:[0-9a-f]{6}|[0-9a-f]{3})\b/i.test(value)) {
+    return value.replace(/#(?:[0-9a-f]{6}|[0-9a-f]{3})\b/i, replacement);
+  }
+
+  if (/\brgba?\([^)]+\)/i.test(value)) {
+    return value.replace(/\brgba?\([^)]+\)/i, replacement);
+  }
+
+  if (/\btransparent\b/i.test(value)) {
+    return replacement;
+  }
+
+  return replacement;
+}
+
+function patchSelectorProperty(baseQSS, selector, property, value) {
+  const blockPattern = /([^{}]+)\{([^}]*)\}/g;
+  const escapedProperty = property.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  return baseQSS.replace(blockPattern, (match, selectorBlock, body) => {
+    const selectors = selectorBlock
+      .split(",")
+      .map((part) => part.trim())
+      .filter(Boolean);
+
+    if (!selectors.includes(selector)) {
+      return match;
+    }
+
+    const propertyPattern = new RegExp(`(${escapedProperty}\\s*:\\s*)([^;]+)(;?)`, "i");
+    if (propertyPattern.test(body)) {
+      return `${selectorBlock}{${body.replace(propertyPattern, `$1 ${value};`)}}`;
+    }
+
+    if (property === "background-color") {
+      const backgroundPattern = /(background\s*:\s*)([^;]+)(;?)/i;
+      if (backgroundPattern.test(body)) {
+        return `${selectorBlock}{${body.replace(backgroundPattern, (_, prefix, current) => `${prefix} ${replaceColorInCompoundValue(current, value)};`)}}`;
+      }
+    }
+
+    if (property === "border-color") {
+      const borderPattern = /(border\s*:\s*)([^;]+)(;?)/i;
+      if (borderPattern.test(body)) {
+        return `${selectorBlock}{${body.replace(borderPattern, (_, prefix, current) => `${prefix} ${replaceColorInCompoundValue(current, value)};`)}}`;
+      }
+
+      const borderSidePattern = /(border-(?:top|right|bottom|left)\s*:\s*)([^;]+)(;?)/gi;
+      if (borderSidePattern.test(body)) {
+        return `${selectorBlock}{${body.replace(borderSidePattern, (_, prefix, current) => `${prefix} ${replaceColorInCompoundValue(current, value)};`)}}`;
+      }
+    }
+
+    return match;
+  });
+}
+
+function parseQSSRules(qss) {
+  const rules = [];
+
+  stripComments(qss).replace(/([^{}]+)\{([^}]*)\}/g, (_match, selectorBlock, body) => {
+    const properties = {};
+
+    body
+      .split(";")
+      .map((declaration) => declaration.trim())
+      .filter(Boolean)
+      .forEach((declaration) => {
+        const separatorIndex = declaration.indexOf(":");
+        if (separatorIndex === -1) {
+          return;
+        }
+
+        const name = declaration.slice(0, separatorIndex).trim().toLowerCase();
+        const value = declaration.slice(separatorIndex + 1).trim();
+        properties[name] = value;
+      });
+
+    selectorBlock
+      .split(",")
+      .map((selector) => selector.trim())
+      .filter(Boolean)
+      .forEach((selector) => {
+        rules.push({ selector, properties: { ...properties } });
+      });
+
+    return "";
   });
 
-  return output;
+  return rules;
+}
+
+function extractColorValue(value) {
+  if (!value) {
+    return "";
+  }
+
+  const hex = value.match(/#([0-9a-f]{3}|[0-9a-f]{6})/i);
+  if (hex) {
+    return clampHex(hex[0]);
+  }
+
+  const rgb = value.match(/\brgba?\([^)]+\)/i);
+  if (rgb) {
+    return normalizeColor(rgb[0]);
+  }
+
+  return "";
+}
+
+function getQSSColor(rules, selectors, properties, fallback = "") {
+  const selectorList = Array.isArray(selectors) ? selectors : [selectors];
+  const propertyList = Array.isArray(properties) ? properties : [properties];
+
+  for (let selectorIndex = 0; selectorIndex < selectorList.length; selectorIndex += 1) {
+    const selector = selectorList[selectorIndex];
+    for (let index = rules.length - 1; index >= 0; index -= 1) {
+      const rule = rules[index];
+      if (rule.selector !== selector) {
+        continue;
+      }
+
+      for (let propertyIndex = 0; propertyIndex < propertyList.length; propertyIndex += 1) {
+        const property = propertyList[propertyIndex].toLowerCase();
+        const value = extractColorValue(rule.properties[property]);
+        if (value) {
+          return value;
+        }
+      }
+    }
+  }
+
+  return fallback;
+}
+
+function applyToPreview(finalQSS) {
+  const rules = parseQSSRules(finalQSS);
+  const appBg = getQSSColor(rules, ["QMainWindow", "QWidget"], ["background-color", "background"], theme.app_bg);
+  const panelBg = getQSSColor(
+    rules,
+    ["QDockWidget", "QGroupBox", "QDialog", "QScrollArea", "QTabWidget::pane"],
+    ["background-color", "background"],
+    theme.panel_bg
+  );
+  const sectionBg = getQSSColor(
+    rules,
+    ["QFrame", "QListView", "QTreeView", "QTableView", "QStackedWidget", "QComboBox QAbstractItemView", "QAbstractItemView"],
+    ["background-color", "background"],
+    theme.input_bg
+  );
+  const elevatedBg = getQSSColor(rules, ["QMenu::item:selected", "QPushButton:hover", "QToolButton:hover"], ["background-color", "background"], theme.button_hover);
+  const panelTitleBg = getQSSColor(rules, ["QDockWidget::title", "QGroupBox::title"], ["background-color", "background"], theme.panel_title_bg);
+  const panelBorder = getQSSColor(rules, ["QDockWidget", "QGroupBox", "QTabWidget::pane"], ["border-color", "border"], theme.panel_border);
+  const menuBg = getQSSColor(rules, ["QMenuBar", "QMenu", "QToolBar"], ["background-color", "background"], theme.menu_bg);
+  const menuText = getQSSColor(rules, ["QWidget", "QLabel", "QMenuBar"], ["color"], theme.text_primary);
+  const textSecondary = getQSSColor(rules, ["QWidget:disabled", "QLabel[status=\"info\"]"], ["color"], theme.text_secondary);
+  const buttonBg = getQSSColor(rules, ["QPushButton"], ["background-color", "background"], theme.button_bg);
+  const buttonText = getQSSColor(rules, ["QPushButton"], ["color"], ensureContrast(theme.text_primary, buttonBg, 4.5));
+  const buttonHover = getQSSColor(rules, ["QPushButton:hover"], ["background-color", "background"], theme.button_hover);
+  const inputBg = getQSSColor(
+    rules,
+    ["QLineEdit", "QComboBox", "QSpinBox", "QTextEdit", "QPlainTextEdit"],
+    ["background-color", "background"],
+    theme.input_bg
+  );
+  const inputText = getQSSColor(rules, ["QLineEdit", "QComboBox", "QTextEdit"], ["color"], theme.text_primary);
+  const inputBorder = getQSSColor(rules, ["QLineEdit", "QComboBox", "QSpinBox"], ["border-color", "border"], theme.input_border);
+  const inputFocus = getQSSColor(rules, ["QLineEdit:focus", "QComboBox:focus"], ["border-color", "border"], theme.input_focus);
+  const tabBg = getQSSColor(rules, ["QTabBar::tab"], ["background-color", "background"], theme.tab_bg);
+  const tabText = getQSSColor(rules, ["QTabBar::tab"], ["color"], theme.text_primary);
+  const tabHover = getQSSColor(rules, ["QTabBar::tab:hover"], ["background-color", "background"], theme.tab_hover);
+  const tabActiveBg = getQSSColor(rules, ["QTabBar::tab:selected"], ["background-color", "background"], theme.tab_active);
+  const tabActiveText = getQSSColor(rules, ["QTabBar::tab:selected"], ["color"], theme.accent);
+  const statusbarBg = getQSSColor(rules, ["QStatusBar"], ["background-color", "background"], theme.statusbar_bg);
+  const statusbarBorder = getQSSColor(rules, ["QStatusBar"], ["border-color", "border"], theme.statusbar_border);
+  const success = getQSSColor(rules, ['QLabel[status="active"]'], ["color"], theme.success);
+  const error = getQSSColor(rules, ['QLabel[status="error"]'], ["color"], theme.error);
+
+  document.body.style.background = `radial-gradient(circle at top, ${shiftHexColor(appBg, 10)}, ${shiftHexColor(appBg, -10)} 60%)`;
+  document.body.style.color = menuText;
+  document.documentElement.style.setProperty("--accent", tabActiveText || theme.accent);
+
+  preview.style.background = "transparent";
+
+  document.querySelectorAll(".helios-app").forEach((el) => {
+    el.style.background = appBg;
+    el.style.color = menuText;
+  });
+
+  document.querySelectorAll(".preview-card").forEach((el) => {
+    el.style.background = mixColors(appBg, "#000000", 0.12);
+    el.style.border = `1px solid ${panelBorder}`;
+    el.style.boxShadow = `0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px ${panelBorder}22`;
+  });
+
+  document.querySelectorAll(".menu-bar").forEach((el) => {
+    el.style.background = menuBg;
+    el.style.borderBottom = `1px solid ${panelBorder}`;
+    el.style.color = menuText;
+  });
+
+  document.querySelectorAll(".menu-items, .menu-items span").forEach((el) => {
+    el.style.color = menuText;
+  });
+
+  document.querySelectorAll(".status-strip, .workspace-mode, .output-header").forEach((el) => {
+    el.style.background = statusbarBg;
+    el.style.borderBottom = `1px solid ${statusbarBorder}`;
+    el.style.color = menuText;
+  });
+
+  document.querySelectorAll(".left-panel, .right-panel").forEach((el) => {
+    el.style.background = panelBg;
+    el.style.color = menuText;
+  });
+
+  document.querySelectorAll(".left-panel").forEach((el) => {
+    el.style.borderRight = `1px solid ${panelBorder}`;
+  });
+
+  document.querySelectorAll(".right-panel").forEach((el) => {
+    el.style.borderLeft = `1px solid ${panelBorder}`;
+  });
+
+  document.querySelectorAll(".center-panel, .center-stack, .output-panel, .preferences-dialog").forEach((el) => {
+    el.style.background = panelBg;
+    el.style.color = menuText;
+  });
+
+  document.querySelectorAll(".section-block, .preview-card-block, .usb-card, .output-body, .dialog-content").forEach((el) => {
+    el.style.background = sectionBg;
+    el.style.border = `1px solid ${inputBorder || panelBorder}`;
+    el.style.color = menuText;
+  });
+
+  document.querySelectorAll(".panel-title").forEach((el) => {
+    el.style.background = panelTitleBg;
+    el.style.color = menuText;
+  });
+
+  document.querySelectorAll(".input").forEach((el) => {
+    el.style.background = inputBg;
+    el.style.color = inputText;
+    el.style.border = `1px solid ${inputBorder}`;
+    el.onmouseover = () => {
+      el.style.borderColor = inputFocus;
+    };
+    el.onmouseout = () => {
+      el.style.borderColor = inputBorder;
+    };
+    el.onfocus = () => {
+      el.style.boxShadow = `0 0 0 1px ${inputFocus}`;
+    };
+    el.onblur = () => {
+      el.style.boxShadow = "none";
+    };
+  });
+
+  document.querySelectorAll(".btn").forEach((el) => {
+    if (el.id === "download") {
+      return;
+    }
+
+    el.style.background = buttonBg;
+    el.style.color = buttonText;
+    el.style.border = `1px solid ${panelBorder}`;
+    el.style.boxShadow = "none";
+    el.onmouseover = () => {
+      el.style.background = buttonHover;
+    };
+    el.onmouseout = () => {
+      el.style.background = buttonBg;
+    };
+  });
+
+  document.querySelectorAll(".tab").forEach((el) => {
+    el.style.background = tabBg;
+    el.style.color = tabText;
+    el.style.border = "none";
+    el.style.borderBottom = "2px solid transparent";
+    el.style.cursor = "pointer";
+    el.onmouseover = () => {
+      if (!el.classList.contains("active")) {
+        el.style.background = tabHover;
+      }
+    };
+    el.onmouseout = () => {
+      if (!el.classList.contains("active")) {
+        el.style.background = tabBg;
+      }
+    };
+  });
+
+  document.querySelectorAll(".tab.active").forEach((el) => {
+    el.style.background = tabActiveBg;
+    el.style.color = tabActiveText;
+    el.style.borderBottomColor = tabActiveText;
+  });
+
+  document.querySelectorAll(".section-block label, .preview-card-block label, .dialog-row label, .meta-line, .usb-row span, .status-strip span:not(.status-online)").forEach((el) => {
+    el.style.color = textSecondary;
+  });
+
+  document.querySelectorAll(".display-area").forEach((el) => {
+    el.style.background = panelBg;
+    el.style.border = `1px solid ${panelBorder}`;
+  });
+
+  document.querySelectorAll(".display-canvas").forEach((el) => {
+    el.style.setProperty("background", "#000000", "important");
+    el.style.border = `1px solid ${inputBorder}`;
+  });
+
+  document.querySelectorAll(".subtab").forEach((el) => {
+    el.style.color = textSecondary;
+    el.style.borderBottomColor = "transparent";
+  });
+
+  document.querySelectorAll(".active-subtab").forEach((el) => {
+    el.style.color = tabActiveText;
+    el.style.borderBottomColor = tabActiveText;
+  });
+
+  document.querySelectorAll(".slot").forEach((el, index) => {
+    el.style.background = sectionBg;
+    el.style.border = `1px solid ${inputBorder}`;
+    el.style.color = textSecondary;
+
+    if (index === 0) {
+      el.style.boxShadow = `inset 3px 0 0 ${success}`;
+    } else if (index === 1) {
+      el.style.boxShadow = `inset 3px 0 0 ${tabActiveText}`;
+    } else {
+      el.style.boxShadow = `inset 3px 0 0 ${error}`;
+    }
+  });
+
+  document.querySelectorAll(".success-badge").forEach((el) => {
+    el.style.background = `${success}22`;
+    el.style.color = success;
+  });
+
+  document.querySelectorAll(".error-badge").forEach((el) => {
+    el.style.background = `${error}22`;
+    el.style.color = error;
+  });
+
+  downloadButton.style.background = "linear-gradient(135deg, #4cc2ff, #7c5cff)";
+  downloadButton.style.border = "none";
+  downloadButton.style.color = "#ffffff";
+  downloadButton.style.boxShadow = "0 0 20px rgba(76, 194, 255, 0.3)";
+}
+
+function removeLightBackgrounds(qss, tokens) {
+  return qss
+    .replace(/(background-color\s*:\s*)(#f{3,6}|#e{3,6}|white)\b/gi, `$1${tokens.panel_bg}`)
+    .replace(/(background\s*:\s*)(#f{3,6}|#e{3,6}|white)\b/gi, `$1${tokens.panel_bg}`);
+}
+
+function applyThemeToBaseQSS(baseQSS, nextTheme) {
+  let output = baseQSS || defaultTemplate;
+  const normalizedTheme = normalizeThemeTokens(nextTheme);
+  const surfaces = deriveSurfaceSystem(normalizedTheme);
+  const patchedSelectors = new Set();
+  const patchAndTrack = (selector, property, value) => {
+    const nextOutput = patchSelectorProperty(output, selector, property, value);
+    if (nextOutput !== output) {
+      patchedSelectors.add(`${selector} -> ${property}`);
+      output = nextOutput;
+    }
+  };
+
+  Object.entries(THEME_TO_SAFE_ZONE).forEach(([themeKey, zone]) => {
+    const config = SAFE_QSS_MAP[zone];
+    if (!config || !normalizedTheme[themeKey]) {
+      return;
+    }
+
+    config.selectors.forEach((selector) => {
+      config.properties.forEach((property) => {
+        const value = getPropertyValueForZone(zone, property, normalizedTheme);
+        if (!value) {
+          return;
+        }
+        patchAndTrack(selector, property, value);
+      });
+    });
+  });
+
+  patchAndTrack("QFrame", "background-color", surfaces.section_bg);
+  patchAndTrack("QMainWindow::separator", "background-color", normalizedTheme.accent_secondary);
+  patchAndTrack("QMainWindow::separator:hover", "background-color", normalizedTheme.accent);
+  patchAndTrack("QSplitter::handle", "background-color", normalizedTheme.panel_border);
+  patchAndTrack("QSplitter::handle:hover", "background-color", normalizedTheme.accent_secondary);
+  patchAndTrack("QGroupBox", "background-color", surfaces.panel_bg);
+  patchAndTrack("QGroupBox", "border-color", normalizedTheme.accent_secondary);
+    patchAndTrack("QGroupBox::title", "background-color", normalizedTheme.panel_title_bg);
+    patchAndTrack("QTabWidget::pane", "background-color", surfaces.panel_bg);
+    patchAndTrack("QTabWidget::pane", "border-color", normalizedTheme.accent_secondary);
+  patchAndTrack("QScrollArea", "background-color", surfaces.panel_bg);
+  patchAndTrack("QStackedWidget", "background-color", surfaces.panel_bg);
+  patchAndTrack("QDialog", "background-color", surfaces.panel_bg);
+  patchAndTrack("QMenu", "background-color", surfaces.panel_bg);
+  patchAndTrack("QMenu", "border-color", normalizedTheme.accent_secondary);
+  patchAndTrack("QMenuBar", "border-color", normalizedTheme.accent_secondary);
+  patchAndTrack("QMenuBar::item:selected", "background-color", normalizedTheme.menu_hover);
+  patchAndTrack("QMenu::item:selected", "background-color", normalizedTheme.menu_hover);
+  patchAndTrack("QMenu::item:pressed", "background-color", normalizedTheme.accent);
+  patchAndTrack("QMenu::separator", "background-color", normalizedTheme.accent_secondary);
+  patchAndTrack("QToolBar", "border-color", normalizedTheme.accent_secondary);
+  patchAndTrack("QToolBar", "background-color", normalizedTheme.menu_bg);
+  patchAndTrack("QDockWidget::title", "border-color", normalizedTheme.accent_secondary);
+  patchAndTrack("QDockWidget::close-button:hover", "background-color", normalizedTheme.menu_hover);
+  patchAndTrack("QDockWidget::float-button:hover", "background-color", normalizedTheme.menu_hover);
+  patchAndTrack("QToolButton:hover", "background-color", normalizedTheme.menu_hover);
+  patchAndTrack("QToolButton:pressed", "background-color", normalizedTheme.accent);
+  patchAndTrack("QToolButton:checked", "background-color", normalizedTheme.accent);
+  patchAndTrack("QToolButton:checked", "border-color", normalizedTheme.accent_secondary);
+    patchAndTrack("QPushButton:hover", "border-color", normalizedTheme.accent_secondary);
+    patchAndTrack("QPushButton:pressed", "background-color", normalizedTheme.button_active);
+    patchAndTrack("QPushButton:pressed", "border-color", normalizedTheme.accent_secondary);
+    patchAndTrack("QPushButton:checked", "background-color", normalizedTheme.button_active);
+    patchAndTrack("QPushButton:checked", "border-color", normalizedTheme.accent_secondary);
+    patchAndTrack("QPushButton:checked:hover", "background-color", normalizedTheme.button_hover);
+    patchAndTrack("QPushButton:checked:hover", "border-color", normalizedTheme.accent_secondary);
+    patchAndTrack("QPushButton:default", "background-color", normalizedTheme.accent);
+    patchAndTrack("QPushButton:default", "border-color", normalizedTheme.accent_secondary);
+    patchAndTrack("QPushButton:default:hover", "background-color", normalizedTheme.button_hover);
+    patchAndTrack("QPushButton:default:hover", "border-color", normalizedTheme.accent_secondary);
+    patchAndTrack("QLineEdit:focus", "background-color", surfaces.section_bg);
+    patchAndTrack("QSpinBox:focus", "background-color", surfaces.section_bg);
+    patchAndTrack("QDoubleSpinBox:focus", "background-color", surfaces.section_bg);
+    patchAndTrack("QComboBox:focus", "background-color", surfaces.section_bg);
+    patchAndTrack("QTextEdit:focus", "background-color", surfaces.section_bg);
+    patchAndTrack("QPlainTextEdit:focus", "background-color", surfaces.section_bg);
+    patchAndTrack("QComboBox QAbstractItemView", "background-color", surfaces.section_bg);
+    patchAndTrack("QComboBox QAbstractItemView", "border-color", normalizedTheme.accent_secondary);
+    patchAndTrack("QComboBox:hover", "background-color", normalizedTheme.menu_hover);
+    patchAndTrack("QComboBox:hover", "border-color", normalizedTheme.accent_secondary);
+    patchAndTrack("QComboBox QAbstractItemView::item:hover", "background-color", normalizedTheme.menu_hover);
+    patchAndTrack("QTabBar::tab", "border-color", normalizedTheme.accent_secondary);
+    patchAndTrack("QTabBar::tab:selected", "border-color", normalizedTheme.accent);
+    patchAndTrack("QAbstractItemView", "background-color", surfaces.section_bg);
+    patchAndTrack("QAbstractItemView", "alternate-background-color", surfaces.panel_bg);
+    patchAndTrack("QListView", "background-color", surfaces.section_bg);
+    patchAndTrack("QListView", "border-color", normalizedTheme.accent_secondary);
+    patchAndTrack("QListView", "alternate-background-color", surfaces.panel_bg);
+    patchAndTrack("QListView::item:hover", "background-color", normalizedTheme.menu_hover);
+    patchAndTrack("QListView::item:selected", "background-color", normalizedTheme.accent);
+    patchAndTrack("QTreeView", "background-color", surfaces.section_bg);
+    patchAndTrack("QTreeView", "border-color", normalizedTheme.accent_secondary);
+    patchAndTrack("QTreeView", "alternate-background-color", surfaces.panel_bg);
+    patchAndTrack("QTreeView::item:hover", "background-color", normalizedTheme.menu_hover);
+    patchAndTrack("QTreeView::item:selected", "background-color", normalizedTheme.accent);
+    patchAndTrack("QTableView", "background-color", surfaces.section_bg);
+    patchAndTrack("QTableView", "border-color", normalizedTheme.accent_secondary);
+    patchAndTrack("QTableView", "alternate-background-color", surfaces.panel_bg);
+    patchAndTrack("QTextEdit[objectName=\"outputLog\"]", "background-color", surfaces.section_bg);
+  patchAndTrack("QHeaderView::section", "background-color", surfaces.panel_bg);
+  patchAndTrack("QHeaderView::section", "color", normalizedTheme.text_primary);
+  patchAndTrack("QHeaderView::section", "border-color", normalizedTheme.accent_secondary);
+  patchAndTrack("QListView::item:selected", "border-color", normalizedTheme.accent_secondary);
+  patchAndTrack("QTreeView::item:selected", "border-color", normalizedTheme.accent_secondary);
+  patchAndTrack("QScrollBar:vertical", "background-color", surfaces.panel_bg);
+  patchAndTrack("QScrollBar::handle:vertical", "background-color", normalizedTheme.panel_border);
+  patchAndTrack("QScrollBar::handle:vertical:hover", "background-color", normalizedTheme.accent_secondary);
+  patchAndTrack("QScrollBar:horizontal", "background-color", surfaces.panel_bg);
+  patchAndTrack("QScrollBar::handle:horizontal", "background-color", normalizedTheme.panel_border);
+  patchAndTrack("QScrollBar::handle:horizontal:hover", "background-color", normalizedTheme.accent_secondary);
+  patchAndTrack("QCheckBox::indicator", "background-color", surfaces.section_bg);
+  patchAndTrack("QCheckBox::indicator", "border-color", normalizedTheme.accent_secondary);
+  patchAndTrack("QCheckBox::indicator:checked", "background-color", normalizedTheme.accent);
+  patchAndTrack("QCheckBox::indicator:checked", "border-color", normalizedTheme.accent_secondary);
+  patchAndTrack("QRadioButton::indicator", "background-color", surfaces.section_bg);
+  patchAndTrack("QRadioButton::indicator", "border-color", normalizedTheme.accent_secondary);
+  patchAndTrack("QRadioButton::indicator:checked", "background-color", normalizedTheme.accent);
+  patchAndTrack("QRadioButton::indicator:checked", "border-color", normalizedTheme.accent_secondary);
+  patchAndTrack('QLabel[status="info"]', "color", normalizedTheme.text_secondary);
+  patchAndTrack("QStatusBar", "border-color", normalizedTheme.accent_secondary);
+
+  lastPatchedSelectors = [...patchedSelectors];
+  console.log("Applied selectors:", lastPatchedSelectors);
+
+  return removeLightBackgrounds(output, surfaces);
+}
+
+function generateFinalQSS(nextTemplate, nextTheme) {
+  let output = applyThemeToBaseQSS(nextTemplate || defaultTemplate, nextTheme);
+
+  if (!/VideoDisplay\s*\{/i.test(output)) {
+    output = `${output.trim()}\n\nVideoDisplay {\n    background: #000000 !important;\n}`;
+  }
+
+  if (!/QWidget#videoDisplay\s*\{/i.test(output)) {
+    output = `${output.trim()}\n\nQWidget#videoDisplay {\n    background: #000000 !important;\n}`;
+  }
+
+  return output.trim();
 }
 
 function showExportSuccess() {
@@ -569,6 +2028,7 @@ function showExportSuccess() {
 function setActiveStep(step) {
   currentStep = step;
   toolCard?.classList.toggle("is-advanced", advancedModeToggle.checked);
+  exitAdvancedButton?.classList.toggle("is-hidden", !advancedModeToggle.checked);
 
   stepTabs.forEach((button) => {
     button.classList.toggle("active", button.dataset.step === step);
@@ -579,10 +2039,31 @@ function setActiveStep(step) {
     const shouldShow = showAll || section.dataset.stepGroup === step;
     section.classList.toggle("is-hidden", !shouldShow);
   });
+
+  document.querySelectorAll("[data-non-theme='true']").forEach((section) => {
+    section.classList.toggle("is-hidden", advancedModeToggle.checked);
+  });
 }
 
 function loadDefaultTheme() {
-  Object.assign(theme, defaultTheme);
+  Object.assign(theme, normalizeThemeTokens(defaultTheme));
+  template = defaultTemplate;
+}
+
+function resetThemeState() {
+  loadDefaultTheme();
+  hidePalette();
+  if (qssUpload) {
+    qssUpload.value = "";
+  }
+  if (themeNameInput) {
+    themeNameInput.value = "custom-theme";
+  }
+  document.querySelectorAll(".preset").forEach((button) => {
+    button.classList.toggle("active", button.dataset.preset === "dark");
+  });
+  updateInputs();
+  applyTheme();
 }
 
 function deriveAccentSystem(source) {
@@ -593,9 +2074,19 @@ function deriveAccentSystem(source) {
 
   theme.accent = accentColor;
   theme.button_bg = accentColor;
-  theme.button_hover = shiftHexColor(accentColor, 18);
-  theme.tab_active = saturateHex(shiftHexColor(accentColor, 6), 0.24);
-  theme.input_border = shiftHexColor(accentColor, -42);
+  theme.button_hover = accentColor;
+  theme.button_active = accentColor;
+  theme.input_focus = accentColor;
+}
+
+function getAppliedPreviewPalette(nextTheme) {
+  const normalizedTheme = normalizeThemeTokens(nextTheme);
+  return [
+    normalizedTheme.app_bg,
+    normalizedTheme.panel_bg,
+    normalizedTheme.accent,
+    normalizedTheme.accent_secondary,
+  ].filter(Boolean);
 }
 
 function showPalette(colors = [], accentColor = "") {
@@ -618,6 +2109,16 @@ function showPalette(colors = [], accentColor = "") {
 
   palettePreviewCard.classList.remove("is-hidden");
   palettePreviewCard.classList.add("is-visible");
+}
+
+function hidePalette() {
+  if (!palettePreviewCard || !palettePreview) {
+    return;
+  }
+
+  palettePreview.innerHTML = "";
+  palettePreviewCard.classList.add("is-hidden");
+  palettePreviewCard.classList.remove("is-visible");
 }
 
 function distanceBetween(first, second) {
@@ -670,47 +2171,80 @@ function extractDominantColorsFromImage(image) {
     }
   });
 
-  return deduped.slice(0, 8);
+  return deduped.filter((color) => isValidColor(color)).slice(0, 6);
 }
 
-function createThemeFromPalette(colors) {
-  if (!colors.length) {
-    return null;
+function isUsablePalette(colors) {
+  if (!colors || colors.length < 3) {
+    return false;
   }
 
-  const sortedByLuminance = [...colors].sort((left, right) => luminance(left) - luminance(right));
-  const darkest = sortedByLuminance[0] || baseTheme.app_bg;
-  const secondDarkest = sortedByLuminance[1] || shiftHexColor(darkest, 10);
-  const midTone = sortedByLuminance[Math.min(2, sortedByLuminance.length - 1)] || shiftHexColor(secondDarkest, 10);
-  const brightAccent = [...colors].sort((left, right) => luminance(right) - luminance(left))[0] || baseTheme.accent;
-  const lightTone = [...colors].sort((left, right) => luminance(right) - luminance(left))[1] || "#ffffff";
+  const valid = colors.filter((color) => isValidColor(color));
+  if (valid.length < 3) {
+    return false;
+  }
 
-  const generated = {
-    app_bg: darkest,
-    panel_bg: secondDarkest,
-    panel_inner: mixColors(secondDarkest, midTone, 0.45),
-    menu_bg: mixColors(darkest, secondDarkest, 0.55),
-    menu_text: ensureContrast(lightTone, mixColors(darkest, secondDarkest, 0.55), 4),
-    left_bg: mixColors(darkest, secondDarkest, 0.35),
-    left_section_bg: mixColors(secondDarkest, midTone, 0.2),
-    right_bg: mixColors(darkest, secondDarkest, 0.45),
-    right_card_bg: mixColors(secondDarkest, midTone, 0.35),
-    tab_bg: mixColors(darkest, secondDarkest, 0.5),
-    tab_active: brightAccent,
-    tab_text: ensureContrast(lightTone, mixColors(darkest, secondDarkest, 0.5), 4),
-    input_bg: mixColors(secondDarkest, midTone, 0.3),
-    input_border: shiftHexColor(secondDarkest, 24),
-    button_bg: brightAccent,
-    button_hover: shiftHexColor(brightAccent, 18),
-    text_primary: ensureContrast(lightTone, darkest, 5),
-    text_secondary: ensureContrast(mixColors(lightTone, darkest, 0.35), secondDarkest, 3.8),
-    success: mixColors(brightAccent, "#00cc88", 0.45),
-    error: mixColors(brightAccent, "#ff5c72", 0.55),
-    accent: brightAccent,
-  };
+  const unique = [...new Set(valid)];
+  if (unique.length < 3) {
+    return false;
+  }
 
-  generated.text_secondary = ensureContrast(generated.text_secondary, generated.panel_bg, 3.5);
-  return generated;
+  const sorted = [...unique].sort((left, right) => luminance(left) - luminance(right));
+  return contrastRatio(sorted[0], sorted[sorted.length - 1]) >= 2.2;
+}
+
+  function mapPaletteToTokens(colors) {
+    const valid = colors.filter((color) => isValidColor(color)).slice(0, 4);
+    if (!valid.length) {
+      return { ...baseTheme };
+    }
+    const [base, surface, secondary, accentColor] = [
+      valid[0] || baseTheme.app_bg,
+      valid[1] || valid[0] || baseTheme.panel_bg,
+      valid[2] || valid[1] || baseTheme.accent_secondary,
+      valid[3] || valid[2] || valid[1] || baseTheme.accent,
+    ];
+    const appBg = resolveTokenColor(base, baseTheme.app_bg);
+    const panelBg = resolveTokenColor(surface, baseTheme.panel_bg);
+    const sectionBg = resolveTokenColor(surface, panelBg);
+    const secondaryTone = resolveTokenColor(secondary, baseTheme.accent_secondary);
+    const accent = resolveTokenColor(accentColor, baseTheme.accent);
+    const inputBg = resolveTokenColor(surface, panelBg);
+    const menuBg = resolveTokenColor(surface, panelBg);
+    const statusbarBg = resolveTokenColor(surface, panelBg);
+    const textPrimary = ensureContrast(getReadableText(appBg), appBg, 7);
+    const textSecondary = ensureContrast(getReadableText(panelBg), panelBg, 4);
+
+    const tokenMap = {
+      app_bg: appBg,
+      panel_bg: panelBg,
+      panel_title_bg: sectionBg,
+      panel_border: secondaryTone,
+      menu_bg: menuBg,
+      menu_hover: secondaryTone,
+      button_bg: accent,
+      button_hover: secondaryTone,
+      button_active: accent,
+      input_bg: inputBg,
+      input_border: secondaryTone,
+      input_focus: accent,
+      tab_bg: inputBg,
+      tab_hover: secondaryTone,
+      tab_active: accent,
+      accent,
+      accent_secondary: secondaryTone,
+      text_primary: textPrimary,
+      text_secondary: textSecondary,
+      success: accent,
+      error: secondaryTone,
+      statusbar_bg: statusbarBg,
+      statusbar_border: secondaryTone,
+    };
+
+  return SAFE_TOKENS.reduce((accumulator, key) => {
+    accumulator[key] = isValidColor(tokenMap[key]) ? tokenMap[key] : baseTheme[key];
+    return accumulator;
+  }, {});
 }
 
 function handleImportedImage(file) {
@@ -718,16 +2252,19 @@ function handleImportedImage(file) {
   reader.onload = (event) => {
     const image = new Image();
     image.onload = () => {
-      const colors = extractDominantColorsFromImage(image);
-      const nextTheme = createThemeFromPalette(colors);
-      if (!nextTheme) {
-        return;
-      }
+      const colors = extractDominantColorsFromImage(image).slice(0, 4);
+      const nextTheme = normalizeThemeTokens(mapPaletteToTokens(colors));
 
       Object.assign(theme, nextTheme);
+      template = defaultTemplate;
       updateInputs();
       applyTheme();
-      showPalette(colors.slice(0, 5), nextTheme.accent);
+      showPalette(colors);
+    };
+    image.onerror = () => {
+      loadDefaultTheme();
+      updateInputs();
+      applyTheme();
     };
     image.src = typeof event.target?.result === "string" ? event.target.result : "";
   };
@@ -735,7 +2272,7 @@ function handleImportedImage(file) {
 }
 
 function updateThemeKey(key, value) {
-  const normalized = clampHex(value);
+  let normalized = clampHex(value);
   if (!normalized) {
     return;
   }
@@ -744,9 +2281,7 @@ function updateThemeKey(key, value) {
 
   if (key === "accent") {
     deriveAccentSystem(normalized);
-  } else if (key === "button_bg") {
-    theme.button_hover = shiftHexColor(normalized, 18);
-  } else if (key === "tab_active") {
+  } else if (key === "button_active" || key === "input_focus") {
     theme.accent = normalized;
   }
 
@@ -790,23 +2325,19 @@ function updateInputs() {
 
 function handleImportedQSS(qss) {
   try {
-    const system = classifyColors(qss);
-    const hasExtractedColor = Object.values(system).some(Boolean);
-
-    if (!hasExtractedColor) {
-      return;
+    const isSafe = validateQSS(qss);
+    if (!isSafe) {
+      console.warn("Unsafe QSS detected");
     }
 
-    Object.keys(theme).forEach((key) => {
-      if (system[key]) {
-        theme[key] = normalizeColor(system[key]);
-      }
-    });
+    const colors = extractPaletteFromQSS(qss);
+    const nextTheme = normalizeThemeTokens(mapPaletteToTokens(colors.slice(0, 4)));
 
-    template = generateTemplate(qss, system);
+    Object.assign(theme, nextTheme);
+    template = defaultTemplate;
     updateInputs();
     applyTheme();
-    showPalette(Object.values(system).filter(Boolean).slice(0, 5), theme.accent);
+    showPalette(colors.slice(0, 4));
   } catch (_error) {
     // Keep the current theme and UI running if import parsing fails.
   }
@@ -817,38 +2348,14 @@ function applyInspoPalette(name) {
   if (!palette) {
     return;
   }
+  const nextTheme = normalizeThemeTokens(mapPaletteToTokens(palette));
 
-  const [appBg, panelBg, accentColor, highlightColor, textColor] = palette;
-  const darkText = luminance(appBg) > 0.35 ? "#111111" : "#ffffff";
-  const secondaryText = shiftHexColor(textColor, darkText === "#111111" ? -88 : -52);
+  Object.assign(theme, nextTheme);
 
-  Object.assign(theme, {
-    app_bg: appBg,
-    panel_bg: panelBg,
-    panel_inner: shiftHexColor(panelBg, -8),
-    menu_bg: shiftHexColor(appBg, 6),
-    menu_text: textColor,
-    left_bg: shiftHexColor(appBg, 4),
-    left_section_bg: shiftHexColor(panelBg, -10),
-    right_bg: shiftHexColor(appBg, 8),
-    right_card_bg: shiftHexColor(panelBg, 4),
-    tab_bg: shiftHexColor(panelBg, -6),
-    tab_active: accentColor,
-    tab_text: textColor,
-    input_bg: shiftHexColor(appBg, -4),
-    input_border: shiftHexColor(panelBg, 18),
-    button_bg: accentColor,
-    button_hover: highlightColor,
-    text_primary: darkText === "#111111" ? darkText : textColor,
-    text_secondary: secondaryText,
-    success: highlightColor,
-    error: "#ff5c72",
-    accent: accentColor,
-  });
-
+  template = defaultTemplate;
   updateInputs();
   applyTheme();
-  showPalette(palette, accentColor);
+  showPalette(getAppliedPreviewPalette(nextTheme), nextTheme.accent);
 
   document.querySelectorAll(".inspo-palette").forEach((button) => {
     button.classList.toggle("active", button.dataset.inspo === name);
@@ -861,144 +2368,161 @@ function applyPreset(presetName) {
     return;
   }
 
-  Object.assign(theme, preset);
+  Object.assign(theme, normalizeThemeTokens(preset));
+  template = defaultTemplate;
   document.querySelectorAll(".preset").forEach((button) => {
     button.classList.toggle("active", button.dataset.preset === presetName);
   });
   updateInputs();
   applyTheme();
+  showPalette(getAppliedPreviewPalette(theme), theme.accent);
 }
 
-function applyTheme() {
-  const glowColor = `${theme.accent}26`;
-  const activeBg = `${theme.tab_active}26`;
-  const activeBorder = `${theme.tab_active}66`;
+  function applyTheme() {
+    const previewBase = normalizeThemeTokens(theme);
+    const surfaces = deriveSurfaceSystem(previewBase);
+    const previewTheme = {
+      panel_inner: previewBase.panel_title_bg,
+      menu_text: previewBase.text_primary,
+      left_bg: surfaces.panel_bg,
+      left_section_bg: previewBase.panel_title_bg,
+      right_bg: surfaces.panel_bg,
+      right_card_bg: previewBase.panel_title_bg,
+      tab_text: previewBase.text_primary,
+      elevated_bg: surfaces.elevated_bg,
+    };
+    const glowColor = `${previewBase.accent}26`;
 
-  document.body.style.background = `radial-gradient(circle at top, ${shiftHexColor(theme.app_bg, 10)}, ${shiftHexColor(
-    theme.app_bg,
-    -10
-  )} 60%)`;
-  document.body.style.color = theme.text_primary;
-  document.documentElement.style.setProperty("--accent", theme.accent);
+  document.body.style.background = surfaces.app_bg;
+  document.body.style.color = previewBase.text_primary;
+  document.documentElement.style.setProperty("--accent", previewBase.accent);
 
   preview.style.background = "transparent";
 
   document.querySelectorAll(".helios-app").forEach((el) => {
-    el.style.background = theme.app_bg;
-    el.style.color = theme.text_primary;
+    el.style.background = surfaces.app_bg;
+    el.style.color = previewBase.text_primary;
   });
 
-  document.querySelectorAll(".preview-card").forEach((el) => {
-    el.style.background = `${theme.app_bg}66`;
-    el.style.border = `1px solid ${theme.input_border}`;
-    el.style.boxShadow = `0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px ${theme.input_border}22`;
-  });
+    document.querySelectorAll(".preview-card").forEach((el) => {
+      el.style.background = surfaces.app_bg;
+      el.style.border = `1px solid ${previewBase.panel_border}`;
+      el.style.boxShadow = `0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px ${previewBase.panel_border}22`;
+    });
 
   document.querySelectorAll(".menu-bar").forEach((el) => {
-    el.style.background = theme.menu_bg;
-    el.style.borderBottom = `1px solid ${theme.input_border}`;
-    el.style.color = theme.menu_text;
+    el.style.background = previewBase.menu_bg;
+    el.style.borderBottom = `1px solid ${previewBase.accent_secondary}`;
+    el.style.color = previewTheme.menu_text;
   });
 
   document.querySelectorAll(".menu-items").forEach((el) => {
-    el.style.color = theme.menu_text;
+    el.style.color = previewTheme.menu_text;
   });
 
   document.querySelectorAll(".left-panel").forEach((el) => {
-    el.style.background = theme.left_bg;
-    el.style.borderRight = `1px solid ${theme.input_border}`;
-    el.style.color = theme.text_primary;
+    el.style.background = previewTheme.left_bg;
+    el.style.borderRight = `1px solid ${previewBase.accent_secondary}`;
+    el.style.color = previewBase.text_primary;
   });
 
   document.querySelectorAll(".right-panel").forEach((el) => {
-    el.style.background = theme.right_bg;
-    el.style.borderLeft = `1px solid ${theme.input_border}`;
-    el.style.color = theme.text_primary;
+    el.style.background = previewTheme.right_bg;
+    el.style.borderLeft = `1px solid ${previewBase.accent_secondary}`;
+    el.style.color = previewBase.text_primary;
   });
 
-  document.querySelectorAll(".section-block").forEach((el) => {
-    el.style.background = theme.left_section_bg;
-    el.style.border = `1px solid ${theme.input_border}`;
-    el.style.borderRadius = "4px";
-    el.style.padding = "8px";
+  document.querySelectorAll(".center-panel, .center-stack, .output-panel, .preferences-dialog").forEach((el) => {
+    el.style.background = surfaces.app_bg;
+    el.style.color = previewBase.text_primary;
   });
+
+    document.querySelectorAll(".section-block").forEach((el) => {
+      el.style.background = previewTheme.left_section_bg;
+      el.style.border = `1px solid ${previewBase.panel_border}`;
+      el.style.borderRadius = "4px";
+      el.style.padding = "8px";
+    });
 
   document.querySelectorAll(".card").forEach((el) => {
-    if (!el.closest(".controls")) {
-      el.style.background = theme.panel_bg;
-      el.style.border = `1px solid ${theme.input_border}`;
-      el.style.color = theme.text_primary;
-    }
-  });
+      if (!el.closest(".controls")) {
+        el.style.background = previewBase.panel_bg;
+        el.style.border = `1px solid ${previewBase.panel_border}`;
+        el.style.color = previewBase.text_primary;
+      }
+    });
 
-  document.querySelectorAll(".preview-card-block").forEach((el) => {
-    el.style.background = theme.right_card_bg;
-  });
+    document.querySelectorAll(".preview-card-block, .usb-card, .dialog-content").forEach((el) => {
+      el.style.background = previewTheme.panel_inner;
+      el.style.border = `1px solid ${previewBase.panel_border}`;
+    });
 
   document.querySelectorAll(".input").forEach((el) => {
-    el.style.background = theme.input_bg;
-    el.style.color = theme.text_primary;
-    el.style.border = `1px solid ${theme.input_border}`;
+    el.style.background = previewBase.input_bg;
+    el.style.color = previewBase.text_primary;
+    el.style.border = `1px solid ${previewBase.input_border}`;
     el.onmouseover = () => {
-      el.style.borderColor = theme.tab_active;
+      el.style.borderColor = previewBase.input_focus;
     };
     el.onmouseout = () => {
-      el.style.borderColor = theme.input_border;
+      el.style.borderColor = previewBase.input_border;
     };
     el.onfocus = () => {
-      el.style.boxShadow = `0 0 0 1px ${theme.input_border}, 0 0 18px ${glowColor}`;
+      el.style.boxShadow = `0 0 0 1px ${previewBase.input_border}, 0 0 18px ${glowColor}`;
     };
     el.onblur = () => {
       el.style.boxShadow = "none";
     };
   });
 
-  document.querySelectorAll(".btn").forEach((el) => {
-    if (el.id === "download") {
-      return;
-    }
+    document.querySelectorAll(".btn").forEach((el) => {
+      if (el.id === "download") {
+        return;
+      }
 
-    el.style.background = theme.button_bg;
-    el.style.color = "#000000";
-    el.style.border = `1px solid ${theme.input_border}`;
-    el.style.boxShadow = `0 0 0 1px ${glowColor}`;
+      el.style.background = previewBase.button_bg;
+      el.style.color = ensureContrast("#ffffff", previewBase.button_bg, 4.5);
+      el.style.border = `1px solid ${previewBase.panel_border}`;
+      el.style.boxShadow = `0 0 0 1px ${glowColor}`;
 
     el.onmouseover = () => {
-      el.style.background = theme.button_hover;
+      el.style.background = previewBase.button_hover;
     };
 
     el.onmouseout = () => {
-      el.style.background = theme.button_bg;
+      el.style.background = previewBase.button_bg;
     };
   });
 
   document.querySelectorAll(".tab").forEach((el) => {
-    el.style.background = "transparent";
-    el.style.color = theme.tab_text;
+    el.style.background = previewBase.tab_bg;
+    el.style.color = previewTheme.tab_text;
     el.style.border = "none";
     el.style.borderBottom = "2px solid transparent";
     el.style.cursor = "pointer";
     el.onmouseover = () => {
       if (!el.classList.contains("active")) {
-        el.style.color = theme.text_primary;
+        el.style.background = previewBase.tab_hover || previewTheme.elevated_bg;
+        el.style.color = ensureContrast("#ffffff", previewBase.tab_hover || previewTheme.elevated_bg, 4.5);
       }
     };
     el.onmouseout = () => {
       if (!el.classList.contains("active")) {
-        el.style.color = theme.tab_text;
+        el.style.background = previewBase.tab_bg;
+        el.style.color = previewTheme.tab_text;
       }
     };
   });
 
-  document.querySelectorAll(".tab.active").forEach((el) => {
-    el.style.background = "transparent";
-    el.style.color = theme.text_primary;
-    el.style.borderBottomColor = theme.tab_active;
-    el.style.boxShadow = "none";
-  });
+    document.querySelectorAll(".tab.active").forEach((el) => {
+      el.style.background = previewBase.tab_active;
+      el.style.color = ensureContrast("#ffffff", previewBase.tab_active, 4.5);
+      el.style.borderBottomColor = previewBase.accent;
+      el.style.boxShadow = "none";
+    });
 
-  document.querySelectorAll(".section-block label, .preview-card-block label").forEach((el) => {
-    el.style.color = theme.text_secondary;
+  document.querySelectorAll(".section-block label, .preview-card-block label, .dialog-row label").forEach((el) => {
+    el.style.color = previewBase.text_secondary;
   });
 
   document.querySelectorAll(".display-area").forEach((el) => {
@@ -1008,44 +2532,58 @@ function applyTheme() {
 
   document.querySelectorAll(".display-canvas").forEach((el) => {
     el.style.setProperty("background", "#000000", "important");
-    el.style.border = `1px solid ${theme.input_border}`;
+    el.style.border = `1px solid ${previewBase.panel_border}`;
   });
 
-  document.querySelectorAll(".workspace-mode, .output-header, .status-strip, .panel-title").forEach((el) => {
-    el.style.background = theme.panel_bg;
-    el.style.color = theme.text_primary;
+    document.querySelectorAll(".workspace-mode, .output-header, .status-strip").forEach((el) => {
+      el.style.background = previewBase.statusbar_bg;
+      el.style.color = previewBase.text_primary;
+    });
+
+  document.querySelectorAll(".panel-title").forEach((el) => {
+    el.style.background = previewBase.panel_title_bg;
+    el.style.color = previewBase.text_primary;
   });
 
-  document.querySelectorAll(".output-body").forEach((el) => {
-    el.style.background = theme.panel_inner;
-  });
+    document.querySelectorAll(".output-body").forEach((el) => {
+      el.style.background = previewTheme.panel_inner;
+      el.style.borderTop = `1px solid ${previewBase.panel_border}`;
+    });
 
   document.querySelectorAll(".meta-line, .usb-row span, .status-strip span:not(.status-online)").forEach((el) => {
-    el.style.color = theme.text_secondary;
+    el.style.color = previewBase.text_secondary;
   });
 
   document.querySelectorAll(".subtab").forEach((el) => {
-    el.style.color = theme.text_secondary;
+    el.style.color = previewBase.text_secondary;
     el.style.borderBottomColor = "transparent";
   });
 
-  document.querySelectorAll(".active-subtab").forEach((el) => {
-    el.style.color = theme.text_primary;
-    el.style.borderBottomColor = theme.tab_active;
+    document.querySelectorAll(".active-subtab").forEach((el) => {
+      el.style.color = previewBase.accent;
+      el.style.borderBottomColor = previewBase.accent;
+    });
+
+    document.querySelectorAll(".slot").forEach((el, index) => {
+      el.style.background = previewTheme.panel_inner;
+      el.style.border = `1px solid ${previewBase.panel_border}`;
+      el.style.color = previewBase.text_secondary;
+
+      if (index === 0) {
+        el.style.boxShadow = `inset 3px 0 0 ${previewBase.accent}`;
+      } else {
+        el.style.boxShadow = `inset 3px 0 0 ${previewBase.accent_secondary}`;
+      }
+    });
+
+  document.querySelectorAll(".success-badge").forEach((el) => {
+    el.style.background = `${previewBase.success}22`;
+    el.style.color = previewBase.success;
   });
 
-  document.querySelectorAll(".slot").forEach((el, index) => {
-    el.style.background = theme.panel_inner;
-    el.style.border = `1px solid ${theme.input_border}`;
-    el.style.color = theme.text_secondary;
-
-    if (index === 0) {
-      el.style.boxShadow = `inset 3px 0 0 ${theme.success}`;
-    } else if (index === 1) {
-      el.style.boxShadow = `inset 3px 0 0 ${theme.accent}`;
-    } else {
-      el.style.boxShadow = `inset 3px 0 0 ${theme.error}`;
-    }
+  document.querySelectorAll(".error-badge").forEach((el) => {
+    el.style.background = `${previewBase.error}22`;
+    el.style.color = previewBase.error;
   });
 
   downloadButton.style.background = "linear-gradient(135deg, #4cc2ff, #7c5cff)";
@@ -1137,8 +2675,9 @@ function wireFocusStates() {
 }
 
 function scrollToControl(zone) {
+  const resolvedZone = PREVIEW_ZONE_ALIASES[zone] || zone;
   const control = document.querySelector(
-    `.control-group[data-zone="${zone}"], .advanced-control[data-zone="${zone}"]`
+    `.control-group[data-zone="${resolvedZone}"], .advanced-control[data-zone="${resolvedZone}"]`
   );
   const target = control?.closest(".card") || control;
   if (!target) {
@@ -1226,11 +2765,16 @@ qssUpload.addEventListener("change", (event) => {
   reader.readAsText(file);
 });
 
-resetButton.onclick = () => {
-  loadDefaultTheme();
-  updateInputs();
-  applyTheme();
-};
+resetButton.onclick = resetThemeState;
+if (quickResetButton) {
+  quickResetButton.onclick = resetThemeState;
+}
+if (exitAdvancedButton) {
+  exitAdvancedButton.onclick = () => {
+    advancedModeToggle.checked = false;
+    setActiveStep(currentStep);
+  };
+}
 
 advancedModeToggle.addEventListener("change", () => {
   setActiveStep(currentStep);
@@ -1251,8 +2795,13 @@ window.addEventListener("mousemove", (event) => {
 });
 
 downloadButton.onclick = () => {
-  const finalQSS = generateFinalQSS(template, theme);
-  downloadQSS(finalQSS);
+  try {
+    const finalQSS = generateFinalQSS(template, theme);
+    downloadQSS(finalQSS);
+  } catch (_error) {
+    const finalQSS = generateFinalQSS(defaultTemplate, defaultTheme);
+    downloadQSS(finalQSS);
+  }
 };
 
 startCreatingButton?.addEventListener("click", () => {
