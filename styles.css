@@ -63,6 +63,15 @@ body::after {
   z-index: -3;
 }
 
+body {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at top, #0d0f14, #050507);
+  background-size: 140px 140px, 140px 140px, auto;
+  background-position: 0 0, 0 0, center;
+}
+
 .blobs {
   position: fixed;
   top: 0;
@@ -139,18 +148,49 @@ body::after {
 }
 
 .hero {
-  text-align: left;
-  max-width: none;
-  margin: 0;
-  padding: 54px 24px 16px;
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  padding: 44px 24px 10px;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  left: 200px;
+  width: 540px;
+  height: 240px;
+  background: radial-gradient(circle at center, rgba(96, 165, 250, 0.15), transparent 60%);
+  pointer-events: none;
+  filter: blur(18px);
 }
 
 .hero-subtitle {
-  max-width: 620px;
-  margin: 12px 0 0;
-  color: #8f97a3;
-  font-size: 16px;
+  max-width: 700px;
+  margin: 8px auto 0;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 17px;
   line-height: 1.65;
+  animation: fadeUp 0.8s ease 0.1s both;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  color: #22d3ee;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  animation: fadeUp 0.8s ease;
 }
 
 .tool-container {
@@ -767,12 +807,13 @@ button:active {
   margin: 0;
   font-family: "Basique", sans-serif;
   position: relative;
-  display: inline-block;
+  display: block;
   font-size: 56px;
-  font-weight: 700;
-  letter-spacing: -1px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
   line-height: 1;
   animation: fadeUp 0.8s ease;
+  text-shadow: 0 0 40px rgba(96, 165, 250, 0.25);
 }
 
 .main-title::after {
@@ -786,8 +827,8 @@ button:active {
 }
 
 .gradient-text {
-  background: linear-gradient(90deg, #4cc2ff, #7c5cff, #00ffa3, #4cc2ff);
-  background-size: 300%;
+  background: linear-gradient(90deg, #22d3ee, #60a5fa, #a855f7, #22d3ee);
+  background-size: 200% auto;
   animation: gradientMove 6s linear infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -800,7 +841,7 @@ button:active {
     background-position: 0%;
   }
   100% {
-    background-position: 300%;
+    background-position: 200% center;
   }
 }
 
