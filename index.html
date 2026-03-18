@@ -21,16 +21,18 @@
       <div class="top-nav-title">Helios Theme Generator</div>
       <a class="top-nav-button" href="https://discord.gg/inputsense" target="_blank" rel="noreferrer">Community</a>
     </nav>
-    <div class="hero">
+    <section class="hero">
       <div class="hero-badge">Theme Design Tool</div>
       <h1 class="main-title gradient-text">Helios Theme Generator</h1>
       <p class="subtitle hero-subtitle">Create, refine, and export polished Helios II themes with a guided visual workflow.</p>
       <div class="hero-credit">Designed by GQFY</div>
-    </div>
+      <button id="startCreating" type="button">Start Creating</button>
+    </section>
 
-    <div class="tool-container">
-      <div class="tool-card">
-        <div class="tool-layout">
+    <section id="generator">
+      <div class="tool-container">
+        <div class="tool-card">
+          <div class="tool-layout">
           <aside class="sidebar">
             <div class="sidebar-header">
               <button id="download" class="download-btn" type="button">Download Theme</button>
@@ -119,16 +121,22 @@
             <p class="section-description">Set the global canvas, panel surfaces, and overall depth of the interface.</p>
             <div class="section-controls">
               <div class="card">
+                <div class="control-group" data-zone="app-bg">
                 <label for="app_bg">App Background</label>
                 <input id="app_bg" type="color" data-key="app_bg" />
+                </div>
               </div>
               <div class="card">
+                <div class="control-group" data-zone="panel-bg">
                 <label for="panel_bg">Panel Background</label>
                 <input id="panel_bg" type="color" data-key="panel_bg" />
+                </div>
               </div>
               <div class="card full">
+                <div class="control-group" data-zone="panel-inner">
                 <label for="panel_inner">Inner Panel</label>
                 <input id="panel_inner" type="color" data-key="panel_inner" />
+                </div>
               </div>
             </div>
           </section>
@@ -138,12 +146,16 @@
             <p class="section-description">Control the menu strip and the text tone users read first.</p>
             <div class="section-controls">
               <div class="card">
+                <div class="control-group" data-zone="menu-bg">
                 <label for="menu_bg">Menu Background</label>
                 <input id="menu_bg" type="color" data-key="menu_bg" />
+                </div>
               </div>
               <div class="card">
+                <div class="control-group" data-zone="menu-text">
                 <label for="menu_text">Menu Text</label>
                 <input id="menu_text" type="color" data-key="menu_text" />
+                </div>
               </div>
             </div>
           </section>
@@ -153,12 +165,16 @@
             <p class="section-description">Tune the capture controls and utility column without changing the overall shell.</p>
             <div class="section-controls">
               <div class="card">
+                <div class="control-group" data-zone="left-bg">
                 <label for="left_bg">Background</label>
                 <input id="left_bg" type="color" data-key="left_bg" />
+                </div>
               </div>
               <div class="card">
+                <div class="control-group" data-zone="left-section-bg">
                 <label for="left_section_bg">Section Background</label>
                 <input id="left_section_bg" type="color" data-key="left_section_bg" />
+                </div>
               </div>
             </div>
           </section>
@@ -168,12 +184,16 @@
             <p class="section-description">Refine card surfaces for device status, memory slots, and contextual panels.</p>
             <div class="section-controls">
               <div class="card">
+                <div class="control-group" data-zone="right-bg">
                 <label for="right_bg">Background</label>
                 <input id="right_bg" type="color" data-key="right_bg" />
+                </div>
               </div>
               <div class="card">
+                <div class="control-group" data-zone="right-card-bg">
                 <label for="right_card_bg">Card Background</label>
                 <input id="right_card_bg" type="color" data-key="right_card_bg" />
+                </div>
               </div>
             </div>
           </section>
@@ -183,16 +203,22 @@
             <p class="section-description">Define how the main workspace navigation behaves in idle and active states.</p>
             <div class="section-controls">
               <div class="card">
+                <div class="control-group" data-zone="tab-bg">
                 <label for="tab_bg">Tab Background</label>
                 <input id="tab_bg" type="color" data-key="tab_bg" />
+                </div>
               </div>
               <div class="card">
+                <div class="control-group" data-zone="tab-active">
                 <label for="tab_active">Active Tab</label>
                 <input id="tab_active" type="color" data-key="tab_active" />
+                </div>
               </div>
               <div class="card full">
+                <div class="control-group" data-zone="tab-text">
                 <label for="tab_text">Tab Text</label>
                 <input id="tab_text" type="color" data-key="tab_text" />
+                </div>
               </div>
             </div>
           </section>
@@ -202,12 +228,16 @@
             <p class="section-description">Style editable fields and their borders for clear hierarchy and focus.</p>
             <div class="section-controls">
               <div class="card">
+                <div class="control-group" data-zone="input-bg">
                 <label for="input_bg">Background</label>
                 <input id="input_bg" type="color" data-key="input_bg" />
+                </div>
               </div>
               <div class="card">
+                <div class="control-group" data-zone="input-border">
                 <label for="input_border">Border</label>
                 <input id="input_border" type="color" data-key="input_border" />
+                </div>
               </div>
             </div>
           </section>
@@ -217,12 +247,16 @@
             <p class="section-description">Choose the primary action tone and the hover behavior users notice immediately.</p>
             <div class="section-controls">
               <div class="card">
+                <div class="control-group" data-zone="button-bg">
                 <label for="button_bg">Button</label>
                 <input id="button_bg" type="color" data-key="button_bg" />
+                </div>
               </div>
               <div class="card">
+                <div class="control-group" data-zone="button-hover">
                 <label for="button_hover">Hover</label>
                 <input id="button_hover" type="color" data-key="button_hover" />
+                </div>
               </div>
             </div>
           </section>
@@ -232,12 +266,16 @@
             <p class="section-description">Balance readable labels, helper text, and overall contrast across the app.</p>
             <div class="section-controls">
               <div class="card">
+                <div class="control-group" data-zone="text-primary">
                 <label for="text_primary">Primary</label>
                 <input id="text_primary" type="color" data-key="text_primary" />
+                </div>
               </div>
               <div class="card">
+                <div class="control-group" data-zone="text-secondary">
                 <label for="text_secondary">Secondary</label>
                 <input id="text_secondary" type="color" data-key="text_secondary" />
+                </div>
               </div>
             </div>
           </section>
@@ -247,12 +285,16 @@
             <p class="section-description">Set positive and warning tones for active slots, states, and system feedback.</p>
             <div class="section-controls">
               <div class="card">
+                <div class="control-group" data-zone="success">
                 <label for="success">Success</label>
                 <input id="success" type="color" data-key="success" />
+                </div>
               </div>
               <div class="card">
+                <div class="control-group" data-zone="error">
                 <label for="error">Error</label>
                 <input id="error" type="color" data-key="error" />
+                </div>
               </div>
             </div>
           </section>
@@ -262,8 +304,10 @@
             <p class="section-description">Drive the system glow and active emphasis with one shared accent color.</p>
             <div class="section-controls">
               <div class="card full">
+                <div class="control-group" data-zone="accent">
                 <label for="accent">Accent</label>
                 <input id="accent" type="color" data-key="accent" />
+                </div>
               </div>
             </div>
           </section>
@@ -280,8 +324,8 @@
 
                 <section class="preview-card">
                   <div class="helios-app">
-                    <div class="menu-bar">
-                      <div class="menu-items">
+                    <div class="menu-bar" data-zone="menu-bg">
+                      <div class="menu-items" data-zone="menu-text">
                         <span>File</span>
                         <span>View</span>
                         <span>Plugins</span>
@@ -297,34 +341,34 @@
                     </div>
 
                     <div class="helios-body">
-                      <div class="left-panel">
+                      <div class="left-panel" data-zone="left-bg">
                         <div class="panel-title">OpenCV Capture</div>
 
-                        <div class="section-block">
+                        <div class="section-block" data-zone="left-section-bg">
                           <label>Capture Source</label>
                           <div class="input">Video Test</div>
                         </div>
 
-                        <div class="section-block">
+                        <div class="section-block" data-zone="left-section-bg">
                           <label>Settings</label>
                           <div class="input">60 FPS</div>
                           <div class="input">1080p (1920x1080)</div>
                         </div>
 
-                        <div class="section-block compact-block">
+                        <div class="section-block compact-block" data-zone="button-bg">
                           <label>Control</label>
                           <button class="btn" type="button">Start Capture</button>
                           <div class="meta-line">Write FPS: --</div>
                         </div>
 
-                        <div class="section-block compact-block">
+                        <div class="section-block compact-block" data-zone="left-section-bg">
                           <label>CV Python</label>
                           <div class="status-badge success-badge">Python: 3.11</div>
                           <div class="status-badge error-badge">Video Input: Not detected</div>
                           <div class="input">2k_Vision.py</div>
                         </div>
 
-                        <div class="section-block compact-block">
+                        <div class="section-block compact-block" data-zone="left-section-bg">
                           <label>File Explorer</label>
                           <div class="input">C:/Users/userg/Desktop/HeliosII/scripts</div>
                           <div class="file-list">
@@ -335,13 +379,13 @@
                       </div>
 
                       <div class="center-panel">
-                        <div class="tabs">
-                          <div class="tab active">Video Display</div>
-                          <div class="tab">Device Monitor</div>
-                          <div class="tab">Online Resources</div>
+                        <div class="tabs" data-zone="tab-bg">
+                          <div class="tab active" data-zone="tab-active">Video Display</div>
+                          <div class="tab" data-zone="tab-bg">Device Monitor</div>
+                          <div class="tab" data-zone="tab-bg">Online Resources</div>
                         </div>
 
-                        <div class="workspace-mode">Video Display</div>
+                        <div class="workspace-mode" data-zone="panel-bg">Video Display</div>
 
                         <div class="center-stack">
                           <div class="display-area">
@@ -349,33 +393,33 @@
                               <span>Processing: 0 FPS</span>
                               <span>Display: 0 FPS</span>
                             </div>
-                            <div class="display-canvas"></div>
+                            <div class="display-canvas video-display"></div>
                           </div>
 
-                          <div class="output-panel">
-                            <div class="output-header">Output Panel</div>
-                            <div class="output-body"></div>
+                          <div class="output-panel" data-zone="panel-inner">
+                            <div class="output-header" data-zone="panel-bg">Output Panel</div>
+                            <div class="output-body" data-zone="panel-inner"></div>
                           </div>
                         </div>
                       </div>
 
-                      <div class="right-panel">
+                      <div class="right-panel" data-zone="right-bg">
                         <div class="panel-title">Titan Bridge</div>
 
-                        <div class="card preview-card-block bridge-card">
+                        <div class="card preview-card-block bridge-card" data-zone="right-card-bg">
                           <label>Titan Two Device</label>
                           <div class="input">No devices found</div>
                           <div class="meta-line">No device selected</div>
                         </div>
 
-                        <div class="card preview-card-block memory-card">
+                        <div class="card preview-card-block memory-card" data-zone="right-card-bg">
                           <label>Memory Slots</label>
                           <div class="slot"><strong>1</strong><span>Empty</span></div>
                           <div class="slot"><strong>2</strong><span>Empty</span></div>
                           <div class="slot"><strong>3</strong><span>Empty</span></div>
                         </div>
 
-                        <div class="card preview-card-block config-card">
+                        <div class="card preview-card-block config-card" data-zone="right-card-bg">
                           <div class="subtabs">
                             <span class="subtab active-subtab">Device Config</span>
                             <span class="subtab">KMG Capture</span>
@@ -397,7 +441,8 @@
           </main>
         </div>
       </div>
-    </div>
+      </div>
+    </section>
     <div id="toast">Theme Exported ✅</div>
 
     <script src="./app.js"></script>

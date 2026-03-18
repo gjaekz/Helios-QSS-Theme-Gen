@@ -129,6 +129,8 @@ const themeNameInput = document.getElementById("themeName");
 const resetButton = document.getElementById("resetTheme");
 const advancedModeToggle = document.getElementById("advancedMode");
 const toast = document.getElementById("toast");
+const startCreatingButton = document.getElementById("startCreating");
+const generatorSection = document.getElementById("generator");
 const palettePreviewCard = document.getElementById("palettePreviewCard");
 const palettePreview = document.getElementById("palettePreview");
 const glow = document.createElement("div");
@@ -140,6 +142,7 @@ const cards = [...document.querySelectorAll(".card")];
 const stepSections = [...document.querySelectorAll("[data-step-group]")];
 const stepTabs = [...document.querySelectorAll(".step-tab")];
 const colorInputs = [...document.querySelectorAll("input[type='color']")];
+const previewZones = [...previewPane.querySelectorAll("[data-zone]")];
 
 let template = defaultTemplate;
 let particles = [];
@@ -1081,6 +1084,55 @@ function wireFocusStates() {
   });
 }
 
+function scrollToControl(zone) {
+  const control = document.querySelector(
+    `.control-group[data-zone="${zone}"], .advanced-control[data-zone="${zone}"]`
+  );
+  const target = control?.closest(".card") || control;
+  if (!target) {
+    return;
+  }
+
+  target.scrollIntoView({
+    behavior: "smooth",
+    block: "center",
+  });
+
+  highlightControl(target);
+}
+
+function clearHighlights() {
+  document.querySelectorAll(".active-highlight").forEach((element) => {
+    element.classList.remove("active-highlight");
+  });
+}
+
+function highlightControl(target) {
+  target.classList.add("active-highlight");
+  window.setTimeout(() => {
+    target.classList.remove("active-highlight");
+  }, 1500);
+}
+
+function wirePreviewZoneEditing() {
+  previewZones.forEach((element) => {
+    element.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const zone = element.getAttribute("data-zone");
+      if (!zone) {
+        return;
+      }
+
+      clearHighlights();
+      scrollToControl(zone);
+      element.classList.add("zone-active");
+      window.setTimeout(() => {
+        element.classList.remove("zone-active");
+      }, 900);
+    });
+  });
+}
+
 document.querySelectorAll(".preset").forEach((button) => {
   button.onclick = () => {
     applyPreset(button.dataset.preset);
@@ -1145,6 +1197,16 @@ downloadButton.onclick = () => {
   downloadQSS(finalQSS);
 };
 
+startCreatingButton?.addEventListener("click", () => {
+  if (!generatorSection) {
+    return;
+  }
+
+  const yOffset = -72;
+  const y = generatorSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+  window.scrollTo({ top: y, behavior: "smooth" });
+});
+
 themeNameInput.value = "custom-theme";
 loadDefaultTheme();
 resizeCanvas();
@@ -1153,6 +1215,7 @@ drawParticles();
 buildColorControls();
 wireCardSpotlights();
 wireFocusStates();
+wirePreviewZoneEditing();
 setActiveStep("base");
 updateInputs();
 applyTheme();
