@@ -555,11 +555,12 @@ async function uploadTheme(file, name) {
   const docRef = await firebaseFns.addDoc(firebaseFns.collection(db, "themes"), {
     name,
     colors,
+    url: fileUrl,
     fileUrl,
     category: inferThemeCategory(colors),
     likes: 0,
     userId: currentUserId,
-    createdAt: firebaseFns.serverTimestamp(),
+    createdAt: Date.now(),
   });
 
   return {
@@ -590,18 +591,19 @@ async function loadThemes() {
       .map((docSnapshot) => {
         const data = docSnapshot.data();
         const colors = Array.isArray(data.colors) ? data.colors.map(normalizeColor).filter(Boolean).slice(0, 4) : [];
-        if (typeof data.name !== "string" || colors.length !== 4 || typeof data.fileUrl !== "string") {
+        const remoteUrl = typeof data.url === "string" ? data.url : data.fileUrl;
+        if (typeof data.name !== "string" || colors.length !== 4 || typeof remoteUrl !== "string") {
           return null;
           }
 
-        return {
-          id: docSnapshot.id,
-          name: data.name,
-          colors,
-          url: data.fileUrl,
-          category: data.category || inferThemeCategory(colors),
-          likes: Number(data.likes || 0),
-          userId: String(data.userId || ""),
+          return {
+            id: docSnapshot.id,
+            name: data.name,
+            colors,
+            url: remoteUrl,
+            category: data.category || inferThemeCategory(colors),
+            likes: Number(data.likes || 0),
+            userId: String(data.userId || ""),
           createdAt: data.createdAt || null,
         };
       })
@@ -722,19 +724,12 @@ async function processUploadFile(file) {
   const name = file.name.replace(/\.qss$/i, "");
   let theme;
 
-  if (firebaseReady && db && storage && firebaseFns) {
-    theme = await uploadTheme(file, name);
-  } else {
-    theme = {
-      id: `local-${slugify(name)}-${Date.now()}`,
-      name,
-      colors,
-      fileUrl: URL.createObjectURL(file),
-      category,
-      userId: currentUserId || "local-user",
-      createdAt: Date.now(),
-    };
+  if (!firebaseReady || !db || !storage || !firebaseFns) {
+    showToast("Upload backend unavailable");
+    return;
   }
+
+  theme = await uploadTheme(file, name);
   lastUpload = Date.now();
 
   marketplaceThemes.unshift({
@@ -747,7 +742,7 @@ async function processUploadFile(file) {
     createdAt: Date.now(),
   });
   renderThemes();
-  showToast(firebaseReady ? "Upload successful" : "Uploaded locally");
+  showToast("Upload successful");
 }
 
 function applyPreviewTheme(colors) {
