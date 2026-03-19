@@ -1,0 +1,42 @@
+[
+  {
+    "id": "g-cotton-sky",
+    "name": "Cotton Sky",
+    "colors": ["#1a1a2e", "#22203a", "#aa96da", "#a8d8ea"],
+    "file": "themes/G_Cotton Sky.qss",
+    "category": "Dark",
+    "createdAt": "2026-03-19T10:15:00.000Z"
+  },
+  {
+    "id": "g-electropop",
+    "name": "Electropop",
+    "colors": ["#0d0d0d", "#151515", "#5200ff", "#ccff00"],
+    "file": "themes/G_Electropop.qss",
+    "category": "Neon",
+    "createdAt": "2026-03-19T10:15:01.000Z"
+  },
+  {
+    "id": "g-frosted-fantasy",
+    "name": "Frosted Fantasy",
+    "colors": ["#0a0818", "#110d2a", "#4361ee", "#f72585"],
+    "file": "themes/G_Frosted Fantasy.qss",
+    "category": "Dark",
+    "createdAt": "2026-03-19T10:15:02.000Z"
+  },
+  {
+    "id": "g-glowing-horizon",
+    "name": "Glowing Horizon",
+    "colors": ["#0d0f1a", "#141727", "#4272ff", "#ffb343"],
+    "file": "themes/G_Glowing Horizon.qss",
+    "category": "Dark",
+    "createdAt": "2026-03-19T10:15:03.000Z"
+  },
+  {
+    "id": "g-rainbow",
+    "name": "Rainbow",
+    "colors": ["#ff3d00", "#ff6b00", "#ffd000", "#00cc00"],
+    "file": "themes/G_Rainbow.qss",
+    "category": "Neon",
+    "createdAt": "2026-03-19T10:15:04.000Z"
+  }
+]

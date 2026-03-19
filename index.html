@@ -19,7 +19,10 @@
     <canvas id="bg"></canvas>
     <nav class="top-nav">
       <div class="top-nav-title">Helios Theme Generator</div>
-      <a class="top-nav-button" href="https://discord.gg/inputsense" target="_blank" rel="noreferrer">Community</a>
+      <div class="top-nav-actions">
+        <a id="marketplaceNav" class="top-nav-button marketplace-button" href="marketplace.html">Marketplace</a>
+        <a class="top-nav-button" href="https://discord.gg/inputsense" target="_blank" rel="noreferrer">Community</a>
+      </div>
     </nav>
     <section class="hero">
       <div class="hero-badge">Theme Design Tool</div>
@@ -520,6 +523,71 @@
       </div>
       </div>
     </section>
+
+    <section id="marketplace" class="marketplace-section">
+      <div class="marketplace-shell">
+        <div class="marketplace-header">
+          <div class="marketplace-heading">
+            <span class="marketplace-badge">Theme Exchange</span>
+            <h2>Marketplace</h2>
+            <p>Browse curated QSS themes, preview their real palettes, and share your own uploads.</p>
+          </div>
+          <button id="openMarketplaceUpload" class="download-btn marketplace-upload-btn btn-primary" type="button">Upload Theme</button>
+        </div>
+
+        <div class="marketplace-toolbar">
+          <label class="marketplace-search">
+            <span>Search Themes</span>
+            <input id="marketplaceSearch" type="text" placeholder="Search by theme name" />
+          </label>
+          <label class="marketplace-filter">
+            <span>Filter</span>
+            <select id="marketplaceFilter">
+              <option value="all">All</option>
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="marketplaceGrid" class="marketplace-grid"></div>
+      </div>
+    </section>
+
+    <div id="marketplaceModal" class="marketplace-modal is-hidden" aria-hidden="true">
+      <div class="marketplace-modal-backdrop" data-close-marketplace="true"></div>
+      <div class="marketplace-modal-card">
+        <div class="marketplace-modal-header">
+          <div>
+            <h3>Upload Theme</h3>
+            <p>Add a QSS theme and extract its exact 4-color palette automatically.</p>
+          </div>
+          <button id="closeMarketplaceUpload" class="marketplace-close btn-secondary" type="button" aria-label="Close upload dialog">×</button>
+        </div>
+
+        <div class="marketplace-modal-body">
+          <label class="marketplace-field">
+            <span>Theme Name</span>
+            <input id="marketplaceThemeName" type="text" placeholder="Glowing Horizon" />
+          </label>
+
+          <label class="marketplace-field">
+            <span>Theme File</span>
+            <input id="marketplaceThemeFile" type="file" accept=".qss" />
+          </label>
+
+          <div class="marketplace-field">
+            <span>Extracted Palette</span>
+            <div id="marketplaceUploadPalette" class="marketplace-upload-palette"></div>
+          </div>
+        </div>
+
+        <div class="marketplace-modal-footer">
+          <button id="cancelMarketplaceUpload" class="btn-secondary" type="button">Cancel</button>
+          <button id="submitMarketplaceUpload" class="download-btn btn-primary" type="button">Submit Theme</button>
+        </div>
+      </div>
+    </div>
     <div id="toast">Theme Exported ✅</div>
 
     <script src="./app.js"></script>

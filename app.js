@@ -702,6 +702,19 @@ const exitAdvancedButton = document.getElementById("exitAdvanced");
 const toast = document.getElementById("toast");
 const startCreatingButton = document.getElementById("startCreating");
 const generatorSection = document.getElementById("generator");
+const marketplaceSection = document.getElementById("marketplace");
+const marketplaceNavButton = document.getElementById("marketplaceNav");
+const marketplaceGrid = document.getElementById("marketplaceGrid");
+const marketplaceSearchInput = document.getElementById("marketplaceSearch");
+const marketplaceFilterInput = document.getElementById("marketplaceFilter");
+const openMarketplaceUploadButton = document.getElementById("openMarketplaceUpload");
+const marketplaceModal = document.getElementById("marketplaceModal");
+const closeMarketplaceUploadButton = document.getElementById("closeMarketplaceUpload");
+const cancelMarketplaceUploadButton = document.getElementById("cancelMarketplaceUpload");
+const submitMarketplaceUploadButton = document.getElementById("submitMarketplaceUpload");
+const marketplaceThemeNameInput = document.getElementById("marketplaceThemeName");
+const marketplaceThemeFileInput = document.getElementById("marketplaceThemeFile");
+const marketplaceUploadPalette = document.getElementById("marketplaceUploadPalette");
 const palettePreviewCard = document.getElementById("palettePreviewCard");
 const palettePreview = document.getElementById("palettePreview");
 const glow = document.createElement("div");
@@ -719,6 +732,9 @@ let template = defaultTemplate;
 let particles = [];
 let mouse = { x: 0, y: 0 };
 let currentStep = "base";
+let marketplaceThemes = [];
+let pendingMarketplaceUpload = null;
+const MARKETPLACE_STORAGE_KEY = "helios-marketplace-themes-v1";
 
 const COLOR_VALUE_RE =
   /#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})\b|rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+(?:\s*,\s*(?:0|1|0?\.\d+))?\s*\)/g;
@@ -1234,7 +1250,7 @@ function deriveSurfaceSystem(tokens) {
 function normalizeThemeTokens(nextTheme) {
   const appBg = resolveTokenColor(nextTheme.app_bg, baseTheme.app_bg);
   const panelBg = resolveTokenColor(nextTheme.panel_bg, baseTheme.panel_bg);
-  const sectionBg = resolveTokenColor(nextTheme.panel_title_bg || nextTheme.input_bg, panelBg);
+  const sectionBg = resolveTokenColor(nextTheme.panel_title_bg || panelBg, panelBg);
   const structure = resolveTokenColor(
     nextTheme.accent_secondary || nextTheme.panel_border || nextTheme.input_border,
     baseTheme.accent_secondary
@@ -1243,22 +1259,22 @@ function normalizeThemeTokens(nextTheme) {
   const textPrimary = ensureContrast(nextTheme.text_primary || getReadableText(appBg), appBg, 7);
   const textSecondary = ensureContrast(nextTheme.text_secondary || getReadableText(panelBg), panelBg, 4);
 
-  return {
-    ...nextTheme,
-    app_bg: appBg,
-    panel_bg: panelBg,
-    panel_title_bg: sectionBg,
-    menu_bg: resolveTokenColor(nextTheme.menu_bg, panelBg),
-    menu_hover: structure,
-    button_bg: resolveTokenColor(nextTheme.button_bg, accent),
-    button_hover: resolveTokenColor(nextTheme.button_hover, accent),
-    button_active: resolveTokenColor(nextTheme.button_active, accent),
-    input_bg: resolveTokenColor(nextTheme.input_bg, sectionBg),
-    panel_border: structure,
-    input_border: structure,
-    tab_bg: resolveTokenColor(nextTheme.tab_bg, panelBg),
-    tab_hover: structure,
-    tab_active: resolveTokenColor(nextTheme.tab_active, accent),
+    return {
+      ...nextTheme,
+      app_bg: appBg,
+      panel_bg: panelBg,
+      panel_title_bg: sectionBg,
+      menu_bg: resolveTokenColor(nextTheme.menu_bg, appBg),
+      menu_hover: structure,
+      button_bg: resolveTokenColor(nextTheme.button_bg, accent),
+      button_hover: resolveTokenColor(nextTheme.button_hover, accent),
+      button_active: resolveTokenColor(nextTheme.button_active, accent),
+      input_bg: resolveTokenColor(nextTheme.input_bg, structure),
+      panel_border: structure,
+      input_border: structure,
+      tab_bg: resolveTokenColor(nextTheme.tab_bg, structure),
+      tab_hover: resolveTokenColor(nextTheme.tab_hover, accent),
+      tab_active: resolveTokenColor(nextTheme.tab_active, accent),
     statusbar_bg: resolveTokenColor(nextTheme.statusbar_bg, panelBg),
     statusbar_border: structure,
     accent,
@@ -1903,6 +1919,7 @@ function applyThemeToBaseQSS(baseQSS, nextTheme) {
     });
   });
 
+  patchAndTrack("QDockWidget", "background-color", normalizedTheme.app_bg);
   patchAndTrack("QFrame", "background-color", surfaces.section_bg);
   patchAndTrack("QMainWindow::separator", "background-color", normalizedTheme.accent_secondary);
   patchAndTrack("QMainWindow::separator:hover", "background-color", normalizedTheme.accent);
@@ -1913,9 +1930,9 @@ function applyThemeToBaseQSS(baseQSS, nextTheme) {
     patchAndTrack("QGroupBox::title", "background-color", normalizedTheme.panel_title_bg);
     patchAndTrack("QTabWidget::pane", "background-color", surfaces.panel_bg);
     patchAndTrack("QTabWidget::pane", "border-color", normalizedTheme.accent_secondary);
-  patchAndTrack("QScrollArea", "background-color", surfaces.panel_bg);
-  patchAndTrack("QStackedWidget", "background-color", surfaces.panel_bg);
-  patchAndTrack("QDialog", "background-color", surfaces.panel_bg);
+    patchAndTrack("QScrollArea", "background-color", normalizedTheme.app_bg);
+    patchAndTrack("QStackedWidget", "background-color", normalizedTheme.app_bg);
+    patchAndTrack("QDialog", "background-color", normalizedTheme.app_bg);
   patchAndTrack("QMenu", "background-color", surfaces.panel_bg);
   patchAndTrack("QMenu", "border-color", normalizedTheme.accent_secondary);
   patchAndTrack("QMenuBar", "border-color", normalizedTheme.accent_secondary);
@@ -2194,10 +2211,10 @@ function isUsablePalette(colors) {
 }
 
   function mapPaletteToTokens(colors) {
-    const valid = colors.filter((color) => isValidColor(color)).slice(0, 4);
-    if (!valid.length) {
-      return { ...baseTheme };
-    }
+      const valid = colors.filter((color) => isValidColor(color)).slice(0, 4);
+      if (!valid.length) {
+        return { ...baseTheme };
+      }
     const [base, surface, secondary, accentColor] = [
       valid[0] || baseTheme.app_bg,
       valid[1] || valid[0] || baseTheme.panel_bg,
@@ -2209,9 +2226,9 @@ function isUsablePalette(colors) {
     const sectionBg = resolveTokenColor(surface, panelBg);
     const secondaryTone = resolveTokenColor(secondary, baseTheme.accent_secondary);
     const accent = resolveTokenColor(accentColor, baseTheme.accent);
-    const inputBg = resolveTokenColor(surface, panelBg);
-    const menuBg = resolveTokenColor(surface, panelBg);
-    const statusbarBg = resolveTokenColor(surface, panelBg);
+      const inputBg = resolveTokenColor(secondary, secondaryTone);
+      const menuBg = resolveTokenColor(base, appBg);
+      const statusbarBg = resolveTokenColor(surface, panelBg);
     const textPrimary = ensureContrast(getReadableText(appBg), appBg, 7);
     const textSecondary = ensureContrast(getReadableText(panelBg), panelBg, 4);
 
@@ -2219,27 +2236,27 @@ function isUsablePalette(colors) {
       app_bg: appBg,
       panel_bg: panelBg,
       panel_title_bg: sectionBg,
-      panel_border: secondaryTone,
-      menu_bg: menuBg,
-      menu_hover: secondaryTone,
-      button_bg: accent,
-      button_hover: secondaryTone,
-      button_active: accent,
-      input_bg: inputBg,
-      input_border: secondaryTone,
-      input_focus: accent,
-      tab_bg: inputBg,
-      tab_hover: secondaryTone,
-      tab_active: accent,
-      accent,
-      accent_secondary: secondaryTone,
-      text_primary: textPrimary,
-      text_secondary: textSecondary,
-      success: accent,
-      error: secondaryTone,
-      statusbar_bg: statusbarBg,
-      statusbar_border: secondaryTone,
-    };
+        panel_border: secondaryTone,
+        menu_bg: menuBg,
+        menu_hover: secondaryTone,
+        button_bg: accent,
+        button_hover: accent,
+        button_active: accent,
+        input_bg: inputBg,
+        input_border: secondaryTone,
+        input_focus: accent,
+        tab_bg: secondaryTone,
+        tab_hover: accent,
+        tab_active: accent,
+        accent,
+        accent_secondary: secondaryTone,
+        text_primary: textPrimary,
+        text_secondary: textSecondary,
+        success: accent,
+        error: base,
+        statusbar_bg: statusbarBg,
+        statusbar_border: secondaryTone,
+      };
 
   return SAFE_TOKENS.reduce((accumulator, key) => {
     accumulator[key] = isValidColor(tokenMap[key]) ? tokenMap[key] : baseTheme[key];
@@ -2299,6 +2316,234 @@ function downloadQSS(qss) {
   link.click();
   URL.revokeObjectURL(link.href);
   showExportSuccess();
+}
+
+function downloadMarketplaceQSS(name, qss) {
+  const safeName = (name || "marketplace-theme").trim().replace(/[^\w\- ]+/g, "").replace(/\s+/g, "-") || "marketplace-theme";
+  const blob = new Blob([qss], { type: "text/plain" });
+  const link = document.createElement("a");
+
+  link.href = URL.createObjectURL(blob);
+  link.download = `${safeName}.qss`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+  showToast(`${name} downloaded`);
+}
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.style.opacity = "1";
+  toast.style.transform = "translateY(0) scale(1)";
+  toast.style.boxShadow = "0 0 0 1px rgba(76, 194, 255, 0.18), 0 16px 40px rgba(0, 0, 0, 0.42)";
+
+  window.setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateY(8px) scale(0.98)";
+  }, 2000);
+}
+
+function inferMarketplaceTone(palette) {
+  if (!palette.length) {
+    return "dark";
+  }
+
+  const average = palette.reduce((sum, color) => sum + luminance(color), 0) / palette.length;
+  return average > 0.45 ? "light" : "dark";
+}
+
+function renderMarketplacePalette(target, palette) {
+  target.innerHTML = "";
+  palette.slice(0, 4).forEach((color) => {
+    const swatch = document.createElement("span");
+    swatch.style.background = color;
+    swatch.title = color.toUpperCase();
+    target.appendChild(swatch);
+  });
+}
+
+function getMarketplaceSeedThemes() {
+  return [
+    { id: "preset-dark", name: "Dark", description: "Default Helios dark workspace.", qss: generateFinalQSS(defaultTemplate, presets.dark) },
+    { id: "preset-neon", name: "Neon", description: "High contrast glow for bold setups.", qss: generateFinalQSS(defaultTemplate, presets.neon) },
+    { id: "preset-light", name: "Light", description: "Bright workspace with clean contrast.", qss: generateFinalQSS(defaultTemplate, presets.light) },
+  ].map((themeDefinition) => {
+    const palette = extractPaletteFromQSS(themeDefinition.qss).slice(0, 4);
+    return {
+      ...themeDefinition,
+      palette,
+      tone: inferMarketplaceTone(palette),
+      source: "built-in",
+    };
+  });
+}
+
+function saveMarketplaceThemes() {
+  const uploads = marketplaceThemes.filter((themeEntry) => themeEntry.source === "user");
+  window.localStorage.setItem(MARKETPLACE_STORAGE_KEY, JSON.stringify(uploads));
+}
+
+function loadMarketplaceThemes() {
+  let uploads = [];
+
+  try {
+    uploads = JSON.parse(window.localStorage.getItem(MARKETPLACE_STORAGE_KEY) || "[]");
+  } catch (_error) {
+    uploads = [];
+  }
+
+  const normalizedUploads = uploads
+    .filter((themeEntry) => typeof themeEntry?.name === "string" && typeof themeEntry?.qss === "string")
+    .map((themeEntry) => ({
+      id: themeEntry.id || `user-${Date.now()}`,
+      name: themeEntry.name,
+      qss: themeEntry.qss,
+      palette: (themeEntry.palette || extractPaletteFromQSS(themeEntry.qss)).slice(0, 4),
+      tone: themeEntry.tone || inferMarketplaceTone((themeEntry.palette || []).slice(0, 4)),
+      description: themeEntry.description || "Uploaded theme",
+      source: "user",
+    }));
+
+  marketplaceThemes = [...getMarketplaceSeedThemes(), ...normalizedUploads];
+}
+
+function renderMarketplaceThemes() {
+  if (!marketplaceGrid) {
+    return;
+  }
+
+  const query = (marketplaceSearchInput?.value || "").trim().toLowerCase();
+  const toneFilter = marketplaceFilterInput?.value || "all";
+  const filteredThemes = marketplaceThemes.filter((themeEntry) => {
+    const matchesSearch = !query || themeEntry.name.toLowerCase().includes(query);
+    const matchesTone = toneFilter === "all" || themeEntry.tone === toneFilter;
+    return matchesSearch && matchesTone;
+  });
+
+  marketplaceGrid.innerHTML = "";
+
+  if (!filteredThemes.length) {
+    const emptyState = document.createElement("div");
+    emptyState.className = "marketplace-empty";
+    emptyState.textContent = "No themes match the current search or filter.";
+    marketplaceGrid.appendChild(emptyState);
+    return;
+  }
+
+  filteredThemes.forEach((themeEntry) => {
+    const card = document.createElement("article");
+    card.className = "theme-card";
+
+    const header = document.createElement("div");
+    header.className = "theme-card-header";
+
+    const title = document.createElement("h3");
+    title.className = "theme-name";
+    title.textContent = themeEntry.name;
+
+    const tone = document.createElement("span");
+    tone.className = "theme-tone";
+    tone.textContent = themeEntry.tone;
+
+    header.append(title, tone);
+
+    const palette = document.createElement("div");
+    palette.className = "palette";
+    renderMarketplacePalette(palette, themeEntry.palette);
+
+    const copy = document.createElement("p");
+    copy.className = "theme-card-copy";
+    copy.textContent = themeEntry.description || "QSS theme ready to download.";
+
+    const action = document.createElement("button");
+    action.type = "button";
+    action.className = "download-btn btn-primary";
+    action.textContent = "Download";
+    action.addEventListener("click", () => {
+      downloadMarketplaceQSS(themeEntry.name, themeEntry.qss);
+    });
+
+    card.append(header, palette, copy, action);
+    marketplaceGrid.appendChild(card);
+  });
+}
+
+function resetMarketplaceUploadForm() {
+  pendingMarketplaceUpload = null;
+  if (marketplaceThemeNameInput) {
+    marketplaceThemeNameInput.value = "";
+  }
+  if (marketplaceThemeFileInput) {
+    marketplaceThemeFileInput.value = "";
+  }
+  if (marketplaceUploadPalette) {
+    marketplaceUploadPalette.innerHTML = '<span class="marketplace-upload-empty">Upload a .qss file to preview its palette.</span>';
+  }
+}
+
+function openMarketplaceModal() {
+  if (!marketplaceModal) {
+    return;
+  }
+  marketplaceModal.classList.remove("is-hidden");
+  marketplaceModal.setAttribute("aria-hidden", "false");
+}
+
+function closeMarketplaceModal() {
+  if (!marketplaceModal) {
+    return;
+  }
+  marketplaceModal.classList.add("is-hidden");
+  marketplaceModal.setAttribute("aria-hidden", "true");
+  resetMarketplaceUploadForm();
+}
+
+function previewMarketplaceUploadPalette(colors) {
+  if (!marketplaceUploadPalette) {
+    return;
+  }
+
+  marketplaceUploadPalette.innerHTML = "";
+  if (!colors.length) {
+    marketplaceUploadPalette.innerHTML = '<span class="marketplace-upload-empty">No usable colors were found in this QSS file.</span>';
+    return;
+  }
+
+  colors.slice(0, 4).forEach((color) => {
+    const swatch = document.createElement("span");
+    swatch.className = "palette-chip";
+    swatch.style.background = color;
+    swatch.title = color.toUpperCase();
+    marketplaceUploadPalette.appendChild(swatch);
+  });
+}
+
+function submitMarketplaceUpload() {
+  if (!pendingMarketplaceUpload) {
+    showToast("Choose a QSS file first");
+    return;
+  }
+
+  if (pendingMarketplaceUpload.palette.length < 4) {
+    showToast("Need 4 palette colors from the QSS");
+    return;
+  }
+
+  const name = (marketplaceThemeNameInput?.value || "").trim() || pendingMarketplaceUpload.name;
+  const entry = {
+    id: `user-${Date.now()}`,
+    name,
+    qss: pendingMarketplaceUpload.qss,
+    palette: pendingMarketplaceUpload.palette.slice(0, 4),
+    tone: inferMarketplaceTone(pendingMarketplaceUpload.palette.slice(0, 4)),
+    description: "Uploaded theme",
+    source: "user",
+  };
+
+  marketplaceThemes = [entry, ...marketplaceThemes];
+  saveMarketplaceThemes();
+  renderMarketplaceThemes();
+  closeMarketplaceModal();
+  showToast(`${name} uploaded`);
 }
 
 function updateInputs() {
@@ -2393,9 +2638,9 @@ function applyPreset(presetName) {
     };
     const glowColor = `${previewBase.accent}26`;
 
-  document.body.style.background = surfaces.app_bg;
-  document.body.style.color = previewBase.text_primary;
-  document.documentElement.style.setProperty("--accent", previewBase.accent);
+    document.body.style.background = previewBase.app_bg;
+    document.body.style.color = previewBase.text_primary;
+    document.documentElement.style.setProperty("--accent", previewBase.accent);
 
   preview.style.background = "transparent";
 
@@ -2404,11 +2649,11 @@ function applyPreset(presetName) {
     el.style.color = previewBase.text_primary;
   });
 
-    document.querySelectorAll(".preview-card").forEach((el) => {
-      el.style.background = surfaces.app_bg;
-      el.style.border = `1px solid ${previewBase.panel_border}`;
-      el.style.boxShadow = `0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px ${previewBase.panel_border}22`;
-    });
+      document.querySelectorAll(".preview-card").forEach((el) => {
+        el.style.background = previewBase.app_bg;
+        el.style.border = `1px solid ${previewBase.panel_border}`;
+        el.style.boxShadow = `0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px ${previewBase.panel_border}22`;
+      });
 
   document.querySelectorAll(".menu-bar").forEach((el) => {
     el.style.background = previewBase.menu_bg;
@@ -2421,16 +2666,16 @@ function applyPreset(presetName) {
   });
 
   document.querySelectorAll(".left-panel").forEach((el) => {
-    el.style.background = previewTheme.left_bg;
-    el.style.borderRight = `1px solid ${previewBase.accent_secondary}`;
-    el.style.color = previewBase.text_primary;
-  });
+      el.style.background = previewBase.app_bg;
+      el.style.borderRight = `1px solid ${previewBase.accent_secondary}`;
+      el.style.color = previewBase.text_primary;
+    });
 
   document.querySelectorAll(".right-panel").forEach((el) => {
-    el.style.background = previewTheme.right_bg;
-    el.style.borderLeft = `1px solid ${previewBase.accent_secondary}`;
-    el.style.color = previewBase.text_primary;
-  });
+      el.style.background = previewBase.app_bg;
+      el.style.borderLeft = `1px solid ${previewBase.accent_secondary}`;
+      el.style.color = previewBase.text_primary;
+    });
 
   document.querySelectorAll(".center-panel, .center-stack, .output-panel, .preferences-dialog").forEach((el) => {
     el.style.background = surfaces.app_bg;
@@ -2736,6 +2981,69 @@ document.querySelectorAll(".inspo-palette").forEach((button) => {
   };
 });
 
+marketplaceSearchInput?.addEventListener("input", () => {
+  renderMarketplaceThemes();
+});
+
+marketplaceFilterInput?.addEventListener("change", () => {
+  renderMarketplaceThemes();
+});
+
+openMarketplaceUploadButton?.addEventListener("click", () => {
+  openMarketplaceModal();
+});
+
+closeMarketplaceUploadButton?.addEventListener("click", () => {
+  closeMarketplaceModal();
+});
+
+cancelMarketplaceUploadButton?.addEventListener("click", () => {
+  closeMarketplaceModal();
+});
+
+marketplaceModal?.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) {
+    return;
+  }
+
+  if (target.dataset.closeMarketplace === "true") {
+    closeMarketplaceModal();
+  }
+});
+
+marketplaceThemeFileInput?.addEventListener("change", (event) => {
+  const file = event.target.files?.[0];
+  if (!file) {
+    pendingMarketplaceUpload = null;
+    previewMarketplaceUploadPalette([]);
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (loadEvent) => {
+    const qss = typeof loadEvent.target?.result === "string" ? loadEvent.target.result : "";
+    const palette = extractPaletteFromQSS(qss).slice(0, 4);
+
+    pendingMarketplaceUpload = {
+      name: file.name.replace(/\.qss$/i, ""),
+      qss,
+      palette,
+    };
+
+    if (marketplaceThemeNameInput && !marketplaceThemeNameInput.value.trim()) {
+      marketplaceThemeNameInput.value = pendingMarketplaceUpload.name;
+    }
+
+    previewMarketplaceUploadPalette(palette);
+  };
+  reader.readAsText(file);
+});
+
+submitMarketplaceUploadButton?.addEventListener("click", () => {
+  submitMarketplaceUpload();
+});
+
 stepTabs.forEach((button) => {
   button.addEventListener("click", () => {
     setActiveStep(button.dataset.step);
@@ -2831,6 +3139,9 @@ if (generatorSection) {
 
 themeNameInput.value = "custom-theme";
 loadDefaultTheme();
+loadMarketplaceThemes();
+renderMarketplaceThemes();
+resetMarketplaceUploadForm();
 document.querySelectorAll(".preset").forEach((button) => {
   button.classList.toggle("active", button.dataset.preset === "dark");
 });

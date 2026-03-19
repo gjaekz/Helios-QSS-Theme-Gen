@@ -1,0 +1,555 @@
+/* =============================================================================
+   Helios Rainbow Theme — MAX COLOUR EDITION
+   Every UI zone gets its own vivid rainbow colour.
+   Red · Orange · Yellow · Green · Blue · Purple + accents
+   ============================================================================= */
+
+/* --- Full Palette ---
+   Red-Orange:    #FF3D00
+   Blaze Orange:  #FF6B00
+   Solar Yellow:  #FFD000
+   Electric Green:#00CC00
+   Lime:          #AAFF00
+   Sky Blue:      #1E90FF
+   Cyan:          #00DDDD
+   Hot Pink:      #FF0088
+   Royal Purple:  #8800AA
+   Violet:        #CC44FF
+   -------------------- */
+
+/* =============================================================================
+   Global base — very dark so colours pop
+   ============================================================================= */
+QWidget {
+    background-color: #0A0A0A;
+    color: #F0F0F0;
+    font-family: "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
+    font-size: 9pt;
+}
+
+QWidget:disabled {
+    color: #2A2A2A;
+}
+
+QWidget:focus {
+    outline: none;
+}
+
+/* =============================================================================
+   Main Window
+   ============================================================================= */
+QMainWindow {
+    background-color: #0A0A0A;
+}
+
+QMainWindow::separator {
+    background: #FFD000;
+    width: 3px;
+    height: 3px;
+}
+
+QMainWindow::separator:hover {
+    background: #FF3D00;
+}
+
+QSplitter::handle {
+    background-color: #111111;
+}
+
+QSplitter::handle:hover {
+    background-color: #00CC00;
+}
+
+/* =============================================================================
+   MenuBar — YELLOW
+   ============================================================================= */
+QMenuBar {
+    background-color: #1A1400;
+    padding: 2px;
+    border-bottom: 3px solid #FFD000;
+    color: #FFD000;
+}
+
+QMenuBar::item {
+    padding: 4px 12px;
+    background: transparent;
+    color: #FFD000;
+}
+
+QMenuBar::item:selected {
+    background-color: #FFD000;
+    color: #000000;
+}
+
+QMenu {
+    background-color: #1A1400;
+    border: 2px solid #FFD000;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+QMenu::item {
+    padding: 6px 24px;
+    border-radius: 4px;
+    color: #F0F0F0;
+}
+
+QMenu::item:selected {
+    background-color: #FFD000;
+    color: #000000;
+}
+
+QMenu::item:pressed {
+    background-color: #FF6B00;
+    color: #000000;
+}
+
+/* =============================================================================
+   ToolBar — GREEN
+   ============================================================================= */
+QToolBar {
+    background-color: #001A00;
+    border: none;
+    border-bottom: 3px solid #00CC00;
+    padding: 3px;
+    spacing: 3px;
+}
+
+QToolButton {
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 6px 6px;
+    color: #00CC00;
+}
+
+QToolButton:hover {
+    background-color: rgba(0, 204, 0, 0.2);
+    border: 1px solid #AAFF00;
+    color: #AAFF00;
+}
+
+QToolButton:pressed {
+    background-color: #002200;
+    color: #FFD000;
+}
+
+QToolButton:checked {
+    background-color: #00CC00;
+    border: 2px solid #AAFF00;
+    color: #000000;
+}
+
+QToolButton:checked:hover {
+    background-color: #AAFF00;
+    border: 2px solid #00CC00;
+    color: #000000;
+}
+
+/* =============================================================================
+   Dock Widgets — BLUE border + ORANGE title
+   ============================================================================= */
+QDockWidget {
+    background-color: #00080F;
+    border: 2px solid #1E90FF;
+    titlebar-close-icon: url(:/icons/close.svg);
+    titlebar-normal-icon: url(:/icons/float.svg);
+}
+
+QDockWidget::title {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #220800, stop:1 #3A1000);
+    color: #FF6B00;
+    padding: 6px 8px;
+    font-weight: bold;
+    border-bottom: 2px solid #FF6B00;
+}
+
+QDockWidget::close-button, QDockWidget::float-button {
+    background-color: rgba(255, 107, 0, 0.15);
+    border-radius: 4px;
+    padding: 2px;
+}
+
+QDockWidget::close-button:hover, QDockWidget::float-button:hover {
+    background-color: #FF3D00;
+}
+
+/* =============================================================================
+   GroupBox — default RED, named overrides below
+   ============================================================================= */
+QGroupBox {
+    border: 2px solid #FF3D00;
+    border-radius: 5px;
+    margin-top: 22px;
+    padding: 4px;
+    font-weight: bold;
+    background-color: #120000;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 5px;
+    margin-bottom: -20px;
+    background-color: transparent;
+    color: #FF3D00;
+    font-weight: bold;
+}
+
+QGroupBox[title="Settings"] {
+    border-color: #FFD000;
+    background-color: #111000;
+}
+QGroupBox[title="Settings"]::title { color: #FFD000; }
+
+QGroupBox[title="Control"] {
+    border-color: #00CC00;
+    background-color: #001100;
+}
+QGroupBox[title="Control"]::title { color: #00CC00; }
+
+QGroupBox[title="CV Python"] {
+    border-color: #1E90FF;
+    background-color: #00080F;
+}
+QGroupBox[title="CV Python"]::title { color: #1E90FF; }
+
+QGroupBox[title="Python Script (.py)"] {
+    border-color: #8800AA;
+    background-color: #0D0015;
+}
+QGroupBox[title="Python Script (.py)"]::title { color: #CC44FF; }
+
+QGroupBox[title="Titan Bridge"],
+QGroupBox[title="Titan Two Device"] {
+    border-color: #00DDDD;
+    background-color: #001515;
+}
+QGroupBox[title="Titan Bridge"]::title,
+QGroupBox[title="Titan Two Device"]::title { color: #00DDDD; }
+
+QGroupBox[title="Memory Slots"] {
+    border-color: #FF0088;
+    background-color: #150008;
+}
+QGroupBox[title="Memory Slots"]::title { color: #FF0088; }
+
+QGroupBox[title="Device Configuration"] {
+    border-color: #AAFF00;
+    background-color: #090F00;
+}
+QGroupBox[title="Device Configuration"]::title { color: #AAFF00; }
+
+QGroupBox[title="USB Ports"] {
+    border-color: #FF6B00;
+    background-color: #110400;
+}
+QGroupBox[title="USB Ports"]::title { color: #FF6B00; }
+
+/* =============================================================================
+   Buttons — BLUE default; named variants per function
+   ============================================================================= */
+QPushButton {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #001A40, stop:1 #000E20);
+    color: #1E90FF;
+    border: 2px solid #1E90FF;
+    border-radius: 4px;
+    padding: 5px 12px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #1E90FF, stop:1 #005FCC);
+    color: #000000;
+    border-color: #00DDDD;
+}
+
+QPushButton:pressed {
+    background-color: #00CC00;
+    color: #000000;
+    border-color: #AAFF00;
+}
+
+QPushButton:checked {
+    background-color: #FFD000;
+    color: #000000;
+    border: 2px solid #FF6B00;
+}
+
+QPushButton:checked:hover {
+    background-color: #FF6B00;
+    color: #000000;
+    border: 2px solid #FF3D00;
+}
+
+QPushButton:default, QPushButton[class="primary"] {
+    background-color: #FF6B00;
+    color: #000000;
+    border: 2px solid #FFD000;
+}
+
+QPushButton:default:hover {
+    background-color: #FFD000;
+    color: #000000;
+}
+
+/* Restart Bridge — CYAN */
+QPushButton[text="Restart Bridge"] {
+    background-color: #001A1A;
+    color: #00DDDD;
+    border: 2px solid #00DDDD;
+}
+QPushButton[text="Restart Bridge"]:hover {
+    background-color: #00DDDD;
+    color: #000000;
+}
+
+/* =============================================================================
+   Inputs — YELLOW text, PURPLE focus
+   ============================================================================= */
+QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox, QTextEdit, QPlainTextEdit {
+    background-color: #080808;
+    border: 2px solid #2A2A2A;
+    border-radius: 4px;
+    padding: 3px 6px;
+    selection-background-color: #1E90FF;
+    selection-color: #000000;
+    color: #FFD000;
+    min-height: 18px;
+}
+
+QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus,
+QComboBox:focus, QTextEdit:focus, QPlainTextEdit:focus {
+    border: 2px solid #8800AA;
+    background-color: #050505;
+}
+
+QTextEdit[objectName="outputLog"] {
+    background-color: #050505;
+    color: #00CC00;
+    border: 2px solid #00CC00;
+}
+
+QSpinBox::up-button, QDoubleSpinBox::up-button,
+QSpinBox::down-button, QDoubleSpinBox::down-button {
+    background-color: transparent;
+    border: none;
+    width: 16px;
+}
+
+QSpinBox::up-button:hover, QDoubleSpinBox::up-button:hover,
+QSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover {
+    background-color: #FFD000;
+}
+
+QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
+    image: url(:/icons/spinbox-up-arrow.svg);
+    width: 10px; height: 10px;
+}
+
+QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
+    image: url(:/icons/spinbox-down-arrow.svg);
+    width: 10px; height: 10px;
+}
+
+/* ComboBox */
+QComboBox {
+    min-width: 60px;
+    padding: 4px 7px;
+    color: #FFD000;
+}
+
+QComboBox:hover {
+    background-color: #111100;
+    border-color: #FFD000;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 20px;
+    background-color: transparent;
+}
+
+QComboBox::down-arrow {
+    image: url(:/icons/arrow-down.svg);
+    width: 10px; height: 10px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #111100;
+    border: 2px solid #FFD000;
+    selection-background-color: #FFD000;
+    selection-color: #000000;
+    outline: none;
+    padding: 4px;
+    color: #FFD000;
+}
+
+/* =============================================================================
+   Tab Bar — solid BLUE selected tab
+   ============================================================================= */
+QTabWidget::pane {
+    border: 2px solid #1E90FF;
+    border-top: none;
+    background-color: #00060F;
+}
+
+QTabWidget::tab-bar {
+    alignment: left;
+}
+
+QTabBar::tab {
+    background-color: #001020;
+    color: #1E90FF;
+    border: 1px solid #1E2A40;
+    border-bottom: none;
+    padding: 7px 14px;
+    margin-right: 2px;
+    font-weight: bold;
+}
+
+QTabBar::tab:hover {
+    background-color: rgba(30, 144, 255, 0.25);
+    color: #00DDDD;
+    border-color: #1E90FF;
+}
+
+QTabBar::tab:selected {
+    background-color: #1E90FF;
+    color: #000000;
+    font-weight: bold;
+    border-color: #1E90FF;
+}
+
+/* =============================================================================
+   Lists / Trees / Tables — PURPLE
+   ============================================================================= */
+QListView, QTreeView, QTableView {
+    background-color: #080008;
+    border: 2px solid #2A0040;
+    border-radius: 4px;
+    outline: none;
+    alternate-background-color: #0D000F;
+    color: #CC88FF;
+}
+
+QListView::item, QTreeView::item {
+    padding: 4px 5px;
+    border: none;
+    color: #CC88FF;
+}
+
+QListView::item:hover, QTreeView::item:hover {
+    background-color: rgba(136, 0, 170, 0.25);
+    color: #FF00FF;
+}
+
+QListView::item:selected, QTreeView::item:selected {
+    background-color: rgba(136, 0, 170, 0.4);
+    color: #FFFFFF;
+    border-left: 3px solid #8800AA;
+}
+
+QHeaderView::section {
+    background-color: #1A0030;
+    color: #CC44FF;
+    border: none;
+    border-right: 1px solid #0A0A0A;
+    border-bottom: 2px solid #8800AA;
+    padding: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* =============================================================================
+   Scrollbars — HOT PINK
+   ============================================================================= */
+QScrollBar:vertical {
+    background: #0A0A0A;
+    width: 12px;
+    margin: 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: #FF0088;
+    min-height: 20px;
+    border-radius: 5px;
+    margin: 2px;
+    border: 1px solid #FF66BB;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #FF66BB;
+    border: 1px solid #FF0088;
+}
+
+QScrollBar:horizontal {
+    background: #0A0A0A;
+    height: 12px;
+    margin: 0px;
+}
+
+QScrollBar::handle:horizontal {
+    background: #FF0088;
+    min-width: 20px;
+    border-radius: 5px;
+    margin: 2px;
+    border: 1px solid #FF66BB;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background: #FF66BB;
+    border: 1px solid #FF0088;
+}
+
+QScrollBar::add-line, QScrollBar::sub-line {
+    width: 0px;
+    height: 0px;
+}
+
+/* =============================================================================
+   CheckBox / RadioButton
+   ============================================================================= */
+QCheckBox { spacing: 6px; color: #F0F0F0; }
+QCheckBox::indicator {
+    width: 14px; height: 14px;
+    background-color: #080808;
+    border: 2px solid #1E90FF;
+    border-radius: 3px;
+}
+QCheckBox::indicator:hover { border-color: #00DDDD; }
+QCheckBox::indicator:checked {
+    background-color: #00CC00;
+    border-color: #AAFF00;
+    image: url(:/icons/check.svg);
+}
+
+QRadioButton { spacing: 6px; color: #F0F0F0; }
+QRadioButton::indicator {
+    width: 14px; height: 14px;
+    background-color: #080808;
+    border: 2px solid #FF0088;
+    border-radius: 7px;
+}
+QRadioButton::indicator:hover { border-color: #FF66BB; }
+QRadioButton::indicator:checked {
+    background-color: #FF0088;
+    border-color: #FF66BB;
+    image: url(:/icons/radio-dot.svg);
+}
+
+/* =============================================================================
+   Status Labels
+   ============================================================================= */
+QLabel[status="active"] { color: #00CC00; font-weight: bold; }
+QLabel[status="error"]  { color: #FF3D00; font-weight: bold; }
+QLabel[status="info"]   { color: #555555; font-size: 9px; }
+
+/* =============================================================================
+   StatusBar — PURPLE band at the bottom
+   ============================================================================= */
+QStatusBar {
+    background-color: #0D0015;
+    color: #CC44FF;
+    border-top: 3px solid #8800AA;
+}
