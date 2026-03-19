@@ -706,11 +706,6 @@ async function processUploadFile(file) {
     return;
   }
 
-  if (!firebaseReady || !db || !storage || !firebaseFns) {
-    showToast("Uploads are unavailable until Firebase is configured");
-    return;
-  }
-
   const text = await file.text();
   const colors = extractColors(text);
   if (colors.length < 4) {
@@ -725,7 +720,21 @@ async function processUploadFile(file) {
 
   const category = detectCategory(colors);
   const name = file.name.replace(/\.qss$/i, "");
-  const theme = await uploadTheme(file, name);
+  let theme;
+
+  if (firebaseReady && db && storage && firebaseFns) {
+    theme = await uploadTheme(file, name);
+  } else {
+    theme = {
+      id: `local-${slugify(name)}-${Date.now()}`,
+      name,
+      colors,
+      fileUrl: URL.createObjectURL(file),
+      category,
+      userId: currentUserId || "local-user",
+      createdAt: Date.now(),
+    };
+  }
   lastUpload = Date.now();
 
   marketplaceThemes.unshift({
@@ -738,7 +747,7 @@ async function processUploadFile(file) {
     createdAt: Date.now(),
   });
   renderThemes();
-  showToast("Upload successful");
+  showToast(firebaseReady ? "Upload successful" : "Uploaded locally");
 }
 
 function applyPreviewTheme(colors) {
@@ -1056,10 +1065,6 @@ window.addEventListener("DOMContentLoaded", () => {
   resizeCanvas();
   createParticles();
   drawParticles();
-  if (!firebaseReady && uploadButton) {
-    uploadButton.dataset.uploadState = "disabled";
-    uploadButton.title = "Add Firebase config to enable public uploads";
-  }
   marketplaceThemes = bootstrapThemesFromMarkup();
   renderThemes();
   loadSeedThemes().then(() => loadThemes());

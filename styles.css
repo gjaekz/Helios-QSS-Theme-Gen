@@ -404,11 +404,6 @@ body {
   align-self: center;
 }
 
-.marketplace-upload-btn[data-upload-state="disabled"] {
-  filter: saturate(0.7);
-  opacity: 0.72;
-}
-
 body.is-dragging-theme .marketplace-upload-btn {
   transform: translateY(-1px) scale(1.02);
   box-shadow:
