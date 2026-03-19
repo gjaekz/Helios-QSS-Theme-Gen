@@ -1,4 +1,4 @@
-import { db, firebaseFns, firebaseReady, storage } from "./firebase.js";
+import { authReady, currentUserId, db, firebaseFns, firebaseReady, storage } from "./firebase.js";
 
 const MAX_FILE_SIZE = 200 * 1024;
 
@@ -39,6 +39,7 @@ let visibleThemeCount = 12;
 let isLoadingBatch = false;
 let activePreviewTheme = null;
 let likeStore = {};
+let lastUpload = 0;
 
 try {
   likeStore = JSON.parse(window.localStorage.getItem("marketplaceLikes") || "{}");
@@ -327,6 +328,10 @@ function getThemeLikes(theme) {
   return Math.max(localLikes, remoteLikes);
 }
 
+function canDeleteTheme(theme) {
+  return Boolean(firebaseReady && currentUserId && theme?.userId && theme.userId === currentUserId);
+}
+
 function saveLikes() {
   window.localStorage.setItem("marketplaceLikes", JSON.stringify(likeStore));
 }
@@ -424,6 +429,7 @@ function createThemeCard(data) {
   });
 
   const likes = getThemeLikes(data);
+  const showDelete = canDeleteTheme(data);
 
   card.innerHTML = `
     <div class="palette-full">
@@ -454,6 +460,7 @@ function createThemeCard(data) {
       </div>
       <div class="theme-actions">
         <button class="theme-like-btn" type="button" data-like-id="${themeKey(data)}" title="Like ${data.name}">❤</button>
+        ${showDelete ? `<button class="theme-delete-btn" type="button" data-delete-id="${data.id}" title="Delete ${data.name}">✕</button>` : ""}
         <button class="download-btn marketplace-download-btn" type="button" data-download-url="${url}" title="Download ${data.name}">↓</button>
       </div>
     </div>
@@ -464,6 +471,7 @@ function createThemeCard(data) {
   card.dataset.previewUrl = url;
   card.dataset.previewColors = JSON.stringify(colors);
   card.dataset.likeId = themeKey(data);
+  card.dataset.deleteId = data.id || "";
 
   return card;
 }
@@ -550,6 +558,7 @@ async function uploadTheme(file, name) {
     fileUrl,
     category: inferThemeCategory(colors),
     likes: 0,
+    userId: currentUserId,
     createdAt: firebaseFns.serverTimestamp(),
   });
 
@@ -559,6 +568,7 @@ async function uploadTheme(file, name) {
     colors,
     fileUrl,
     category: inferThemeCategory(colors),
+    userId: currentUserId,
     createdAt: Date.now(),
   };
 }
@@ -585,12 +595,13 @@ async function loadThemes() {
           }
 
         return {
-            id: docSnapshot.id,
-            name: data.name,
-            colors,
-            url: data.fileUrl,
+          id: docSnapshot.id,
+          name: data.name,
+          colors,
+          url: data.fileUrl,
           category: data.category || inferThemeCategory(colors),
           likes: Number(data.likes || 0),
+          userId: String(data.userId || ""),
           createdAt: data.createdAt || null,
         };
       })
@@ -684,32 +695,38 @@ async function hasDuplicatePalette(colors) {
 }
 
 async function processUploadFile(file) {
+  if (Date.now() - lastUpload < 10000) {
+    showToast("Wait before uploading again");
+    return;
+  }
+
   const validationMessage = validateFile(file);
   if (validationMessage) {
-    alert(validationMessage);
+    showToast(validationMessage);
     return;
   }
 
   if (!firebaseReady || !db || !storage || !firebaseFns) {
-    alert("Add your Firebase config first");
+    showToast("Uploads are unavailable until Firebase is configured");
     return;
   }
 
   const text = await file.text();
   const colors = extractColors(text);
   if (colors.length < 4) {
-    alert("Invalid QSS: not enough colors");
+    showToast("Invalid QSS: not enough colors");
     return;
   }
 
   if (await hasDuplicatePalette(colors)) {
-    alert("Theme with same palette already exists");
+    showToast("Theme with same palette already exists");
     return;
   }
 
   const category = detectCategory(colors);
   const name = file.name.replace(/\.qss$/i, "");
   const theme = await uploadTheme(file, name);
+  lastUpload = Date.now();
 
   marketplaceThemes.unshift({
     id: theme.id,
@@ -717,6 +734,7 @@ async function processUploadFile(file) {
     colors,
     url: theme.fileUrl,
     category,
+    userId: theme.userId,
     createdAt: Date.now(),
   });
   renderThemes();
@@ -764,6 +782,26 @@ function closeThemePreview() {
   document.body.classList.remove("theme-preview-open");
 }
 
+async function deleteTheme(themeId) {
+  const theme = marketplaceThemes.find((entry) => String(entry.id) === String(themeId));
+  if (!theme || !canDeleteTheme(theme) || !firebaseReady || !db || !firebaseFns) {
+    return;
+  }
+
+  try {
+    await firebaseFns.deleteDoc(firebaseFns.doc(db, "themes", themeId));
+    const fileUrl = theme.url || theme.fileUrl || "";
+    if (fileUrl) {
+      await firebaseFns.deleteObject(firebaseFns.ref(storage, fileUrl));
+    }
+    marketplaceThemes = marketplaceThemes.filter((entry) => String(entry.id) !== String(themeId));
+    renderThemes();
+    showToast("Theme deleted");
+  } catch (_error) {
+    showToast("Delete failed");
+  }
+}
+
 async function likeTheme(themeId) {
   likeStore[themeId] = Number(likeStore[themeId] || 0) + 1;
   saveLikes();
@@ -800,7 +838,7 @@ async function handleUpload(event) {
     await processUploadFile(file);
   } catch (error) {
     console.error(error);
-    alert("Upload failed");
+    showToast("Upload failed");
   } finally {
     if (fileInput) {
       fileInput.value = "";
@@ -843,7 +881,7 @@ document.addEventListener("drop", async (event) => {
     await processUploadFile(file);
   } catch (error) {
     console.error(error);
-    alert("Upload failed");
+    showToast("Upload failed");
   }
 });
 
@@ -923,6 +961,16 @@ document.addEventListener("click", (event) => {
     }
 
     likeTheme(themeId).catch(() => {});
+    return;
+  }
+
+  if (target.classList.contains("theme-delete-btn")) {
+    const themeId = target.dataset.deleteId;
+    if (!themeId) {
+      return;
+    }
+
+    deleteTheme(themeId).catch(() => {});
     return;
   }
 
@@ -1008,7 +1056,14 @@ window.addEventListener("DOMContentLoaded", () => {
   resizeCanvas();
   createParticles();
   drawParticles();
+  if (!firebaseReady && uploadButton) {
+    uploadButton.dataset.uploadState = "disabled";
+    uploadButton.title = "Add Firebase config to enable public uploads";
+  }
   marketplaceThemes = bootstrapThemesFromMarkup();
   renderThemes();
   loadSeedThemes().then(() => loadThemes());
+  authReady.then(() => {
+    renderThemes();
+  });
 });

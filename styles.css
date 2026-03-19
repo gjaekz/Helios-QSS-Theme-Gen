@@ -404,6 +404,11 @@ body {
   align-self: center;
 }
 
+.marketplace-upload-btn[data-upload-state="disabled"] {
+  filter: saturate(0.7);
+  opacity: 0.72;
+}
+
 body.is-dragging-theme .marketplace-upload-btn {
   transform: translateY(-1px) scale(1.02);
   box-shadow:
@@ -825,6 +830,22 @@ body.is-dragging-theme .marketplace-shell {
 .theme-like-btn:hover {
   box-shadow: 0 10px 22px rgba(0,0,0,0.18);
   transform: translateY(-1px) scale(1.03);
+}
+
+.theme-delete-btn {
+  width: auto;
+  min-width: 40px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #ffd9d9;
+  box-shadow: none;
+}
+
+.theme-delete-btn:hover {
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.18);
 }
 
 .theme-card:hover .marketplace-download-btn {
