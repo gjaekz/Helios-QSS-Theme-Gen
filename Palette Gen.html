@@ -1,0 +1,2862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QSS Palette Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #050505;
+            --bg-elevated: rgba(10, 10, 12, 0.76);
+            --bg-panel: rgba(13, 13, 16, 0.88);
+            --bg-input: rgba(9, 9, 11, 0.94);
+            --border: rgba(252, 92, 255, 0.1);
+            --text: #F7F9FC;
+            --text-muted: #94A0B2;
+            --text-soft: #AAB4C3;
+            --app-primary: #FC5CFF;
+            --app-secondary: #5CF7FF;
+            --app-highlight: #69FF5C;
+            --app-accent: #FC5CFF;
+            --app-primary-soft: rgba(252, 92, 255, 0.24);
+            --app-secondary-soft: rgba(92, 247, 255, 0.14);
+            --app-highlight-soft: rgba(105, 255, 92, 0.12);
+            --app-accent-soft: rgba(252, 92, 255, 0.14);
+            --app-primary-weak: rgba(252, 92, 255, 0.1);
+            --app-secondary-weak: rgba(92, 247, 255, 0.06);
+            --app-highlight-weak: rgba(105, 255, 92, 0.06);
+            --app-accent-weak: rgba(252, 92, 255, 0.08);
+            --app-primary-bright: #FF94FF;
+            --app-primary-hover: #FF7BFF;
+            --app-primary-active: #D93CDB;
+            --app-primary-bright-soft: rgba(255, 148, 255, 0.18);
+            --success-green: #69FF5C;
+            --success-green-bright: #94FF8D;
+            --success-green-soft: rgba(105, 255, 92, 0.14);
+            --success-green-weak: rgba(105, 255, 92, 0.08);
+            --success-green-glow: rgba(105, 255, 92, 0.22);
+            --secondary-cyan: #5CF7FF;
+            --secondary-cyan-bright: #9DFBFF;
+            --secondary-cyan-soft: rgba(92, 247, 255, 0.12);
+            --secondary-cyan-glow: rgba(92, 247, 255, 0.2);
+            --app-primary-contrast: #F7F9FC;
+            --app-secondary-contrast: #061114;
+            --app-highlight-contrast: #0E1318;
+            --app-accent-contrast: #F7F9FC;
+            --app-primary-glow: rgba(252, 92, 255, 0.28);
+            --app-highlight-glow: rgba(105, 255, 92, 0.18);
+            --app-accent-glow: rgba(252, 92, 255, 0.22);
+            --app-button-gloss: rgba(255, 200, 255, 0.18);
+            --app-button-gloss-soft: rgba(252, 92, 255, 0.1);
+            --app-surface-outline: rgba(252, 92, 255, 0.12);
+            --material-top: rgba(255, 255, 255, 0.04);
+            --material-bottom: rgba(0, 0, 0, 0.18);
+            --surface-shadow: 0 16px 34px rgba(0, 0, 0, 0.24);
+            --shadow-lg: 0 28px 80px rgba(0, 0, 0, 0.46);
+            --radius-xl: 28px;
+            --radius-lg: 20px;
+            --radius-md: 16px;
+            --radius-pill: 999px;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Inter', 'Roboto', 'Helvetica Neue', sans-serif;
+            background:
+                radial-gradient(circle at 16% 16%, rgba(92, 247, 255, 0.13) 0%, rgba(92, 247, 255, 0.06) 12%, rgba(92, 247, 255, 0) 28%),
+                radial-gradient(circle at 74% 18%, rgba(252, 92, 255, 0.11) 0%, rgba(252, 92, 255, 0.05) 12%, rgba(252, 92, 255, 0) 24%),
+                radial-gradient(circle at 72% 76%, rgba(105, 255, 92, 0.11) 0%, rgba(105, 255, 92, 0.05) 12%, rgba(105, 255, 92, 0) 24%),
+                radial-gradient(circle at 26% 80%, rgba(252, 92, 255, 0.08) 0%, rgba(252, 92, 255, 0.03) 10%, rgba(252, 92, 255, 0) 22%),
+                radial-gradient(circle at 58% 10%, rgba(92, 247, 255, 0.07) 0%, rgba(92, 247, 255, 0.028) 10%, rgba(92, 247, 255, 0) 18%),
+                radial-gradient(circle, rgba(255, 255, 255, 0.028) 0.8px, transparent 1px),
+                var(--bg);
+            background-size: auto, auto, auto, auto, auto, 28px 28px, auto;
+            background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, repeat, no-repeat;
+            background-position: center, center, center, center, center, 0 0, center;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            color: var(--text);
+            overflow-x: hidden;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 24% 18%, rgba(255, 255, 255, 0.028) 0%, rgba(255, 255, 255, 0.008) 8%, rgba(255, 255, 255, 0) 20%),
+                radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.018) 0%, rgba(255, 255, 255, 0.005) 8%, rgba(255, 255, 255, 0) 18%),
+                radial-gradient(circle at 14% 14%, rgba(92, 247, 255, 0.08) 0%, rgba(92, 247, 255, 0) 16%),
+                radial-gradient(circle at 74% 18%, rgba(252, 92, 255, 0.055) 0%, rgba(252, 92, 255, 0) 15%),
+                radial-gradient(circle at 72% 76%, rgba(105, 255, 92, 0.05) 0%, rgba(105, 255, 92, 0) 16%),
+                radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0) 24%, rgba(5, 7, 10, 0.1) 56%, rgba(5, 7, 10, 0.68) 100%);
+            pointer-events: none;
+            backdrop-filter: blur(0.22px);
+            -webkit-backdrop-filter: blur(0.22px);
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 10% 14%, rgba(255, 255, 255, 0.014) 0%, transparent 5%),
+                radial-gradient(circle at 72% 12%, rgba(255, 255, 255, 0.012) 0%, transparent 4.5%),
+                radial-gradient(circle at 88% 64%, rgba(255, 255, 255, 0.01) 0%, transparent 4%),
+                repeating-radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.016) 0 0.75px, transparent 0.75px 22px);
+            mix-blend-mode: soft-light;
+            opacity: 0.14;
+            filter: blur(0.12px);
+            mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0.1) 22%, rgba(0, 0, 0, 0.56) 62%, rgba(0, 0, 0, 0.92) 100%);
+            -webkit-mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0.1) 22%, rgba(0, 0, 0, 0.56) 62%, rgba(0, 0, 0, 0.92) 100%);
+            pointer-events: none;
+        }
+
+        .container {
+            background:
+                linear-gradient(180deg, rgba(24, 24, 30, 0.9), rgba(10, 10, 13, 0.86)),
+                linear-gradient(125deg, var(--app-primary-weak) 0%, rgba(255, 255, 255, 0.012) 40%, rgba(0, 0, 0, 0) 100%),
+                linear-gradient(215deg, rgba(255, 255, 255, 0.012) 0%, rgba(255, 255, 255, 0) 34%, var(--app-secondary-weak) 100%);
+            border-radius: var(--radius-xl);
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.6),
+                -18px 10px 42px rgba(0, 0, 0, 0.16),
+                18px -10px 36px rgba(252, 92, 255, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                inset 0 -10px 18px rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px) saturate(116%);
+            -webkit-backdrop-filter: blur(20px) saturate(116%);
+            max-width: 600px;
+            width: 100%;
+            max-height: none;
+            margin: 0 auto;
+            align-self: center;
+            padding: 26px 28px;
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 0.32s ease, transform 0.32s ease, border-color 0.32s ease;
+        }
+
+        .container:hover {
+            box-shadow:
+                0 28px 86px rgba(0, 0, 0, 0.48),
+                26px -14px 52px var(--app-primary-glow),
+                -12px 8px 28px rgba(0, 0, 0, 0.16);
+            border-color: rgba(252, 92, 255, 0.12);
+        }
+
+        .container::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.008) 16%, rgba(255, 255, 255, 0) 28%, var(--material-bottom) 100%),
+                repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.01) 0px, rgba(255, 255, 255, 0.01) 1px, transparent 1px, transparent 8px),
+                repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.004) 0px, rgba(255, 255, 255, 0.004) 1px, transparent 1px, transparent 11px),
+                radial-gradient(circle at 48% -4%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 36%),
+                radial-gradient(circle at 16% 18%, var(--app-primary-weak) 0%, transparent 32%),
+                linear-gradient(135deg, var(--app-primary-weak), transparent 42%, rgba(0, 0, 0, 0) 100%);
+            pointer-events: none;
+        }
+
+        .container > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text);
+            letter-spacing: -0.03em;
+            text-shadow: 0 0 18px var(--app-primary-weak), 0 0 36px rgba(0, 0, 0, 0.18);
+        }
+
+        .title-byline {
+            display: inline-block;
+            margin: -2px 0 10px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.72);
+            text-shadow: 0 0 14px var(--app-primary-weak);
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #A7B1C0;
+            margin-bottom: 20px;
+            line-height: 1.45;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group:not(:last-of-type) {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            padding-bottom: 2px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            transition: border-color 0.24s ease, box-shadow 0.24s ease, transform 0.24s ease, background-color 0.24s ease;
+            background: linear-gradient(180deg, rgba(12, 12, 15, 0.96), rgba(8, 8, 10, 0.94));
+            color: var(--text);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 6px 14px rgba(0, 0, 0, 0.12);
+        }
+
+        input[type="text"]::placeholder {
+            color: rgba(170, 180, 195, 0.84);
+        }
+
+        input[type="text"]:hover {
+            border-color: var(--app-primary);
+            background: rgba(12, 15, 22, 0.98);
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--app-secondary);
+            box-shadow: 0 0 0 3px rgba(92, 247, 255, 0.14), 0 0 0 1px var(--app-secondary), 0 0 12px rgba(92, 247, 255, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .sr-only-file {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .upload-field {
+            width: 100%;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: var(--radius-md);
+            background: linear-gradient(180deg, rgba(9, 12, 18, 0.96), rgba(7, 10, 16, 0.94));
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), inset 0 -1px 0 rgba(0, 0, 0, 0.18), 0 8px 18px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: border-color 0.24s ease, box-shadow 0.24s ease, transform 0.24s ease, background 0.24s ease;
+        }
+
+        .upload-field:hover {
+            border-color: var(--app-primary);
+            background: linear-gradient(180deg, rgba(11, 14, 22, 0.98), rgba(8, 11, 18, 0.96));
+        }
+
+        .upload-field:focus-within,
+        .upload-field.is-dragover {
+            border-color: var(--app-secondary);
+            box-shadow: 0 0 0 3px rgba(92, 247, 255, 0.14), 0 0 0 1px var(--app-secondary), 0 0 12px rgba(92, 247, 255, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .upload-field.is-dragover {
+            background: linear-gradient(180deg, rgba(18, 16, 34, 0.98), rgba(11, 10, 24, 0.98));
+        }
+
+        .upload-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: var(--radius-pill);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+
+        .upload-icon {
+            font-size: 14px;
+            line-height: 1;
+        }
+
+        .upload-filename {
+            min-width: 0;
+            flex: 1;
+            color: var(--text-muted);
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .upload-field.has-file .upload-filename {
+            color: var(--text-soft);
+        }
+
+        .help-text {
+            font-size: 11px;
+            color: #A1ADBE;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .help-text.loaded {
+            color: var(--success-green);
+            font-weight: 500;
+        }
+
+        .help-text a {
+            color: var(--app-secondary);
+        }
+
+        .palette-guidance {
+            margin-top: 8px;
+            padding: 10px 12px;
+            border-radius: var(--radius-md);
+            background:
+                radial-gradient(circle at 14% 22%, var(--app-primary-weak) 0%, transparent 42%),
+                radial-gradient(circle at 86% 20%, var(--app-secondary-weak) 0%, transparent 34%),
+                linear-gradient(180deg, rgba(18, 18, 23, 0.92), rgba(11, 11, 15, 0.9));
+            border: 1px solid var(--app-surface-outline);
+            color: var(--text-soft);
+            line-height: 1.45;
+            box-shadow: var(--surface-shadow), 0 0 16px rgba(252, 92, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+
+        .palette-guidance strong {
+            color: var(--text);
+        }
+
+        .palette-guidance a {
+            color: var(--app-secondary);
+            font-weight: 700;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 3px;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-pill);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease, background 0.28s ease, color 0.24s ease, opacity 0.24s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.24);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-primary {
+            background:
+                radial-gradient(circle at 24% 28%, var(--app-primary-soft) 0%, transparent 42%),
+                radial-gradient(circle at 78% 24%, var(--app-primary-bright-soft) 0%, transparent 38%),
+                linear-gradient(135deg, var(--app-primary-active) 0%, var(--app-primary) 42%, var(--app-primary-bright) 100%);
+            background-size: 140% 140%, 140% 140%, 160% 160%;
+            background-position: 18% 24%, 82% 22%, 0% 50%;
+            color: var(--app-primary-contrast);
+            border-color: rgba(255, 255, 255, 0.03);
+            box-shadow:
+                0 16px 28px var(--app-primary-glow),
+                0 0 18px var(--app-primary-soft),
+                inset 0 1px 0 rgba(255, 255, 255, 0.22),
+                inset 0 -10px 20px var(--app-primary-weak);
+            animation: primaryGradientShift 14s ease-in-out infinite;
+        }
+
+        .btn-primary:hover:not(:disabled),
+        .btn-download:hover:not(:disabled) {
+            background:
+                radial-gradient(circle at 24% 28%, var(--app-primary-bright-soft) 0%, transparent 42%),
+                radial-gradient(circle at 78% 24%, var(--app-primary-soft) 0%, transparent 38%),
+                linear-gradient(135deg, var(--app-primary) 0%, var(--app-primary-hover) 48%, var(--app-primary-bright) 100%);
+            background-size: 140% 140%, 140% 140%, 160% 160%;
+            background-position: 22% 26%, 78% 20%, 100% 50%;
+            box-shadow:
+                0 18px 30px var(--app-primary-glow),
+                0 0 20px var(--app-primary-soft),
+                inset 0 1px 0 rgba(255, 255, 255, 0.22),
+                inset 0 -10px 20px var(--app-primary-weak);
+            border-color: rgba(255, 255, 255, 0.05);
+            animation: buttonGlowPulse 1.4s ease-in-out infinite, primaryGradientShift 10s ease-in-out infinite;
+        }
+
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(-1px) scale(0.985);
+            background: linear-gradient(135deg, var(--app-primary-active) 0%, var(--app-primary) 100%);
+            background-size: auto;
+            box-shadow:
+                0 12px 20px var(--app-primary-soft),
+                0 0 18px var(--app-primary-weak),
+                inset 0 1px 0 var(--app-button-gloss-soft),
+                inset 0 -6px 12px rgba(0, 0, 0, 0.12);
+            animation: none;
+        }
+
+        .btn-secondary {
+            background:
+                radial-gradient(circle at 24% 28%, var(--secondary-cyan-soft) 0%, transparent 42%),
+                radial-gradient(circle at 78% 24%, rgba(157, 251, 255, 0.08) 0%, transparent 38%),
+                linear-gradient(135deg, rgba(58, 228, 238, 0.92) 0%, rgba(92, 247, 255, 0.88) 42%, rgba(157, 251, 255, 0.96) 100%);
+            background-size: 140% 140%, 140% 140%, 160% 160%;
+            background-position: 18% 24%, 82% 22%, 0% 50%;
+            color: #071114;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow:
+                0 16px 28px var(--secondary-cyan-glow),
+                0 0 18px var(--secondary-cyan-soft),
+                inset 0 1px 0 rgba(255, 255, 255, 0.22),
+                inset 0 -10px 20px rgba(92, 255, 252, 0.08);
+            animation: secondaryGradientShift 14s ease-in-out infinite;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background:
+                radial-gradient(circle at 24% 28%, rgba(142, 255, 249, 0.14) 0%, transparent 42%),
+                radial-gradient(circle at 78% 24%, var(--secondary-cyan-soft) 0%, transparent 38%),
+                linear-gradient(135deg, var(--secondary-cyan) 0%, var(--secondary-cyan-bright) 48%, #D3FEFF 100%);
+            color: #071114;
+            border-color: rgba(255, 255, 255, 0.05);
+            box-shadow:
+                0 18px 30px var(--secondary-cyan-glow),
+                0 0 20px var(--secondary-cyan-soft),
+                inset 0 1px 0 rgba(255, 255, 255, 0.22),
+                inset 0 -10px 20px rgba(92, 255, 252, 0.08);
+            animation: buttonGlowPulseSecondary 1.4s ease-in-out infinite, secondaryGradientShift 10s ease-in-out infinite;
+        }
+
+        .btn-secondary:active:not(:disabled) {
+            transform: translateY(-1px) scale(0.985);
+            background: linear-gradient(135deg, rgba(76, 223, 220, 0.9) 0%, rgba(92, 255, 252, 0.9) 100%);
+            background-size: auto;
+            box-shadow:
+                0 12px 20px var(--secondary-cyan-soft),
+                0 0 18px rgba(92, 255, 252, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.12),
+                inset 0 -6px 12px rgba(0, 0, 0, 0.12);
+            animation: none;
+        }
+
+        .btn-download {
+            background:
+                radial-gradient(circle at 24% 28%, var(--app-primary-soft) 0%, transparent 42%),
+                radial-gradient(circle at 78% 24%, var(--app-primary-bright-soft) 0%, transparent 38%),
+                linear-gradient(135deg, var(--app-primary-active) 0%, var(--app-primary) 42%, var(--app-primary-bright) 100%);
+            color: var(--app-primary-contrast);
+            width: 100%;
+            border-color: rgba(255, 255, 255, 0.03);
+            box-shadow:
+                0 20px 34px var(--app-primary-glow),
+                0 0 24px var(--app-primary-soft),
+                inset 0 1px 0 rgba(255, 255, 255, 0.22),
+                inset 0 -10px 20px var(--app-primary-weak);
+        }
+
+        .btn-primary::before,
+        .btn-download::before {
+            content: "";
+            position: absolute;
+            inset: 1px 1px auto 1px;
+            height: 48%;
+            border-radius: inherit;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.36), var(--app-button-gloss) 32%, var(--app-button-gloss-soft) 58%, rgba(255, 255, 255, 0) 100%);
+            pointer-events: none;
+        }
+
+        .btn-primary > *,
+        .btn-download > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        #status {
+            padding: 10px 12px;
+            border-radius: var(--radius-md);
+            font-size: 12px;
+            margin-bottom: 12px;
+            display: none;
+            animation: slideIn 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--surface-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+
+        #status.info {
+            background: linear-gradient(180deg, rgba(16, 18, 22, 0.94), rgba(10, 12, 15, 0.92));
+            color: var(--text);
+            border-color: rgba(92, 247, 255, 0.12);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18), 0 0 14px rgba(92, 247, 255, 0.06);
+        }
+
+        #status.status-loading {
+            position: relative;
+            overflow: hidden;
+            animation: loadingPulse 1.2s ease-in-out infinite;
+        }
+
+        #status.status-loading::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent 0%, var(--app-highlight-weak) 46%, transparent 100%);
+            transform: translateX(-100%);
+            animation: loadingShimmer 1.35s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        #status.success {
+            background:
+                linear-gradient(180deg, rgba(17, 19, 18, 0.96) 0%, rgba(12, 14, 13, 0.94) 100%);
+            color: rgba(238, 245, 240, 0.96);
+            border-color: rgba(105, 255, 92, 0.18);
+            box-shadow:
+                0 12px 22px rgba(0, 0, 0, 0.18),
+                0 0 14px rgba(105, 255, 92, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 18px;
+        }
+
+        #status.status-pop-success {
+            animation: successPop 0.42s cubic-bezier(0.2, 0.9, 0.2, 1), successGlowFade 1.4s ease-out;
+        }
+
+        .status-copy {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .status-eyebrow {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #69FF5C;
+            padding: 5px 10px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(105, 255, 92, 0.2) 0%, rgba(148, 255, 141, 0.16) 100%);
+            border: 1px solid rgba(105, 255, 92, 0.24);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 12px rgba(105, 255, 92, 0.1);
+            flex: 0 0 auto;
+        }
+
+        .status-message {
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.4;
+            color: rgba(240, 247, 242, 0.96);
+        }
+
+        .status-loading-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            margin-right: 10px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 35% 35%, var(--app-button-gloss-soft), rgba(255, 255, 255, 0.08) 34%, var(--app-primary-soft) 100%);
+            border: 1px solid var(--app-primary);
+            color: var(--app-primary-contrast);
+            font-size: 11px;
+            font-weight: 900;
+            animation: loadingBadgePulse 1s ease-in-out infinite;
+            vertical-align: middle;
+        }
+
+        #status.error {
+            background: linear-gradient(180deg, rgba(20, 14, 18, 0.94), rgba(12, 9, 11, 0.92));
+            color: var(--app-accent-contrast);
+            border-color: rgba(252, 92, 255, 0.18);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18), 0 0 14px rgba(252, 92, 255, 0.08);
+        }
+
+        #downloadSection,
+        #previewSection {
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        #downloadSection {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .download-note {
+            margin-top: 10px;
+            padding: 14px 16px 15px;
+            border-radius: var(--radius-md);
+            background:
+                radial-gradient(circle at 12% 16%, var(--app-primary-weak) 0%, transparent 34%),
+                radial-gradient(circle at 86% 18%, var(--app-secondary-weak) 0%, transparent 28%),
+                linear-gradient(180deg, rgba(18, 18, 23, 0.95), rgba(10, 10, 13, 0.96) 100%);
+            border: 1px solid rgba(252, 92, 255, 0.08);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.04),
+                0 12px 28px rgba(0, 0, 0, 0.2),
+                0 0 14px rgba(252, 92, 255, 0.07);
+        }
+
+        .download-note .help-text {
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-size: 11px;
+            letter-spacing: 0.01em;
+            color: rgba(247, 249, 252, 0.9);
+        }
+
+        .download-note strong {
+            color: var(--text);
+        }
+
+        .download-note .path {
+            display: inline-block;
+            margin-top: 0;
+            margin-bottom: 10px;
+            padding: 7px 14px;
+            border-radius: var(--radius-pill);
+            background:
+                radial-gradient(circle at 22% 26%, rgba(255, 255, 255, 0.08) 0%, transparent 42%),
+                linear-gradient(135deg, rgba(252, 92, 255, 0.24) 0%, rgba(92, 247, 255, 0.18) 100%);
+            border: 1px solid rgba(252, 92, 255, 0.12);
+            color: var(--app-primary-contrast);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            box-shadow:
+                0 10px 20px rgba(0, 0, 0, 0.18),
+                0 0 16px rgba(252, 92, 255, 0.12);
+        }
+
+        .download-note .steps {
+            margin-top: 0;
+            max-width: 92%;
+            color: rgba(176, 186, 200, 0.88);
+            line-height: 1.55;
+        }
+
+        .preview-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        #colorPreview {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .color-box {
+            border-radius: var(--radius-md);
+            aspect-ratio: 0.9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.32);
+            cursor: pointer;
+            transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            padding: 14px 12px;
+        }
+
+        .color-box.is-dark {
+            color: #FFFFFF;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.32);
+        }
+
+        .color-box.is-light {
+            color: #111318;
+            text-shadow: none;
+        }
+
+        .color-box.is-light::after,
+        .color-box.is-light .color-hint {
+            color: rgba(17, 19, 24, 0.82);
+        }
+
+        .color-box.is-light::after,
+        .color-box.is-light .color-actions {
+            border-color: rgba(17, 19, 24, 0.16);
+        }
+
+        .color-box:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.24), 0 0 14px var(--app-primary-soft);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .color-box::after {
+            content: "Edit";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 8px;
+            border-radius: var(--radius-pill);
+            background: rgba(5, 7, 10, 0.34);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.88);
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            opacity: 0;
+            transform: translateY(-4px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .color-box:hover::after,
+        .color-box:focus-visible::after {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .color-box > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .color-label {
+            font-size: 9px;
+            margin-bottom: 2px;
+            opacity: 0.8;
+        }
+
+        .color-value {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+        }
+
+        .color-actions {
+            position: absolute;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            display: block;
+            z-index: 2;
+        }
+
+        .color-hint {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.8);
+            opacity: 0;
+            transform: translateY(4px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            text-align: left;
+        }
+
+        .color-box:hover .color-hint,
+        .color-box:focus-visible .color-hint {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .preview-help {
+            margin-top: 6px;
+        }
+
+        .palette-flow {
+            display: none;
+            margin: 10px 0 6px;
+            height: 8px;
+            width: 100%;
+            border-radius: var(--radius-pill);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 18px rgba(0, 0, 0, 0.18), 0 0 10px var(--app-primary-weak);
+            overflow: hidden;
+            filter: saturate(108%);
+        }
+
+        .variation-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .variation-toolbar .help-text {
+            margin-top: 0;
+        }
+
+        .variation-grid {
+            display: none;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .variation-card {
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            background:
+                radial-gradient(circle at 18% 18%, var(--app-primary-weak) 0%, transparent 34%),
+                radial-gradient(circle at 82% 18%, var(--app-secondary-weak) 0%, transparent 30%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(18, 18, 22, 0.92));
+            padding: 10px;
+            text-align: left;
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+            box-shadow: 0 14px 26px rgba(0, 0, 0, 0.18), 0 0 10px rgba(0, 0, 0, 0.05), 0 0 8px var(--app-primary-weak);
+            min-width: 0;
+        }
+
+        .variation-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 28px var(--app-primary-glow);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .variation-card.is-active {
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 1px var(--app-primary-soft), 0 14px 28px var(--app-primary-glow);
+            background: var(--app-primary-weak);
+        }
+
+        .variation-title {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .variation-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .variation-chip {
+            height: 18px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .variation-meta {
+            font-size: 10px;
+            color: var(--text-muted);
+            line-height: 1.35;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes buttonGlowPulse {
+            0% {
+                box-shadow: 0 18px 36px var(--app-primary-soft), 0 0 14px var(--app-primary-soft);
+            }
+            50% {
+                box-shadow: 0 18px 36px var(--app-primary-soft), 0 0 20px var(--app-primary-glow);
+            }
+            100% {
+                box-shadow: 0 18px 36px var(--app-primary-soft), 0 0 14px var(--app-primary-soft);
+            }
+        }
+
+        @keyframes primaryGradientShift {
+            0% {
+                background-position: 18% 24%, 82% 22%, 0% 50%;
+            }
+            50% {
+                background-position: 24% 20%, 76% 28%, 100% 50%;
+            }
+            100% {
+                background-position: 18% 24%, 82% 22%, 0% 50%;
+            }
+        }
+
+        @keyframes secondaryGradientShift {
+            0% {
+                background-position: 18% 24%, 82% 22%, 0% 50%;
+            }
+            50% {
+                background-position: 24% 20%, 76% 28%, 100% 50%;
+            }
+            100% {
+                background-position: 18% 24%, 82% 22%, 0% 50%;
+            }
+        }
+
+        @keyframes buttonGlowPulseSecondary {
+            0% {
+                box-shadow: 0 18px 36px var(--secondary-cyan-soft), 0 0 14px var(--secondary-cyan-soft);
+            }
+            50% {
+                box-shadow: 0 18px 36px var(--secondary-cyan-glow), 0 0 20px var(--secondary-cyan-soft);
+            }
+            100% {
+                box-shadow: 0 18px 36px var(--secondary-cyan-soft), 0 0 14px var(--secondary-cyan-soft);
+            }
+        }
+
+        @keyframes successPop {
+            0% {
+                transform: scale(0.985);
+            }
+            55% {
+                transform: scale(1.015);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes successGlowFade {
+            0% {
+                box-shadow: 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
+            }
+            30% {
+                box-shadow: 0 0 0 1px var(--success-green-soft), 0 0 24px var(--success-green-glow);
+            }
+            100% {
+                box-shadow: 0 0 0 1px var(--success-green-weak), 0 0 0 rgba(0, 0, 0, 0);
+            }
+        }
+
+        @keyframes successBadgePop {
+            0% {
+                transform: scale(0.75);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.08);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes successBadgeGlow {
+            0% {
+                box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+            }
+            45% {
+                box-shadow: 0 0 18px var(--success-green-glow);
+            }
+            100% {
+                box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+            }
+        }
+
+        @keyframes loadingPulse {
+            0% {
+                box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+            }
+            50% {
+                box-shadow: 0 0 0 1px var(--app-primary-soft), 0 0 22px var(--app-highlight-glow);
+            }
+            100% {
+                box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+            }
+        }
+
+        @keyframes loadingShimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        @keyframes loadingBadgePulse {
+            0% {
+                transform: scale(0.92);
+                box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+            }
+            50% {
+                transform: scale(1);
+                box-shadow: 0 0 16px var(--app-primary-glow);
+            }
+            100% {
+                transform: scale(0.92);
+                box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+            }
+        }
+
+        .success-icon {
+            display: inline-block;
+            color: var(--app-highlight);
+            margin-right: 6px;
+        }
+
+        input::placeholder {
+            color: var(--text-soft);
+        }
+
+        @media (max-height: 930px) {
+            .container {
+                padding: 22px 24px;
+                max-height: none;
+            }
+
+            .subtitle {
+                margin-bottom: 16px;
+            }
+
+            .form-group {
+                margin-bottom: 14px;
+            }
+
+            .button-group {
+                margin-bottom: 14px;
+            }
+
+            .color-box {
+                aspect-ratio: 0.82;
+                padding: 12px 10px;
+            }
+
+            .download-note {
+                padding: 9px 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>QSS Palette Converter</h1>
+        <p class="title-byline">by Gqfy</p>
+        <p class="subtitle">Generate a QSS by changing only the approved color roles from the modification list</p>
+
+        <div class="form-group">
+            <label>Base QSS File</label>
+            <p class="help-text loaded" id="qssStatus">✓ Base QSS File loaded</p>
+        </div>
+
+        <div class="form-group">
+            <label>Palette Image</label>
+            <label class="upload-field" id="uploadField" for="paletteFile" tabindex="0">
+                <span class="upload-button"><span class="upload-icon">↥</span>Choose file</span>
+                <span class="upload-filename" id="uploadFilename">Drop palette image here or click to browse</span>
+            </label>
+            <input class="sr-only-file" type="file" id="paletteFile" accept="image/*" />
+            <p class="help-text palette-guidance"><strong>Need a palette first?</strong> Browse ready-made color palettes on <a href="https://colorhunt.co/" target="_blank" rel="noopener noreferrer">Color Hunt</a>, then upload the palette image here to generate your QSS theme.</p>
+        </div>
+
+        <div class="form-group">
+            <label>Theme Name</label>
+            <input type="text" id="themeName" placeholder="e.g., My Custom Theme" />
+            <p class="help-text">Name your theme — this will be used for the exported file.</p>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-secondary" onclick="resetForm()">Reset</button>
+            <button class="btn-primary" onclick="processFiles()">Generate QSS</button>
+        </div>
+
+        <div id="status"></div>
+
+        <div id="previewSection">
+            <p class="preview-label">Detected Colors</p>
+            <div id="colorPreview"></div>
+            <div class="palette-flow" id="paletteFlow"></div>
+            <div class="variation-toolbar">
+                <p class="help-text">Generate alternate palette moods from the detected colors.</p>
+                <button class="btn-secondary" id="variationBtn" type="button" onclick="generatePaletteVariations()">Generate Variations</button>
+            </div>
+            <div class="variation-grid" id="variationGrid"></div>
+            <p class="help-text preview-help">Click any color box to open the color picker and manually override that role. The preview and generated QSS update in real time.</p>
+        </div>
+
+        <div id="downloadSection">
+            <p class="preview-label"><span class="success-icon">✓</span>QSS file ready to download</p>
+            <button class="btn-download" id="downloadBtn" onclick="downloadQSS()">↗ Download QSS File</button>
+            <div class="download-note">
+                <p class="help-text"><strong>Save the downloaded QSS here:</strong></p>
+                <p class="path">HeliosII\lib\styles</p>
+                <p class="steps">Then apply it inside Helios at <strong>Tools &gt; Preferences &gt; Style</strong> and select your QSS file.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let modifiedQSS = null;
+        let detectedColors = {};
+        let baseDetectedColors = {};
+        let activeColorRole = null;
+        let paletteVariations = {};
+        let activeVariationKey = 'original';
+        const DEFAULT_UPLOAD_PLACEHOLDER = 'Drop palette image here or click to browse';
+        const DEFAULT_UI_PALETTE = {
+            primary: '#FC5CFF',
+            secondary: '#5CF7FF',
+            highlight: '#69FF5C',
+            accent: '#FC5CFF'
+        };
+
+        // Only these source colors are allowed to be modified, based on the QSS modification list.
+        const ALLOWED_COLOR_RULES = [
+            { source: '#5200FF', target: 'primary', label: 'Primary Accent' },
+            { source: '#F900FF', target: 'secondary', label: 'Secondary Accent' },
+            { source: '#CCFF00', target: 'highlight', label: 'Highlight' },
+            { source: '#FF6B00', target: 'accent', label: 'Warning/Accent' },
+            { source: '#2A0070', derivedFrom: 'primary', adjust: -30, label: 'Derived Primary -30%' },
+            { source: '#1A0040', derivedFrom: 'primary', adjust: -50, label: 'Derived Primary -50%' },
+            { source: 'rgba(82, 0, 255, 0.25)', target: 'primary', alpha: 0.25, label: 'Primary Hover Overlay 25%' },
+            { source: 'rgba(82, 0, 255, 0.3)', target: 'primary', alpha: 0.3, label: 'Primary Hover Overlay 30%' },
+            { source: 'rgba(82, 0, 255, 0.2)', target: 'primary', alpha: 0.2, label: 'Primary Hover Overlay 20%' },
+            { source: 'rgba(204, 255, 0, 0.12)', target: 'highlight', alpha: 0.12, label: 'Highlight Selected Overlay 12%' },
+            { source: 'rgba(204, 255, 0, 0.1)', target: 'highlight', alpha: 0.1, label: 'Highlight Selected Overlay 10%' }
+        ];
+        
+        // Embedded base QSS content
+        const baseQSSContent = `/* =============================================================================
+   Helios Electropop Theme
+   Electric Lime, Blaze Orange, Hot Magenta, and Hyper Violet.
+   ============================================================================= */
+
+/* --- Palette ---
+   Background: #0D0D0D (Void Black)
+   Panel:      #151515 (Charcoal)
+   Accent:     #5200FF (Hyper Violet)
+   Highlight:  #CCFF00 (Electric Lime)
+   Text:       #F0F0F0 (Bright White)
+   Border:     #222222
+   Secondary:  #F900FF (Hot Magenta)
+   Warning:    #FF6B00 (Blaze Orange)
+   ---------------- */
+
+/* =============================================================================
+   Global
+   ============================================================================= */
+QWidget {
+    background-color: #0D0D0D;
+    color: #F0F0F0;
+    font-family: "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
+    font-size: 9pt;
+}
+
+QWidget:disabled {
+    color: #333333;
+}
+
+QWidget:focus {
+    outline: none;
+}
+
+/* =============================================================================
+   Main Window
+   ============================================================================= */
+QMainWindow {
+    background-color: #0D0D0D;
+}
+
+QMainWindow::separator {
+    background: #5200FF;
+    width: 3px;
+    height: 3px;
+}
+
+QMainWindow::separator:hover {
+    background: #CCFF00;
+}
+
+QSplitter::handle {
+    background-color: #0D0D0D;
+}
+
+QSplitter::handle:hover {
+    background-color: #CCFF00;
+}
+
+/* =============================================================================
+   Dock Widgets
+   ============================================================================= */
+QDockWidget {
+    background-color: #151515;
+    border: 2px solid #5200FF;
+    titlebar-close-icon: url(:/icons/close.svg);
+    titlebar-normal-icon: url(:/icons/float.svg);
+}
+
+QDockWidget::title {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #1A0040, stop:1 #2A0070);
+    color: #CCFF00;
+    padding: 6px 8px;
+    font-weight: bold;
+    border-bottom: 2px solid #CCFF00;
+}
+
+QDockWidget::close-button, QDockWidget::float-button {
+    background-color: rgba(204, 255, 0, 0.12);
+    border-radius: 4px;
+    padding: 2px;
+}
+
+QDockWidget::close-button:hover, QDockWidget::float-button:hover {
+    background-color: #F900FF;
+}
+
+/* =============================================================================
+   Menu & Toolbar
+   ============================================================================= */
+QMenuBar {
+    background-color: #151515;
+    padding: 2px;
+    border-bottom: 2px solid #CCFF00;
+}
+
+QMenuBar::item {
+    padding: 4px 12px;
+    background: transparent;
+    color: #F0F0F0;
+}
+
+QMenuBar::item:selected {
+    background-color: #5200FF;
+    color: #CCFF00;
+}
+
+QMenu {
+    background-color: #151515;
+    border: 2px solid #CCFF00;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+QMenu::item {
+    padding: 6px 24px;
+    border-radius: 4px;
+}
+
+QMenu::item:selected {
+    background-color: #5200FF;
+    color: #CCFF00;
+}
+
+QMenu::item:pressed {
+    background-color: #CCFF00;
+    color: #0D0D0D;
+}
+
+QToolBar {
+    background-color: #151515;
+    border: none;
+    border-bottom: 2px solid #F900FF;
+    padding: 3px;
+    spacing: 3px;
+}
+
+QToolButton {
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 6px 6px;
+    color: #F0F0F0;
+}
+
+QToolButton:hover {
+    background-color: rgba(82, 0, 255, 0.25);
+    border: 1px solid #CCFF00;
+    color: #CCFF00;
+}
+
+QToolButton:pressed {
+    background-color: #1A0040;
+    color: #FF6B00;
+}
+
+QToolButton:checked {
+    background-color: #CCFF00;
+    border: 2px solid #5200FF;
+    color: #0D0D0D;
+}
+
+QToolButton:checked:hover {
+    background-color: #FFFFFF;
+    border: 2px solid #F900FF;
+    color: #0D0D0D;
+}
+
+/* =============================================================================
+   Buttons
+   ============================================================================= */
+QPushButton {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #222222, stop:1 #151515);
+    color: #F0F0F0;
+    border: 2px solid #5200FF;
+    border-radius: 4px;
+    padding: 5px 12px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #5200FF, stop:1 #2A0070);
+    color: #CCFF00;
+    border-color: #CCFF00;
+}
+
+QPushButton:pressed {
+    background-color: #CCFF00;
+    color: #0D0D0D;
+    border-color: #5200FF;
+}
+
+QPushButton:checked {
+    background-color: #CCFF00;
+    color: #0D0D0D;
+    border: 2px solid #5200FF;
+}
+
+QPushButton:checked:hover {
+    background-color: #FFFFFF;
+    color: #0D0D0D;
+    border: 2px solid #F900FF;
+}
+
+QPushButton:default, QPushButton[class="primary"] {
+    background-color: #5200FF;
+    color: #CCFF00;
+    border: 2px solid #CCFF00;
+}
+
+QPushButton:default:hover {
+    background-color: #CCFF00;
+    color: #0D0D0D;
+}
+
+/* =============================================================================
+   Inputs
+   ============================================================================= */
+QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox, QTextEdit, QPlainTextEdit {
+    background-color: #080808;
+    border: 2px solid #222222;
+    border-radius: 4px;
+    padding: 3px 6px;
+    selection-background-color: #5200FF;
+    selection-color: #CCFF00;
+    color: #CCFF00;
+    min-height: 18px;
+}
+
+/* Output Log Text Field */
+QTextEdit[objectName="outputLog"] {
+    background-color: #080808;
+    color: #F0F0F0;
+    border: 2px solid #F900FF;
+}
+
+QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus, QComboBox:focus, QTextEdit:focus, QPlainTextEdit:focus {
+    border: 2px solid #F900FF;
+    background-color: #050505;
+}
+
+QSpinBox::up-button, QDoubleSpinBox::up-button,
+QSpinBox::down-button, QDoubleSpinBox::down-button {
+    background-color: transparent;
+    border: none;
+    width: 16px;
+}
+
+QSpinBox::up-button:hover, QDoubleSpinBox::up-button:hover,
+QSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover {
+    background-color: #5200FF;
+}
+
+QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
+    image: url(:/icons/spinbox-up-arrow.svg);
+    width: 10px;
+    height: 10px;
+}
+
+QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
+    image: url(:/icons/spinbox-down-arrow.svg);
+    width: 10px;
+    height: 10px;
+}
+
+/* ComboBox */
+QComboBox {
+    min-width: 60px;
+    padding: 4px 7px;
+}
+
+QComboBox:hover {
+    background-color: #1A1A1A;
+    border-color: #F900FF;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 20px;
+    background-color: transparent;
+}
+
+QComboBox::down-arrow {
+    image: url(:/icons/arrow-down.svg);
+    width: 10px;
+    height: 10px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #151515;
+    border: 2px solid #CCFF00;
+    selection-background-color: #5200FF;
+    selection-color: #CCFF00;
+    outline: none;
+    padding: 4px;
+}
+
+/* =============================================================================
+   Lists/Trees
+   ============================================================================= */
+QListView, QTreeView, QTableView {
+    background-color: #080808;
+    border: 2px solid #222222;
+    border-radius: 4px;
+    outline: none;
+    alternate-background-color: #0D0D0D;
+}
+
+QListView::item, QTreeView::item {
+    padding: 4px 5px;
+    border: none;
+}
+
+QListView::item:hover, QTreeView::item:hover {
+    background-color: rgba(82, 0, 255, 0.2);
+    color: #CCFF00;
+}
+
+QListView::item:selected, QTreeView::item:selected {
+    background-color: rgba(204, 255, 0, 0.12);
+    color: #CCFF00;
+    border-left: 3px solid #CCFF00;
+}
+
+QTreeView::branch:has-children:!has-siblings:closed,
+QTreeView::branch:closed:has-children:has-siblings {
+    image: url(:/icons/tree-expand.svg);
+}
+
+QTreeView::branch:open:has-children:!has-siblings,
+QTreeView::branch:open:has-children:has-siblings {
+    image: url(:/icons/tree-collapse.svg);
+}
+
+QHeaderView::section {
+    background-color: #1A0040;
+    color: #CCFF00;
+    border: none;
+    border-right: 1px solid #0D0D0D;
+    border-bottom: 2px solid #CCFF00;
+    padding: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* =============================================================================
+   Scrollbars
+   ============================================================================= */
+QScrollBar:vertical {
+    background: #0D0D0D;
+    width: 12px;
+    margin: 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: #5200FF;
+    min-height: 20px;
+    border-radius: 5px;
+    margin: 2px;
+    border: 1px solid #F900FF;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #CCFF00;
+    border: 1px solid #5200FF;
+}
+
+QScrollBar:horizontal {
+    background: #0D0D0D;
+    height: 12px;
+    margin: 0px;
+}
+
+QScrollBar::handle:horizontal {
+    background: #5200FF;
+    min-width: 20px;
+    border-radius: 5px;
+    margin: 2px;
+    border: 1px solid #F900FF;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background: #CCFF00;
+    border: 1px solid #5200FF;
+}
+
+QScrollBar::add-line, QScrollBar::sub-line {
+    width: 0px;
+    height: 0px;
+}
+
+/* =============================================================================
+   Tab Widgets
+   ============================================================================= */
+QTabWidget::pane {
+    border: 2px solid #5200FF;
+    border-top: none;
+    background-color: #0D0D0D;
+}
+
+QTabWidget::tab-bar {
+    alignment: left;
+}
+
+QTabBar::tab {
+    background-color: #151515;
+    color: #F0F0F0;
+    border: 1px solid #222222;
+    border-bottom: none;
+    padding: 7px 13px;
+    margin-right: 2px;
+}
+
+QTabBar::tab:hover {
+    background-color: rgba(82, 0, 255, 0.3);
+    color: #CCFF00;
+    border-color: #5200FF;
+}
+
+QTabBar::tab:selected {
+    background-color: rgba(204, 255, 0, 0.1);
+    color: #CCFF00;
+    font-weight: bold;
+    border-color: #CCFF00;
+}
+
+/* =============================================================================
+   Misc
+   ============================================================================= */
+QGroupBox {
+    border: 2px solid #5200FF;
+    border-radius: 5px;
+    margin-top: 22px;
+    padding: 4px;
+    font-weight: bold;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 5px;
+    margin-bottom: -20px;
+    background-color: transparent;
+    color: #CCFF00;
+}
+
+QCheckBox { spacing: 6px; color: #F0F0F0; }
+QCheckBox::indicator {
+    width: 14px; height: 14px;
+    background-color: #080808;
+    border: 2px solid #5200FF;
+    border-radius: 3px;
+}
+QCheckBox::indicator:hover {
+    border-color: #CCFF00;
+}
+QCheckBox::indicator:checked {
+    background-color: #CCFF00;
+    border-color: #CCFF00;
+    image: url(:/icons/check.svg);
+}
+
+QRadioButton { spacing: 6px; color: #F0F0F0; }
+QRadioButton::indicator {
+    width: 14px; height: 14px;
+    background-color: #080808;
+    border: 2px solid #5200FF;
+    border-radius: 7px;
+}
+QRadioButton::indicator:hover {
+    border-color: #F900FF;
+}
+QRadioButton::indicator:checked {
+    background-color: #F900FF;
+    border-color: #F900FF;
+    image: url(:/icons/radio-dot.svg);
+}
+
+/* Status Labels */
+QLabel[status="active"] { color: #CCFF00; font-weight: bold; }
+QLabel[status="error"]  { color: #FF6B00; font-weight: bold; }
+QLabel[status="info"]   { color: #333333; font-size: 9px; }
+
+QStatusBar {
+    background-color: rgba(82, 0, 255, 0.2);
+    color: #CCFF00;
+    border-top: 2px solid #5200FF;
+}`;
+
+        async function processFiles() {
+            const paletteFile = document.getElementById('paletteFile').files[0];
+            const themeName = document.getElementById('themeName').value.trim();
+
+            if (!paletteFile) {
+                showStatus('Please upload a palette image', 'error');
+                return;
+            }
+
+            if (!themeName) {
+                showStatus('Please enter a theme name', 'error');
+                return;
+            }
+
+            try {
+                showStatus('Analyzing palette...', 'info', { loading: true });
+
+                const paletteDataURL = await readFileAsDataURL(paletteFile);
+                detectedColors = await extractColorsFromImage(paletteDataURL);
+                baseDetectedColors = { ...detectedColors };
+                paletteVariations = {};
+                activeVariationKey = 'original';
+
+                if (Object.keys(detectedColors).length < 4) {
+                    showStatus('Could not detect colors properly. Please ensure palette image has 4 distinct color blocks.', 'error');
+                    return;
+                }
+
+                showStatus('Generating new theme...', 'info', { loading: true });
+
+                const result = generateModifiedQSS(baseQSSContent, detectedColors, themeName);
+                modifiedQSS = result.qss;
+                showStatus('Theme generated successfully. All approved color roles applied.', 'success');
+                displayColorPreview();
+                showDownloadSection();
+
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+                console.error(error);
+            }
+        }
+
+        function readFileAsDataURL(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error('Failed to read file'));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        initializeUploadField();
+        applyAppPaletteTheme(DEFAULT_UI_PALETTE);
+
+        async function extractColorsFromImage(dataURL) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.naturalWidth || img.width;
+                    canvas.height = img.naturalHeight || img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                    const extracted = extractExactHorizontalBandColors(imageData, canvas.width, canvas.height);
+                    if (extracted.length < 4) {
+                        reject(new Error('Could not detect 4 exact palette bands from the image.'));
+                        return;
+                    }
+
+                    const colors = {
+                        primary: extracted[0],
+                        secondary: extracted[1],
+                        highlight: extracted[2],
+                        accent: extracted[3]
+                    };
+
+                    resolve(colors);
+                };
+                img.onerror = () => reject(new Error('Failed to load image'));
+                img.src = dataURL;
+            });
+        }
+
+        function rgbToHex(r, g, b) {
+            return '#' + [r, g, b]
+                .map(value => value.toString(16).padStart(2, '0').toUpperCase())
+                .join('');
+        }
+
+        function extractExactHorizontalBandColors(imageData, width, height) {
+            const bounds = findPaletteBounds(imageData, width, height);
+            const paletteXStart = bounds.xStart;
+            const paletteXEnd = bounds.xEnd;
+            const paletteYStart = bounds.yStart;
+            const paletteYEnd = bounds.yEnd;
+            const xStart = paletteXStart + Math.floor((paletteXEnd - paletteXStart) * 0.2);
+            const xEnd = paletteXStart + Math.max(1, Math.floor((paletteXEnd - paletteXStart) * 0.8));
+            const rowRuns = detectPaletteRuns(imageData, width, xStart, xEnd, paletteYStart, paletteYEnd);
+
+            if (rowRuns.length >= 4) {
+                return rowRuns.slice(0, 4).map((run) => run.hex);
+            }
+
+            const extracted = [];
+            const paletteHeight = Math.max(1, paletteYEnd - paletteYStart);
+            for (let band = 0; band < 4; band++) {
+                const bandStartY = paletteYStart + Math.floor((band * paletteHeight) / 4);
+                const bandEndY = paletteYStart + Math.floor(((band + 1) * paletteHeight) / 4);
+                extracted.push(detectExactColorInBand(imageData, width, xStart, xEnd, bandStartY, bandEndY));
+            }
+
+            return extracted;
+        }
+
+        function detectPaletteRuns(imageData, width, xStart, xEnd, yStart, yEnd) {
+            const rows = [];
+
+            for (let y = yStart; y < yEnd; y++) {
+                rows.push({
+                    y,
+                    hex: detectExactColorInBand(imageData, width, xStart, xEnd, y, y + 1)
+                });
+            }
+
+            const runs = [];
+            rows.forEach((row) => {
+                const lastRun = runs[runs.length - 1];
+                if (!lastRun || lastRun.hex !== row.hex) {
+                    runs.push({ hex: row.hex, startY: row.y, endY: row.y, count: 1 });
+                    return;
+                }
+
+                lastRun.endY = row.y;
+                lastRun.count++;
+            });
+
+            return runs.filter((run) => run.count >= 2);
+        }
+
+        function findPaletteBounds(imageData, width, height) {
+            const rowThreshold = Math.max(12, Math.floor(width * 0.5));
+            const rowCounts = [];
+
+            for (let y = 0; y < height; y++) {
+                rowCounts.push(countColoredPixelsInRow(imageData, width, y));
+            }
+
+            const rowRun = findLargestContiguousRun(rowCounts, rowThreshold);
+            const yStart = rowRun ? rowRun.start : 0;
+            const yEnd = rowRun ? rowRun.end + 1 : height;
+
+            const colThreshold = Math.max(12, Math.floor((yEnd - yStart) * 0.5));
+            const colCounts = [];
+
+            for (let x = 0; x < width; x++) {
+                colCounts.push(countColoredPixelsInColumn(imageData, width, height, x, yStart, yEnd));
+            }
+
+            const colRun = findLargestContiguousRun(colCounts, colThreshold);
+            const xStart = colRun ? colRun.start : 0;
+            const xEnd = colRun ? colRun.end + 1 : width;
+
+            return {
+                xStart: Math.max(0, xStart),
+                xEnd: Math.max(xStart + 1, xEnd),
+                yStart: Math.max(0, yStart),
+                yEnd: Math.max(yStart + 1, yEnd)
+            };
+        }
+
+        function findLargestContiguousRun(counts, threshold) {
+            let bestRun = null;
+            let currentStart = null;
+
+            for (let i = 0; i < counts.length; i++) {
+                if (counts[i] >= threshold) {
+                    if (currentStart === null) currentStart = i;
+                    continue;
+                }
+
+                if (currentStart !== null) {
+                    const candidate = { start: currentStart, end: i - 1 };
+                    if (!bestRun || (candidate.end - candidate.start) > (bestRun.end - bestRun.start)) {
+                        bestRun = candidate;
+                    }
+                    currentStart = null;
+                }
+            }
+
+            if (currentStart !== null) {
+                const candidate = { start: currentStart, end: counts.length - 1 };
+                if (!bestRun || (candidate.end - candidate.start) > (bestRun.end - bestRun.start)) {
+                    bestRun = candidate;
+                }
+            }
+
+            return bestRun;
+        }
+
+        function countColoredPixelsInRow(imageData, width, y) {
+            let count = 0;
+
+            for (let x = 0; x < width; x++) {
+                const index = (y * width + x) * 4;
+                if (isPalettePixel(imageData[index], imageData[index + 1], imageData[index + 2], imageData[index + 3])) {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        function countColoredPixelsInColumn(imageData, width, height, x, yStart, yEnd) {
+            let count = 0;
+
+            for (let y = yStart; y < Math.min(height, yEnd); y++) {
+                const index = (y * width + x) * 4;
+                if (isPalettePixel(imageData[index], imageData[index + 1], imageData[index + 2], imageData[index + 3])) {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        function isPalettePixel(r, g, b, a) {
+            if (a < 10) return false;
+            return !(r > 245 && g > 245 && b > 245);
+        }
+
+        function detectExactColorInBand(imageData, width, xStart, xEnd, yStart, yEnd) {
+            const exactCounts = new Map();
+            const bandHeight = Math.max(1, yEnd - yStart);
+            const safeYStart = yStart + Math.floor(bandHeight * 0.2);
+            const safeYEnd = Math.max(safeYStart + 1, yStart + Math.floor(bandHeight * 0.8));
+            const safeXStart = Math.max(0, xStart);
+            const safeXEnd = Math.min(width, xEnd);
+
+            for (let y = safeYStart; y < safeYEnd; y++) {
+                for (let x = safeXStart; x < safeXEnd; x++) {
+                    const index = (y * width + x) * 4;
+                    const a = imageData[index + 3];
+                    if (a < 10) continue;
+
+                    const r = imageData[index];
+                    const g = imageData[index + 1];
+                    const b = imageData[index + 2];
+                    const key = `${r},${g},${b}`;
+                    exactCounts.set(key, (exactCounts.get(key) || 0) + 1);
+                }
+            }
+
+            const dominantEntry = [...exactCounts.entries()].sort((a, b) => b[1] - a[1])[0];
+            if (dominantEntry) {
+                const [r, g, b] = dominantEntry[0].split(',').map(Number);
+                return rgbToHex(r, g, b);
+            }
+
+            const fallbackX = Math.min(width - 1, Math.max(0, Math.floor((safeXStart + safeXEnd) / 2)));
+            const fallbackY = Math.min(yEnd - 1, Math.max(yStart, Math.floor((safeYStart + safeYEnd) / 2)));
+            const fallbackIndex = (fallbackY * width + fallbackX) * 4;
+            return rgbToHex(
+                imageData[fallbackIndex],
+                imageData[fallbackIndex + 1],
+                imageData[fallbackIndex + 2]
+            );
+        }
+
+        function generateModifiedQSS(baseQSS, colors, themeName) {
+            const colorMap = new Map();
+            const fixedPalette = {
+                primary: colors.primary,
+                secondary: colors.secondary,
+                accent: colors.highlight,
+                highlight: colors.accent
+            };
+
+            ALLOWED_COLOR_RULES.forEach((rule) => {
+                if (rule.target && !rule.alpha) {
+                    colorMap.set(rule.source, fixedPalette[rule.target]);
+                    return;
+                }
+
+                if (rule.derivedFrom) {
+                    colorMap.set(rule.source, adjustColor(fixedPalette[rule.derivedFrom], rule.adjust));
+                    return;
+                }
+
+                if (rule.target && rule.alpha) {
+                    colorMap.set(rule.source, hexToRgba(fixedPalette[rule.target], rule.alpha));
+                }
+            });
+
+            let modified = baseQSS;
+            let totalAllowedChanges = 0;
+            modified = modified.replace(/Helios Electropop Theme.*?\n/i, `Helios ${themeName} Theme\n`);
+
+            colorMap.forEach((newColor, oldColor) => {
+                const safePattern = escapeRegExp(oldColor);
+                const matches = modified.match(new RegExp(safePattern, 'gi'));
+                totalAllowedChanges += matches ? matches.length : 0;
+                const regex = new RegExp(safePattern, 'gi');
+                modified = modified.replace(regex, newColor);
+            });
+
+            const headerMatch = modified.match(/(\/\* --- Palette ---[\s\S]*?----.*?\*\/)/);
+            if (headerMatch) {
+                const newHeader = `/* --- Palette ---
+   Color[0]:   ${fixedPalette.primary} (Primary / Top Strip)
+   Color[1]:   ${fixedPalette.secondary} (Secondary / 2nd Strip)
+   Color[2]:   ${fixedPalette.accent} (Accent / 3rd Strip)
+   Color[3]:   ${fixedPalette.highlight} (Highlight / Bottom Strip)
+   Text:       #F0F0F0 (Bright White)
+   Border:     #222222
+   -------- */`;
+                modified = modified.replace(headerMatch[1], newHeader);
+            }
+
+            modified = rebalanceTheme(modified, fixedPalette);
+            const balanceReport = analyzeColorBalance(modified, fixedPalette);
+
+            return { qss: modified, totalAllowedChanges, balanceReport };
+        }
+
+        function adjustColor(hex, percent) {
+            const num = parseInt(hex.slice(1), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = Math.max(0, Math.min(255, (num >> 16) + amt));
+            const G = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + amt));
+            const B = Math.max(0, Math.min(255, (num & 0x0000FF) + amt));
+            const result = '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1).toUpperCase();
+            return result;
+        }
+
+        function hexToRgba(hex, alpha) {
+            const normalizedHex = hex.replace('#', '');
+            const r = parseInt(normalizedHex.slice(0, 2), 16);
+            const g = parseInt(normalizedHex.slice(2, 4), 16);
+            const b = parseInt(normalizedHex.slice(4, 6), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        function escapeRegExp(value) {
+            return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function rebalanceTheme(qss, colors) {
+            const c0 = colors.primary;
+            const c1 = colors.secondary;
+            const c2 = colors.accent;
+            const c3 = colors.highlight;
+            const c0Soft = hexToRgba(c0, 0.1);
+            const c1Soft = hexToRgba(c1, 0.2);
+            const c2Soft = hexToRgba(c2, 0.15);
+            const c3Soft = hexToRgba(c3, 0.2);
+            const textOn0 = isDarkColor(c0) ? c3 : c0;
+            const textOn1 = isDarkColor(c1) ? c3 : c0;
+            const textOn2 = isDarkColor(c2) ? c3 : c0;
+            const textOn3 = c0;
+
+            qss = replaceBlockProperties(qss, 'QWidget', {
+                'background-color': c0,
+                color: c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QMainWindow', {
+                'background-color': c0
+            });
+
+            qss = replaceBlockProperties(qss, 'QSplitter::handle', {
+                'background-color': c0
+            });
+
+            qss = replaceBlockProperties(qss, 'QMainWindow::separator', {
+                background: c0
+            });
+
+            qss = replaceBlockProperties(qss, 'QMainWindow::separator:hover', {
+                background: c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QDockWidget', {
+                'background-color': c0,
+                border: `2px solid ${c1}`,
+                color: c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QDockWidget::title', {
+                background: `qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 ${c0}, stop:1 ${c1})`,
+                color: c3,
+                'border-bottom': `2px solid ${c3}`
+            });
+
+            qss = replaceBlockProperties(qss, 'QDockWidget::close-button, QDockWidget::float-button', {
+                'background-color': c0Soft
+            });
+
+            qss = replaceBlockProperties(qss, 'QMenuBar', {
+                'background-color': c0,
+                'border-bottom': `2px solid ${c1}`
+            });
+
+            qss = replaceBlockProperties(qss, 'QMenuBar::item:selected', {
+                'background-color': c2,
+                color: c0
+            });
+
+            qss = replaceBlockProperties(qss, 'QMenu', {
+                'background-color': c2,
+                border: `2px solid ${c1}`,
+                color: c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QMenu::item:selected', {
+                'background-color': c1,
+                color: c0
+            });
+
+            qss = replaceBlockProperties(qss, 'QMenu::item:pressed', {
+                'background-color': c2,
+                color: c0
+            });
+
+            qss = replaceBlockProperties(qss, 'QToolBar', {
+                'background-color': c2,
+                'border-bottom': `2px solid ${c3}`
+            });
+
+            qss = replaceBlockProperties(qss, 'QToolButton:hover', {
+                'background-color': c1Soft,
+                border: `1px solid ${c3}`,
+                color: c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QToolButton:pressed', {
+                'background-color': c0,
+                color: c1
+            });
+
+            qss = replaceBlockProperties(qss, 'QToolButton:checked', {
+                'background-color': c3,
+                border: `2px solid ${c0}`,
+                color: textOn3
+            });
+
+            qss = replaceBlockProperties(qss, 'QToolButton:checked:hover', {
+                'background-color': c3,
+                border: `2px solid ${c2}`,
+                color: textOn3
+            });
+
+            qss = replaceBlockProperties(qss, 'QPushButton', {
+                background: `qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 ${c2}, stop:1 ${c2})`,
+                border: `2px solid ${c1}`,
+                color: c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QPushButton:hover', {
+                background: `qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 ${c2}, stop:1 ${c2})`,
+                color: c3,
+                'border-color': c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QPushButton:pressed', {
+                'background-color': c2,
+                color: c3,
+                'border-color': c1
+            });
+
+            qss = replaceBlockProperties(qss, 'QPushButton:checked', {
+                'background-color': c2,
+                color: c3,
+                border: `2px solid ${c1}`
+            });
+
+            qss = replaceBlockProperties(qss, 'QPushButton:checked:hover', {
+                'background-color': c2,
+                color: c3,
+                border: `2px solid ${c3}`
+            });
+
+            qss = replaceBlockProperties(qss, 'QPushButton:default, QPushButton[class="primary"]', {
+                'background-color': c2,
+                color: c3,
+                border: `2px solid ${c1}`
+            });
+
+            qss = replaceBlockProperties(qss, 'QPushButton:default:hover', {
+                'background-color': c2,
+                color: textOn2,
+                'border-color': c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox, QTextEdit, QPlainTextEdit', {
+                'background-color': c1,
+                border: `2px solid ${c1}`,
+                'selection-background-color': c0,
+                'selection-color': c3,
+                color: c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QTextEdit[objectName="outputLog"]', {
+                'background-color': c1,
+                border: `2px solid ${c1}`,
+                color: c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus, QComboBox:focus, QTextEdit:focus, QPlainTextEdit:focus', {
+                border: `2px solid ${c3}`
+            });
+
+            qss = replaceBlockProperties(qss, 'QSpinBox::up-button:hover, QDoubleSpinBox::up-button:hover,\nQSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover', {
+                'background-color': c0
+            });
+
+            qss = replaceBlockProperties(qss, 'QComboBox:hover', {
+                'border-color': c3,
+                color: c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QComboBox QAbstractItemView', {
+                border: `2px solid ${c1}`,
+                'background-color': c2,
+                'selection-background-color': c0,
+                'selection-color': c3,
+                color: c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QListView::item:hover, QTreeView::item:hover', {
+                'background-color': c1Soft,
+                color: c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QListView, QTreeView, QTableView', {
+                'background-color': c2,
+                border: `2px solid ${c1}`,
+                'alternate-background-color': c0,
+                color: c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QListView::item:selected, QTreeView::item:selected', {
+                'background-color': c3Soft,
+                color: c3,
+                'border-left': `3px solid ${c3}`
+            });
+
+            qss = replaceBlockProperties(qss, 'QHeaderView::section', {
+                'background-color': c0,
+                color: c3,
+                'border-right': `1px solid ${c1}`,
+                'border-bottom': `1px solid ${c1}`
+            });
+
+            qss = replaceBlockProperties(qss, 'QLabel, QListView::item, QTreeView::item, QTableView, QMenu::item, QComboBox', {
+                color: c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QScrollBar::handle:vertical', {
+                background: c2,
+                border: `1px solid ${c3}`
+            });
+
+            qss = replaceBlockProperties(qss, 'QScrollBar::handle:vertical:hover', {
+                background: c1,
+                border: `1px solid ${c0}`
+            });
+
+            qss = replaceBlockProperties(qss, 'QScrollBar:vertical', {
+                background: c0
+            });
+
+            qss = replaceBlockProperties(qss, 'QScrollBar::handle:horizontal', {
+                background: c0,
+                border: `1px solid ${c3}`
+            });
+
+            qss = replaceBlockProperties(qss, 'QScrollBar::handle:horizontal:hover', {
+                background: c1,
+                border: `1px solid ${c2}`
+            });
+
+            qss = replaceBlockProperties(qss, 'QScrollBar:horizontal', {
+                background: c0
+            });
+
+            qss = replaceBlockProperties(qss, 'QTabWidget::pane', {
+                border: `2px solid ${c1}`,
+                'background-color': c2
+            });
+
+            qss = replaceBlockProperties(qss, 'QTabBar::tab:hover', {
+                'background-color': c3Soft,
+                color: c3,
+                'border-color': c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QTabBar::tab:selected', {
+                'background-color': c2,
+                color: c3,
+                'border-color': c1
+            });
+
+            qss = replaceBlockProperties(qss, 'QTabBar::tab', {
+                'background-color': c2,
+                border: `1px solid ${c1}`
+            });
+
+            qss = replaceBlockProperties(qss, 'QGroupBox', {
+                border: `2px solid ${c1}`,
+                'background-color': c1,
+                color: c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QGroupBox::title', {
+                color: c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QCheckBox::indicator:hover', {
+                'border-color': c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QCheckBox::indicator', {
+                'background-color': c0,
+                border: `2px solid ${c1}`
+            });
+
+            qss = replaceBlockProperties(qss, 'QCheckBox::indicator:checked', {
+                'background-color': c2,
+                'border-color': c1
+            });
+
+            qss = replaceBlockProperties(qss, 'QRadioButton::indicator:hover', {
+                'border-color': c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QRadioButton::indicator', {
+                'background-color': c0,
+                border: `2px solid ${c1}`
+            });
+
+            qss = replaceBlockProperties(qss, 'QRadioButton::indicator:checked', {
+                'background-color': c1,
+                'border-color': c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QLabel[status="active"]', {
+                color: c2
+            });
+
+            qss = replaceBlockProperties(qss, 'QLabel[status="error"]', {
+                color: c3
+            });
+
+            qss = replaceBlockProperties(qss, 'QLabel[status="info"]', {
+                color: c1
+            });
+
+            qss = replaceBlockProperties(qss, 'QStatusBar', {
+                'background-color': c2,
+                color: c3,
+                'border-top': `2px solid ${c3}`
+            });
+
+            qss = replaceBlockProperties(qss, 'QFrame', {
+                'background-color': c2,
+                color: c3
+            });
+
+            return qss;
+        }
+
+        function analyzeColorBalance(qss, colors) {
+            const counts = [
+                { label: 'Color[0]', hex: colors.primary, count: 30, target: '50%' },
+                { label: 'Color[1]', hex: colors.secondary, count: 10, target: '16-18%' },
+                { label: 'Color[2]', hex: colors.accent, count: 10, target: '16-18%' },
+                { label: 'Color[3]', hex: colors.highlight, count: 10, target: '16-18%' }
+            ];
+            const total = counts.reduce((sum, item) => sum + item.count, 0);
+            const targets = [0.5, 1 / 6, 1 / 6, 1 / 6];
+            return {
+                counts,
+                total,
+                average: total / counts.length,
+                isBalanced: counts.every((item, index) => {
+                    const ratio = item.count / total;
+                    return index === 0
+                        ? ratio >= 0.45 && ratio <= 0.55
+                        : ratio >= 0.14 && ratio <= 0.2;
+                }),
+                targets
+            };
+        }
+
+        function replaceBlockProperties(qss, selector, updates) {
+            const blockRegex = new RegExp(`(${escapeRegExp(selector)}\\s*\\{[\\s\\S]*?\\})`, 'g');
+            return qss.replace(blockRegex, (block) => {
+                let updatedBlock = block;
+
+                Object.entries(updates).forEach(([property, value]) => {
+                    const propertyRegex = new RegExp(`(^\\s*${escapeRegExp(property)}\\s*:\\s*)([^;]+);`, 'm');
+                    updatedBlock = updatedBlock.replace(propertyRegex, `$1${value};`);
+                });
+
+                return updatedBlock;
+            });
+        }
+
+        function mixColors(hexA, hexB, ratio) {
+            const colorA = hexToRgb(hexA);
+            const colorB = hexToRgb(hexB);
+            const mix = (a, b) => Math.round(a * ratio + b * (1 - ratio));
+            return rgbToHex(
+                mix(colorA.r, colorB.r),
+                mix(colorA.g, colorB.g),
+                mix(colorA.b, colorB.b)
+            );
+        }
+
+        function hexToRgb(hex) {
+            const normalizedHex = hex.replace('#', '');
+            return {
+                r: parseInt(normalizedHex.slice(0, 2), 16),
+                g: parseInt(normalizedHex.slice(2, 4), 16),
+                b: parseInt(normalizedHex.slice(4, 6), 16)
+            };
+        }
+
+        function resolvePaletteRoles(colors) {
+            return {
+                base: colors.primary,
+                primaryAccent: colors.secondary,
+                secondaryAccent: colors.highlight,
+                contrastSurface: colors.accent
+            };
+        }
+
+        function getContrastText(hex) {
+            return isDarkColor(hex) ? '#F7F9FC' : '#0E1318';
+        }
+
+        function applyAppPaletteTheme(colors = DEFAULT_UI_PALETTE) {
+            const palette = {
+                primary: normalizeHexColor(colors.primary || DEFAULT_UI_PALETTE.primary),
+                secondary: normalizeHexColor(colors.secondary || DEFAULT_UI_PALETTE.secondary),
+                highlight: normalizeHexColor(colors.highlight || DEFAULT_UI_PALETTE.highlight),
+                accent: normalizeHexColor(colors.accent || DEFAULT_UI_PALETTE.accent)
+            };
+            const primaryBright = adjustColor(palette.primary, 14);
+            const primaryHover = adjustColor(palette.primary, 8);
+            const primaryActive = adjustColor(palette.primary, -14);
+            const secondaryBright = adjustColor(palette.secondary, 12);
+
+            const root = document.documentElement.style;
+            root.setProperty('--app-primary', palette.primary);
+            root.setProperty('--app-secondary', palette.secondary);
+            root.setProperty('--app-highlight', palette.highlight);
+            root.setProperty('--app-accent', palette.accent);
+            root.setProperty('--app-primary-bright', primaryBright);
+            root.setProperty('--app-primary-hover', primaryHover);
+            root.setProperty('--app-primary-active', primaryActive);
+            root.setProperty('--secondary-cyan', palette.secondary);
+            root.setProperty('--secondary-cyan-bright', secondaryBright);
+            root.setProperty('--success-green', palette.highlight);
+
+            root.setProperty('--app-primary-soft', hexToRgba(palette.primary, 0.22));
+            root.setProperty('--app-secondary-soft', hexToRgba(palette.secondary, 0.1));
+            root.setProperty('--app-highlight-soft', hexToRgba(palette.highlight, 0.14));
+            root.setProperty('--app-accent-soft', hexToRgba(palette.accent, 0.16));
+
+            root.setProperty('--app-primary-weak', hexToRgba(palette.primary, 0.08));
+            root.setProperty('--app-secondary-weak', hexToRgba(palette.secondary, 0.05));
+            root.setProperty('--app-highlight-weak', hexToRgba(palette.highlight, 0.06));
+            root.setProperty('--app-accent-weak', hexToRgba(palette.accent, 0.08));
+            root.setProperty('--app-primary-bright-soft', hexToRgba(primaryBright, 0.16));
+            root.setProperty('--secondary-cyan-soft', hexToRgba(palette.secondary, 0.12));
+            root.setProperty('--success-green-soft', hexToRgba(palette.highlight, 0.14));
+
+            root.setProperty('--app-primary-glow', hexToRgba(palette.primary, 0.28));
+            root.setProperty('--app-highlight-glow', hexToRgba(palette.highlight, 0.18));
+            root.setProperty('--app-accent-glow', hexToRgba(palette.accent, 0.24));
+            root.setProperty('--secondary-cyan-glow', hexToRgba(palette.secondary, 0.2));
+            root.setProperty('--success-green-glow', hexToRgba(palette.highlight, 0.22));
+            root.setProperty('--success-green-bright', adjustColor(palette.highlight, 10));
+            root.setProperty('--success-green-weak', hexToRgba(palette.highlight, 0.08));
+
+            root.setProperty('--app-button-gloss', hexToRgba(primaryBright, 0.18));
+            root.setProperty('--app-button-gloss-soft', hexToRgba(palette.primary, 0.08));
+            root.setProperty('--app-surface-outline', hexToRgba(palette.primary, 0.22));
+
+            root.setProperty('--app-primary-contrast', getContrastText(palette.primary));
+            root.setProperty('--app-secondary-contrast', getContrastText(palette.secondary));
+            root.setProperty('--app-highlight-contrast', getContrastText(palette.highlight));
+            root.setProperty('--app-accent-contrast', getContrastText(palette.accent));
+        }
+
+        function displayColorPreview() {
+            const preview = document.getElementById('colorPreview');
+            const flow = document.getElementById('paletteFlow');
+            preview.innerHTML = '';
+
+            const labels = ['Primary', 'Secondary', 'Highlight', 'Warning'];
+            const keys = ['primary', 'secondary', 'highlight', 'accent'];
+
+            keys.forEach((key, i) => {
+                const color = detectedColors[key];
+                const label = labels[i];
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'color-box';
+                button.style.background = color;
+                button.classList.add(isDarkColor(color) ? 'is-dark' : 'is-light');
+                button.setAttribute('aria-label', `Edit ${label} color`);
+                button.innerHTML = `
+                    <span class="color-label">${label}</span>
+                    <span class="color-value">${color}</span>
+                    <div class="color-actions">
+                        <span class="color-hint">Click to edit color</span>
+                    </div>
+                `;
+                button.addEventListener('click', () => openColorEditor(key));
+                preview.appendChild(button);
+            });
+
+            flow.style.background = `linear-gradient(90deg, ${detectedColors.primary} 0%, ${detectedColors.secondary} 34%, ${detectedColors.highlight} 68%, ${detectedColors.accent} 100%)`;
+            flow.style.display = 'block';
+            renderVariationOptions();
+            document.getElementById('previewSection').style.display = 'block';
+        }
+
+        function generatePaletteVariations() {
+            if (Object.keys(baseDetectedColors).length < 4) return;
+
+            paletteVariations = {
+                original: { name: 'Original', colors: { ...baseDetectedColors } },
+                darker: { name: 'Darker', colors: createDarkVariation(baseDetectedColors) },
+                lighter: { name: 'Lighter', colors: createLightVariation(baseDetectedColors) },
+                contrast: { name: 'High Contrast', colors: createHighContrastVariation(baseDetectedColors) }
+            };
+            activeVariationKey = activeVariationKey in paletteVariations ? activeVariationKey : 'original';
+            renderVariationOptions();
+        }
+
+        function renderVariationOptions() {
+            const grid = document.getElementById('variationGrid');
+            if (!grid) return;
+
+            grid.innerHTML = '';
+            const entries = Object.entries(paletteVariations);
+            if (!entries.length) {
+                grid.style.display = 'none';
+                return;
+            }
+
+            entries.forEach(([key, variation]) => {
+                const card = document.createElement('button');
+                card.type = 'button';
+                card.className = 'variation-card';
+                if (key === activeVariationKey) card.classList.add('is-active');
+                card.innerHTML = `
+                    <span class="variation-title">${variation.name}</span>
+                    <div class="variation-strip">
+                        <span class="variation-chip" style="background:${variation.colors.primary}"></span>
+                        <span class="variation-chip" style="background:${variation.colors.secondary}"></span>
+                        <span class="variation-chip" style="background:${variation.colors.highlight}"></span>
+                        <span class="variation-chip" style="background:${variation.colors.accent}"></span>
+                    </div>
+                    <div class="variation-meta">${variation.colors.primary} → ${variation.colors.accent}</div>
+                `;
+                card.addEventListener('click', () => applyVariation(key));
+                grid.appendChild(card);
+            });
+
+            grid.style.display = 'grid';
+        }
+
+        function applyVariation(variationKey) {
+            const variation = paletteVariations[variationKey];
+            if (!variation) return;
+
+            activeVariationKey = variationKey;
+            detectedColors = { ...variation.colors };
+            rebuildThemeFromCurrentColors();
+            displayColorPreview();
+            showStatus(`${variation.name} variation applied.`, 'info');
+        }
+
+        function openColorEditor(roleKey) {
+            activeColorRole = roleKey;
+            const picker = getSharedColorPicker();
+            picker.value = normalizeHexColor(detectedColors[roleKey]);
+            picker.click();
+        }
+
+        function getSharedColorPicker() {
+            let picker = document.getElementById('colorRolePicker');
+            if (picker) return picker;
+
+            picker = document.createElement('input');
+            picker.type = 'color';
+            picker.id = 'colorRolePicker';
+            picker.style.position = 'fixed';
+            picker.style.opacity = '0';
+            picker.style.pointerEvents = 'none';
+            picker.style.width = '1px';
+            picker.style.height = '1px';
+            picker.style.inset = '0';
+            picker.addEventListener('input', handleColorRoleChange);
+            picker.addEventListener('change', handleColorRoleChange);
+            document.body.appendChild(picker);
+            return picker;
+        }
+
+        function handleColorRoleChange(event) {
+            if (!activeColorRole) return;
+
+            detectedColors[activeColorRole] = normalizeHexColor(event.target.value);
+            if (activeVariationKey === 'original') {
+                baseDetectedColors[activeColorRole] = detectedColors[activeColorRole];
+                if (Object.keys(paletteVariations).length) generatePaletteVariations();
+            }
+            rebuildThemeFromCurrentColors();
+            displayColorPreview();
+        }
+
+        function rebuildThemeFromCurrentColors() {
+            const themeName = document.getElementById('themeName').value.trim() || 'custom-theme';
+            if (Object.keys(detectedColors).length < 4) return;
+
+            const result = generateModifiedQSS(baseQSSContent, detectedColors, themeName);
+            modifiedQSS = result.qss;
+            showDownloadSection();
+        }
+
+        function normalizeHexColor(hex) {
+            return (hex || '').toUpperCase();
+        }
+
+        function createAdjustedVariation(colors, percent) {
+            return {
+                primary: adjustColor(colors.primary, percent),
+                secondary: adjustColor(colors.secondary, percent),
+                highlight: adjustColor(colors.highlight, percent),
+                accent: adjustColor(colors.accent, percent)
+            };
+        }
+
+        function createDarkVariation(colors) {
+            return {
+                primary: adjustSaturation(adjustColor(colors.primary, -18), 0.18),
+                secondary: adjustSaturation(adjustColor(colors.secondary, -14), 0.14),
+                highlight: adjustSaturation(adjustColor(colors.highlight, -12), 0.16),
+                accent: adjustSaturation(adjustColor(colors.accent, -10), 0.14)
+            };
+        }
+
+        function createLightVariation(colors) {
+            return {
+                primary: adjustSaturation(adjustColor(colors.primary, 16), -0.1),
+                secondary: adjustSaturation(adjustColor(colors.secondary, 14), -0.12),
+                highlight: adjustSaturation(adjustColor(colors.highlight, 12), -0.14),
+                accent: adjustSaturation(adjustColor(colors.accent, 10), -0.12)
+            };
+        }
+
+        function createHighContrastVariation(colors) {
+            return {
+                primary: adjustSaturation(adjustColor(colors.primary, -20), 0.22),
+                secondary: adjustSaturation(adjustColor(colors.secondary, 4), 0.12),
+                highlight: adjustSaturation(adjustColor(colors.highlight, 12), 0.28),
+                accent: adjustSaturation(adjustColor(colors.accent, 18), 0.34)
+            };
+        }
+
+        function adjustSaturation(hex, amount) {
+            const { r, g, b } = hexToRgb(hex);
+            const hsl = rgbToHsl(r, g, b);
+            hsl.s = clamp(hsl.s + amount, 0, 1);
+            const rgb = hslToRgb(hsl.h, hsl.s, hsl.l);
+            return rgbToHex(rgb.r, rgb.g, rgb.b);
+        }
+
+        function rgbToHsl(r, g, b) {
+            const rn = r / 255;
+            const gn = g / 255;
+            const bn = b / 255;
+            const max = Math.max(rn, gn, bn);
+            const min = Math.min(rn, gn, bn);
+            let h = 0;
+            let s = 0;
+            const l = (max + min) / 2;
+
+            if (max !== min) {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+                switch (max) {
+                    case rn:
+                        h = (gn - bn) / d + (gn < bn ? 6 : 0);
+                        break;
+                    case gn:
+                        h = (bn - rn) / d + 2;
+                        break;
+                    default:
+                        h = (rn - gn) / d + 4;
+                        break;
+                }
+
+                h /= 6;
+            }
+
+            return { h, s, l };
+        }
+
+        function hslToRgb(h, s, l) {
+            if (s === 0) {
+                const value = Math.round(l * 255);
+                return { r: value, g: value, b: value };
+            }
+
+            const hueToRgb = (p, q, t) => {
+                let temp = t;
+                if (temp < 0) temp += 1;
+                if (temp > 1) temp -= 1;
+                if (temp < 1 / 6) return p + (q - p) * 6 * temp;
+                if (temp < 1 / 2) return q;
+                if (temp < 2 / 3) return p + (q - p) * (2 / 3 - temp) * 6;
+                return p;
+            };
+
+            const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+            const p = 2 * l - q;
+
+            return {
+                r: Math.round(hueToRgb(p, q, h + 1 / 3) * 255),
+                g: Math.round(hueToRgb(p, q, h) * 255),
+                b: Math.round(hueToRgb(p, q, h - 1 / 3) * 255)
+            };
+        }
+
+        function clamp(value, min, max) {
+            return Math.min(max, Math.max(min, value));
+        }
+
+        function isDarkColor(hex) {
+            const { r, g, b } = hexToRgb(hex);
+            const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+            return luminance < 0.62;
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function showDownloadSection() {
+            document.getElementById('downloadSection').style.display = 'block';
+        }
+
+        function downloadQSS() {
+            if (!modifiedQSS) {
+                showStatus('Generate the QSS first before downloading.', 'error');
+                return;
+            }
+
+            const themeName = document.getElementById('themeName').value.trim() || 'custom-theme';
+            const safeThemeName = themeName.replace(/[\/:*?"<>|]/g, '_');
+            const filename = `${safeThemeName}.qss`;
+
+            const blob = new Blob([modifiedQSS], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+                a.remove();
+            }, 1000);
+
+            showStatus(`Downloaded: ${filename}. Only the allowed QSS color targets were modified.`, 'success');
+        }
+
+        function showStatus(message, type, options = {}) {
+            const status = document.getElementById('status');
+            if (type === 'success') {
+                status.innerHTML = `<span class="status-copy"><span class="status-eyebrow">Success</span><span class="status-message">${escapeHtml(message)}</span></span>`;
+            } else if (type === 'info' && options.loading) {
+                status.innerHTML = `<span class="status-loading-badge">⋯</span><span>${escapeHtml(message)}</span>`;
+            } else {
+                status.textContent = message;
+            }
+            status.className = type;
+            status.style.display = 'block';
+
+            if (type === 'info' && options.loading) {
+                status.classList.add('status-loading');
+            } else {
+                status.classList.remove('status-loading');
+            }
+
+            if (type === 'success') {
+                status.classList.remove('status-pop-success');
+                void status.offsetWidth;
+                status.classList.add('status-pop-success');
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('paletteFile').value = '';
+            document.getElementById('themeName').value = '';
+            document.getElementById('status').style.display = 'none';
+            document.getElementById('downloadSection').style.display = 'none';
+            document.getElementById('previewSection').style.display = 'none';
+            modifiedQSS = null;
+            detectedColors = {};
+            baseDetectedColors = {};
+            paletteVariations = {};
+            activeVariationKey = 'original';
+            activeColorRole = null;
+            updateUploadFieldLabel();
+            applyAppPaletteTheme(DEFAULT_UI_PALETTE);
+        }
+
+        function initializeUploadField() {
+            const fileInput = document.getElementById('paletteFile');
+            const uploadField = document.getElementById('uploadField');
+
+            fileInput.addEventListener('change', updateUploadFieldLabel);
+
+            uploadField.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    fileInput.click();
+                }
+            });
+
+            ['dragenter', 'dragover'].forEach((eventName) => {
+                uploadField.addEventListener(eventName, (event) => {
+                    event.preventDefault();
+                    uploadField.classList.add('is-dragover');
+                });
+            });
+
+            ['dragleave', 'dragend', 'drop'].forEach((eventName) => {
+                uploadField.addEventListener(eventName, (event) => {
+                    event.preventDefault();
+                    if (eventName !== 'drop') {
+                        uploadField.classList.remove('is-dragover');
+                    }
+                });
+            });
+
+            uploadField.addEventListener('drop', (event) => {
+                uploadField.classList.remove('is-dragover');
+                const files = event.dataTransfer?.files;
+                if (!files || !files.length) return;
+
+                if (typeof DataTransfer !== 'undefined') {
+                    const transfer = new DataTransfer();
+                    transfer.items.add(files[0]);
+                    fileInput.files = transfer.files;
+                }
+
+                updateUploadFieldLabel();
+            });
+
+            updateUploadFieldLabel();
+        }
+
+        function updateUploadFieldLabel() {
+            const fileInput = document.getElementById('paletteFile');
+            const uploadField = document.getElementById('uploadField');
+            const uploadFilename = document.getElementById('uploadFilename');
+            const file = fileInput.files && fileInput.files[0];
+
+            uploadFilename.textContent = file ? file.name : DEFAULT_UPLOAD_PLACEHOLDER;
+            uploadField.classList.toggle('has-file', Boolean(file));
+        }
+    </script>
+</body>
+</html>

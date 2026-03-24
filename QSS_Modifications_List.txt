@@ -1,0 +1,240 @@
+QSS COLOR MODIFICATION SUMMARY
+=============================
+
+Total Color Occurrences Modified: 83
+
+ORIGINAL COLOR MAPPING
+======================
+
+Primary Accent:    #5200FF (Hyper Violet) → New Color
+Secondary Accent:  #F900FF (Hot Magenta) → New Color
+Highlight Color:   #CCFF00 (Electric Lime) → New Color
+Warning Color:     #FF6B00 (Blaze Orange) → New Color
+Derived Primary:   #2A0070 (Purple variant) → Adjusted variant
+Derived Primary:   #1A0040 (Dark purple) → Adjusted variant
+
+
+DETAILED LOCATION LIST
+======================
+
+PALETTE HEADER (Lines 6-15)
+---------------------------
+1. Line 9:   Accent: #5200FF → NEW PRIMARY COLOR
+2. Line 10:  Highlight: #CCFF00 → NEW HIGHLIGHT COLOR
+3. Line 13:  Secondary: #F900FF → NEW SECONDARY COLOR
+4. Line 14:  Warning: #FF6B00 → NEW WARNING COLOR
+
+
+MAIN WINDOW SECTION (Lines 38-59)
+----------------------------------
+5. Line 43:  QMainWindow::separator { background: #5200FF }
+6. Line 49:  QMainWindow::separator:hover { background: #CCFF00 }
+7. Line 57:  QSplitter::handle:hover { background-color: #CCFF00 }
+
+
+DOCK WIDGETS SECTION (Lines 63-87)
+-----------------------------------
+8. Line 65:  QDockWidget { border: 2px solid #5200FF }
+9. Line 71:  QDockWidget::title gradient { stop:0 #1A0040, stop:1 #2A0070 }
+10. Line 72: QDockWidget::title { color: #CCFF00 }
+11. Line 75: QDockWidget::title { border-bottom: 2px solid #CCFF00 }
+12. Line 85: QDockWidget::close-button:hover { background-color: #F900FF }
+
+
+MENU & TOOLBAR SECTION (Lines 91-170)
+--------------------------------------
+13. Line 94:  QMenuBar { border-bottom: 2px solid #CCFF00 }
+14. Line 104: QMenuBar::item:selected { background-color: #5200FF }
+15. Line 105: QMenuBar::item:selected { color: #CCFF00 }
+16. Line 110: QMenu { border: 2px solid #CCFF00 }
+17. Line 121: QMenu::item:selected { background-color: #5200FF }
+18. Line 122: QMenu::item:selected { color: #CCFF00 }
+19. Line 126: QMenu::item:pressed { background-color: #CCFF00 }
+20. Line 133: QToolBar { border-bottom: 2px solid #F900FF }
+21. Line 148: QToolButton:hover { border: 1px solid #CCFF00 }
+22. Line 149: QToolButton:hover { color: #CCFF00 }
+23. Line 153: QToolButton:pressed { background-color: #1A0040 }
+24. Line 154: QToolButton:pressed { color: #FF6B00 }
+25. Line 158: QToolButton:checked { background-color: #CCFF00 }
+26. Line 159: QToolButton:checked { border: 2px solid #5200FF }
+27. Line 165: QToolButton:checked:hover { border: 2px solid #F900FF }
+
+
+BUTTONS SECTION (Lines 172-215)
+--------------------------------
+28. Line 175: QPushButton { border: 2px solid #5200FF }
+29. Line 182: QPushButton:hover gradient { stop:0 #5200FF, stop:1 #2A0080 }
+30. Line 183: QPushButton:hover { color: #CCFF00 }
+31. Line 184: QPushButton:hover { border-color: #CCFF00 }
+32. Line 188: QPushButton:pressed { background-color: #CCFF00 }
+33. Line 190: QPushButton:pressed { border-color: #5200FF }
+34. Line 194: QPushButton:checked { background-color: #CCFF00 }
+35. Line 196: QPushButton:checked { border: 2px solid #5200FF }
+36. Line 202: QPushButton:checked:hover { border: 2px solid #F900FF }
+37. Line 206: QPushButton:default { background-color: #5200FF }
+38. Line 207: QPushButton:default { color: #CCFF00 }
+39. Line 208: QPushButton:default { border: 2px solid #CCFF00 }
+40. Line 212: QPushButton:default:hover { background-color: #CCFF00 }
+
+
+INPUTS SECTION (Lines 219-296)
+-------------------------------
+41. Line 224: QLineEdit etc { selection-background-color: #5200FF }
+42. Line 225: QLineEdit etc { selection-color: #CCFF00 }
+43. Line 226: QLineEdit etc { color: #CCFF00 }
+44. Line 234: QTextEdit[objectName="outputLog"] { border: 2px solid #F900FF }
+45. Line 238: QLineEdit:focus etc { border: 2px solid #F900FF }
+46. Line 251: QSpinBox::up-button:hover { background-color: #5200FF }
+47. Line 274: QComboBox:hover { border-color: #F900FF }
+48. Line 291: QComboBox QAbstractItemView { border: 2px solid #CCFF00 }
+49. Line 292: QComboBox QAbstractItemView { selection-background-color: #5200FF }
+50. Line 293: QComboBox QAbstractItemView { selection-color: #CCFF00 }
+
+
+LISTS/TREES SECTION (Lines 301-344)
+------------------------------------
+51. Line 315: QListView::item:hover { background-color: rgba(82, 0, 255, 0.2) }
+52. Line 316: QListView::item:hover { color: #CCFF00 }
+53. Line 320: QListView::item:selected { background-color: rgba(204, 255, 0, 0.12) }
+54. Line 321: QListView::item:selected { color: #CCFF00 }
+55. Line 322: QListView::item:selected { border-left: 3px solid #CCFF00 }
+56. Line 337: QHeaderView::section { background-color: #1A0040 }
+57. Line 338: QHeaderView::section { color: #CCFF00 }
+58. Line 340: QHeaderView::section { border-bottom: 2px solid #CCFF00 }
+
+
+SCROLLBARS SECTION (Lines 349-390)
+-----------------------------------
+59. Line 356: QScrollBar::handle:vertical { background: #5200FF }
+60. Line 360: QScrollBar::handle:vertical { border: 1px solid #F900FF }
+61. Line 364: QScrollBar::handle:vertical:hover { background: #CCFF00 }
+62. Line 365: QScrollBar::handle:vertical:hover { border: 1px solid #5200FF }
+63. Line 375: QScrollBar::handle:horizontal { background: #5200FF }
+64. Line 379: QScrollBar::handle:horizontal { border: 1px solid #F900FF }
+65. Line 383: QScrollBar::handle:horizontal:hover { background: #CCFF00 }
+66. Line 384: QScrollBar::handle:horizontal:hover { border: 1px solid #5200FF }
+
+
+TAB WIDGETS SECTION (Lines 395-426)
+------------------------------------
+67. Line 396: QTabWidget::pane { border: 2px solid #5200FF }
+68. Line 415: QTabBar::tab:hover { background-color: rgba(82, 0, 255, 0.3) }
+69. Line 416: QTabBar::tab:hover { color: #CCFF00 }
+70. Line 417: QTabBar::tab:hover { border-color: #5200FF }
+71. Line 421: QTabBar::tab:selected { background-color: rgba(204, 255, 0, 0.1) }
+72. Line 422: QTabBar::tab:selected { color: #CCFF00 }
+73. Line 424: QTabBar::tab:selected { border-color: #CCFF00 }
+
+
+MISC SECTION (Lines 430-478)
+-----------------------------
+74. Line 431: QGroupBox { border: 2px solid #5200FF }
+75. Line 444: QGroupBox::title { color: #CCFF00 }
+76. Line 451: QCheckBox::indicator { border: 2px solid #5200FF }
+77. Line 455: QCheckBox::indicator:hover { border-color: #CCFF00 }
+78. Line 458: QCheckBox::indicator:checked { background-color: #CCFF00 }
+79. Line 459: QCheckBox::indicator:checked { border-color: #CCFF00 }
+80. Line 467: QRadioButton::indicator { border: 2px solid #5200FF }
+81. Line 471: QRadioButton::indicator:hover { border-color: #F900FF }
+82. Line 474: QRadioButton::indicator:checked { background-color: #F900FF }
+83. Line 475: QRadioButton::indicator:checked { border-color: #F900FF }
+
+
+STATUS BAR SECTION (Lines 480-489)
+-----------------------------------
+84. Line 480: QLabel[status="active"] { color: #CCFF00 }
+85. Line 481: QLabel[status="error"] { color: #FF6B00 }
+86. Line 487: QStatusBar { background-color: rgba(82, 0, 255, 0.2) }
+87. Line 488: QStatusBar { color: #CCFF00 }
+88. Line 489: QStatusBar { border-top: 2px solid #5200FF }
+
+
+COMPONENTS AFFECTED BY COLOR CHANGES
+=====================================
+
+Buttons (QPushButton)
+  - Normal state
+  - Hover state
+  - Pressed state
+  - Checked state
+  - Default/Primary state
+
+Tool Buttons (QToolButton)
+  - Hover state
+  - Pressed state
+  - Checked state
+
+Menus (QMenu/QMenuBar)
+  - Border colors
+  - Selected items
+  - Pressed items
+
+Input Fields (QLineEdit, QSpinBox, QComboBox, QTextEdit)
+  - Border colors
+  - Focus states
+  - Selection colors
+  - Hover states
+
+Lists & Trees (QListView, QTreeView)
+  - Hover effects
+  - Selection colors
+  - Header colors
+
+Scrollbars (Vertical & Horizontal)
+  - Handle color
+  - Hover states
+  - Border colors
+
+Tab Widgets (QTabBar)
+  - Active tabs
+  - Hover states
+  - Border colors
+
+Dock Widgets
+  - Border colors
+  - Title bar gradients
+  - Button hover states
+
+Checkboxes & Radio Buttons
+  - Border colors
+  - Checked states
+  - Hover states
+
+Status Labels & Status Bar
+  - Active status color
+  - Error status color
+  - Background colors
+
+
+COLOR ROLE MAPPING
+==================
+
+Primary Accent (#5200FF → New Primary):
+  - Main borders
+  - Selection backgrounds
+  - Active states
+  - Hover states for primary elements
+  - Gradients
+
+Secondary Accent (#F900FF → New Secondary):
+  - Toolbar bottom border
+  - Secondary hover states
+  - Docking widget buttons
+  - Radio button checked state
+
+Highlight Color (#CCFF00 → New Highlight):
+  - Text on dark backgrounds
+  - Selection text color
+  - Active status indicators
+  - Hover text
+  - Selected item indicators
+
+Warning Color (#FF6B00 → New Warning):
+  - Error status labels
+  - Tool button pressed state
+  - Alert indicators
+
+Derived Colors:
+  - #2A0070 (was -30% from #5200FF) → Adjusted dynamically
+  - #1A0040 (was -50% from #5200FF) → Adjusted dynamically
+  - Used in gradients and background variants
